@@ -1,0 +1,15 @@
+crew_common: &crew_common
+  cache: true
+  max_iter: 100
+  max_rpm: 1000
+  memory: true
+  share_crew: true
+
+html5_crew:
+  agents:
+    - html5_code_manager
+    - html5_programmer
+  tasks:
+    - html5_code_manager
+    - html5_code_tester
+

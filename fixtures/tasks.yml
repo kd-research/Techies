@@ -1,0 +1,63 @@
+task_common: &task_common
+  human_input: false
+  async_execution: false
+
+game_architecture:
+  <<: *task_common
+  description: >
+    Use the file_tool to read the neccesary game features from the disk with file path {researcher_task.output_file}
+    Use the information gathered by the researcher during the research task. Do not do your own research, or delegate research. 
+    Generate instructions for the coding task.
+    Do not do any coding.
+    Only delegate the task of reviewing your work to the reviewer. Do not delegate any other tasks to any other co-workers.
+    Check with the reviewer to make sure you included all the neccesary game features.
+    Give the reviewer the exact instructions you intend on putting in your finale answer. 
+    Update your instructions based on feedback from the reviewer. 
+    Do not finalize your answer until the reviewer confirms you have completed your task.
+  expected_output: >
+    Detailed plans and instructions for the coding task. 
+  output_file: "task_plans.md"
+  agent:
+    - game_architect
+  tools:
+    - file_tool
+
+
+html5_coding:
+  <<: *task_common
+  description: >
+    Use the file_tool to read the task instructions from the disk with file path {game_architect_task.output_file}.
+    Create perfect HTML5 code to implement everything in the coding task.
+    Make sure the code includes {topic_info}.
+    Iteratively code, test for bugs and errors, and update that code.
+    Check with the reviewer to make sure the code includes all the neccesary game features.
+    Give the reviewer your code so far.
+    Update your code based on feedback from the reviewer.
+    Do not finalize your answer until the reviewer confirms the you have completed your task.
+    Your final answer should include HTML5 code for {topic} and only HTML5 code for {topic}.
+  expected_output: >
+    A single executable file that contains HTML5 code for {topic}.
+  output_file: "game.html"
+  agent:
+    - html5_coding_manager
+  tools: 
+    - file_tool
+
+research:
+  <<: *task_common
+  description: >
+    Always give an answer.
+    Use google_search_tool to research what game mechanics are.
+    Use the google_search_tool to research {topic}.
+    Find the necessary game features for {topic}.
+    Make sure these game features include {topic_info}.
+    Do not code in this task.
+  expected_output: >
+    A list of the necessary game features for {topic}.
+  output_file: "game_research.md"
+  agent:
+    - researcher
+  tools:
+    - google_search_tool
+
+# vim: set foldmethod=indent foldlevel=0:
