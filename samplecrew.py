@@ -1,12 +1,26 @@
+from functools import lru_cache
 from crewai import Agent, Task, Crew
 
 from langchain.agents import load_tools
 from langchain_community.llms.ollama import Ollama
+from langchain_groq import ChatGroq
 
-llm = Ollama(
-    base_url="http://localhost:11434",
-    model="llama3:70b",
-)
+
+@lru_cache
+def ollama_model():
+    return Ollama(
+        base_url="http://localhost:11434",
+        model="llama3:8b",
+    )
+
+
+@lru_cache
+def groq_model():
+    return ChatGroq(model="llama3-8b-8192", )
+
+
+llm = groq_model()
+
 llm_config = dict(
     memory=True,
     embedder={
@@ -51,8 +65,11 @@ task2 = Task(
 )
 
 my_crew = Crew(
-    agents=[agent1, agent2], tasks=[task1, task2], verbose=True, **llm_config
-
+    agents=[agent1, agent2],
+    tasks=[task1, task2],
+    verbose=True,
+    **llm_config,
+    max_rpm=5,
 )
 
 crew = my_crew.kickoff(inputs={"input": "Chris Lee (singer)"})
