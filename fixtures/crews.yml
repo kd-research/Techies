@@ -1,15 +1,22 @@
-crew_common: &crew_common
+_crew_common: &crew_common
   cache: true
   max_iter: 100
   max_rpm: 1000
   memory: true
   share_crew: true
 
-html5_crew:
+hierarchy_crew:
+  <<: *crew_common
   agents:
-    - html5_code_manager
-    - html5_programmer
+    - project_leader
+    - hierarchy_architect
+    - hierarchy_entity_engineer
+    - hierarchy_manager_engineer
+    - hierarchy_reviewer
+    - hierarchy_detailed_reviewer
+    - hierarchy_question_reflector
+    - hierarchy_assembler
   tasks:
-    - html5_code_manager
-    - html5_code_tester
+    - game_hierarchy_representation
+    - game_hierarchy_assembling
 

@@ -1,5 +1,5 @@
 from functools import lru_cache
-from crewai import Agent, Task, Crew
+from crewai import Agent, Task, Crew, Process
 
 from langchain.agents import load_tools
 from langchain_community.llms.ollama import Ollama
@@ -16,21 +16,31 @@ def ollama_model():
 
 @lru_cache
 def groq_model():
-    return ChatGroq(model="llama3-8b-8192", )
+    return ChatGroq(model="llama3-70b-8192", )
+
+@lru_cache
+def huggingface_embedder():
+    return {
+        "provider": "huggingface",
+        "config":
+            {
+                "model":
+                    "sentence-transformers/all-mpnet-base-v2",
+            }
+    }
+
+@lru_cache
+def gpt4all_embedder():
+    return {
+        "provider": "gpt4all",
+    }
 
 
 llm = groq_model()
 
 llm_config = dict(
     memory=True,
-    embedder={
-        "provider": "huggingface",
-        "config":
-            {
-                "model":
-                    "mixedbread-ai/mxbai-embed-large-v1",  # https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1
-            }
-    }
+    embedder=huggingface_embedder(),
 )
 
 langchain_tools = load_tools(["google-serper"], llm=llm)
@@ -60,6 +70,7 @@ agent2 = Agent(
 task2 = Task(
     description="a tldr summary of the short biography",
     expected_output="5 bullet point summary of the biography",
+    output_file="tldr_summary.txt",
     agent=agent2,
     context=[task1],
 )
@@ -68,8 +79,10 @@ my_crew = Crew(
     agents=[agent1, agent2],
     tasks=[task1, task2],
     verbose=True,
+    process=Process.sequential,
     **llm_config,
-    max_rpm=5,
+    max_rpm=1,
+    max_iter=1,
 )
 
 crew = my_crew.kickoff(inputs={"input": "Chris Lee (singer)"})
