@@ -1,14 +1,11 @@
 _crew_common: &crew_common
   cache: true
   max_iter: 100
-  max_rpm: 1000
   memory: true
-  share_crew: true
 
 hierarchy_crew:
   <<: *crew_common
   agents:
-    - project_leader
     - hierarchy_architect
     - hierarchy_entity_engineer
     - hierarchy_manager_engineer
@@ -18,5 +15,7 @@ hierarchy_crew:
     - hierarchy_assembler
   tasks:
     - game_hierarchy_representation
+    - hierarchy_review
+    - game_hierarchy_refinement
     - game_hierarchy_assembling
 

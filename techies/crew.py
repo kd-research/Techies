@@ -16,4 +16,5 @@ class Crew(_Crew):
             tasks.append(task_pool.get(task_name))
         crew_config['tasks'] = tasks
 
-        super().__init__(**crew_config, **kwargs)
+        crew_config.update(kwargs)
+        super().__init__(**crew_config)

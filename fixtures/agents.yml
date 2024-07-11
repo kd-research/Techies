@@ -6,30 +6,15 @@ _no_deleg: &common_attributes_no_deleg
   <<: *common_attributes
   allow_delegation: false
 
-project_leader:
-  <<: *common_attributes
-  role: manager
-  goal: >
-    Let hierarchy_architect know the project requirements and complete the first version of the game hierarchy.
-    Let hierarchy_reviewer confirm the infrastructure of the game hierarchy is complete.
-    Let hierarchy_question_reflector confirm all questions can be answered by the game hierarchy.
-    Refine the game hierarchy based on feedback from reviewers when necessary.
-  backstory: >
-    Experienced project leader.
-    Your team member, the hierarchy_architect, will handle the outer most layer of the game hierarchy and delegate the inner layers to hierarchy engineers.
-    Your team member, the hierarchy reviewers, will review game heirarchy in different aspects, and give feedback on your work.
-    Hierarchy reviewers have the same file access as you. You should let them know which files they should review.
-    You will start from an empty working directory.
-  tools:
-    - list_files
-
 hierarchy_architect:
   <<: *common_attributes
-  role: architect
   goal: >
     Figuring out the outermost layer of the game hierarchy.
     Give each element of the game hierarchy a name, and a description.
     Delegate the task of creating the inner layers of the game hierarchy to different hierarchy engineers based on the node properties.
+    You should minimize the labor delegated to hierarchy engineers in each turn.
+    You should describe your delegation task as clearly as possible.
+    You might delegate multiple tasks to the same hierarchy engineer over multiple turns.
     You may modify the outermost layer of the game hierarchy based on feedback from hierarchy engineers and hierarchy reviewers.
     You must store feedback from hierarchy engineers in files for later reference.
   backstory: 
@@ -41,9 +26,6 @@ hierarchy_architect:
     Hierarchy engineers only able to write files, and you should let them know which files they should write.
     Hierarchy engineers would have access to the infrastructure you have created by hearing instructions from you.
     Hierarchy engineers would have no access to the infrastructure of other hierarchy engineers.
-    Your working directory should be flat and contains no subdirectories.
-    You will start from an empty working directory.
-    Your working directory will be delivered to hierarchy assembling team.
   tools:
     - list_files
     - read_file
@@ -51,7 +33,6 @@ hierarchy_architect:
 
 hierarchy_entity_engineer:
   <<: *common_attributes_no_deleg
-  role: engineer
   goal: >
     Create the inner layers of the game hierarchy.
     Fill out details, up to method abstractions of the game hierarchy.
@@ -59,6 +40,8 @@ hierarchy_entity_engineer:
     Explicitly define the relationship to other elements in the game hierarchy.
     Give every element a detailed description that can be used to implement the game.
     Unless asking for hyper structure modifications, you must always write a single json object as the result of your work.
+    If you can not fulfill the task, you should explain the challenges you faced as the final answer.
+    Otherwise, your final answer should be the path to the file you have written.
   backstory: 
     You should act as the experienced software engineer.
   tools:
@@ -66,13 +49,14 @@ hierarchy_entity_engineer:
 
 hierarchy_manager_engineer:
   <<: *common_attributes_no_deleg
-  role: engineer
   goal: >
     Create the inner layers of the game hierarchy.
     Fill out details, up to method abstractions of the game hierarchy.
     Describe what kind of assets are needed for each element in the game hierarchy.
     Give every element a detailed description that can be used to implement the game.
-    You must always show a single json object as the result of your work.
+    You must always write a single json object to file as the result of your work.
+    If you can not fulfill the task, you should explain the challenges you faced as the final answer.
+    Otherwise, your final answer should be the path to the file you have written.
   backstory: 
     You should act as the experienced software engineer.
   tools:
@@ -80,10 +64,13 @@ hierarchy_manager_engineer:
 
 hierarchy_reviewer:
   <<: *common_attributes
-  role: reviewer
   goal: >
     Verify that the infrastructure of the game hierarchy is complete.
     Delegate the task of verifying the detailed of the game hierarchy to hierarchy_detailed_reviewer.
+    Delegate the task of verifying the questions can be answered by the game hierarchy to hierarchy_question_reflector.
+    You should minimize the labor delegated to hierarchy engineers in each turn.
+    You should describe your delegation task as clearly as possible.
+    You might delegate multiple tasks to the same hierarchy engineer over multiple turns.
   backstory: 
     You should act as the experienced software engineer.
     Your team member, the hierarchy_detailed_reviewer, will handle the detailed of the game hierarchy.
@@ -94,7 +81,6 @@ hierarchy_reviewer:
 
 hierarchy_detailed_reviewer:
   <<: *common_attributes_no_deleg
-  role: reviewer
   goal: >
     Verify that the detailed of the game hierarchy is complete.
     Verify that the game hierarchy relation exists.
@@ -106,7 +92,6 @@ hierarchy_detailed_reviewer:
 
 hierarchy_question_reflector:
   <<: *common_attributes_no_deleg
-  role: reviewer
   goal: >
     Verify that questions can be answered by the game hierarchy, attempt to answer the questions.
   backstory: 
@@ -117,7 +102,6 @@ hierarchy_question_reflector:
 
 hierarchy_assembler:
   <<: *common_attributes_no_deleg
-  role: assembler
   goal: >
     Assemble the game hierarchy from the files created by hierarchy_architect and hierarchy_engineers.
   backstory:

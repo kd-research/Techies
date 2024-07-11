@@ -6,7 +6,7 @@ from crewai import Agent as _Agent
 
 class Agent(_Agent):
     @staticmethod
-    def eager_load_all():
+    def eager_load_all(**extra_kwargs):
 
         agent_pool = {}
         all_tools = get_all_tools()
@@ -15,7 +15,8 @@ class Agent(_Agent):
                 agent = Agent(
                     config_name,
                     agent_pool=agent_pool,
-                    tools_available=all_tools
+                    tools_available=all_tools,
+                    **extra_kwargs
                 )
 
         return agent_pool
@@ -24,7 +25,8 @@ class Agent(_Agent):
         self, config_name, *, agent_pool=None, tools_available=None, **kwargs
     ):
         agent_config = load_fixture('agents')[config_name]
-        agent_config['name'] = config_name
+        agent_config['role'] = config_name
+        agent_config['name'] = config_name.replace('_', ' ').title()
 
         agent_tools = []
         for tool_name in agent_config.get('tools', []):
@@ -36,5 +38,6 @@ class Agent(_Agent):
         if agent_pool is not None:
             agent_pool[config_name] = self
 
-        super().__init__(**agent_config, **kwargs)
+        agent_config.update(kwargs)
+        super().__init__(**agent_config)
 

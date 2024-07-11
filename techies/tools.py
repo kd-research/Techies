@@ -35,7 +35,7 @@ class ReadFileTool(BaseTool):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def _run(self, **kwargs):
+    def _run(self, **kwargs) -> str:
         try:
             path = kwargs['path']
             with open(f"{self.base_dir}/{path}", "r") as f:
@@ -54,9 +54,9 @@ class WriteFileTool(BaseTool):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def _run(self, **kwargs):
+    def _run(self, **kwargs) -> str:
         try:
-            path = kwargs['path']
+            path = kwargs['path'].replace("/", "-")
             content = kwargs['content']
             with open(f"{self.base_dir}/{path}", "w") as f:
                 f.write(content)
@@ -74,10 +74,10 @@ class ListFilesTool(BaseTool):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def _run(self, **kwargs):
+    def _run(self, **kwargs) -> str:
         try:
             files = os.listdir(self.base_dir)
-            return files
+            return "\n".join(files)
         except Exception as e:
             return f"Failed to list files: {e}"
 
