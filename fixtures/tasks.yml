@@ -12,7 +12,7 @@ game_hierarchy_representation:
     You would start from an empty working directory.
     Your working directory will be delivered to hierarchy reviewers.
   expected_output: >
-    List of filenames that multiple files that contain the game hierarchy of the game.
+    List of filenames that multiple files that contain the game hierarchy of the game. Do not repeat the content in the files.
 
 hierarchy_review:
   <<: *task_common

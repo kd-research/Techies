@@ -1,6 +1,6 @@
 import os
 from tempfile import TemporaryDirectory
-from typing import Type
+from typing import Type, List
 
 from pydantic.v1 import BaseModel, Field
 from crewai_tools import BaseTool
@@ -9,6 +9,12 @@ class ReadFileToolSchema(BaseModel):
     path: str = Field(
         type=str,
         description="The path to the file to read"
+    )
+
+class BatchReadFilesToolSchema(BaseModel):
+    paths: List[str] = Field(
+        type=List[str],
+        description="An array of paths to the files to read"
     )
 
 class WriteFileToolSchema(BaseModel):
@@ -44,6 +50,29 @@ class ReadFileTool(BaseTool):
             return content
         except Exception as e:
             return f"Failed to read file: {e}"
+
+class BatchReadFilesTool(BaseTool):
+    name: str = "batch_read_files"
+    description: str = "Read and concat the contents of multiple files in a batch"
+    args_schema: Type[BaseModel] = BatchReadFilesToolSchema
+    base_dir: str
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> str:
+        try:
+            paths = kwargs['paths']
+            content = ""
+            for path in paths:
+                with open(f"{self.base_dir}/{path}", "r") as f:
+                    content += f.read()
+                    content += "\n"
+
+            return content
+        except Exception as e:
+            return f"Failed to read files: {e}"
+
 
 class WriteFileTool(BaseTool):
     name: str = "write_file"
@@ -86,7 +115,13 @@ def get_all_tools():
     print(f"Temp directory created at: {base_dir}")
 
     tools = {}
-    for toolkls in [ReadFileTool, WriteFileTool, ListFilesTool]:
+    toolklasses = [
+        ReadFileTool, 
+        BatchReadFilesTool,
+        WriteFileTool, 
+        ListFilesTool
+    ]
+    for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
         tools[tool.name] = tool
 

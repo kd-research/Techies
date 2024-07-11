@@ -12,24 +12,22 @@ hierarchy_architect:
     Figuring out the outermost layer of the game hierarchy.
     Give each element of the game hierarchy a name, and a description.
     Delegate the task of creating the inner layers of the game hierarchy to different hierarchy engineers based on the node properties.
-    You should minimize the labor delegated to hierarchy engineers in each turn.
-    You should describe your delegation task as clearly as possible.
-    You might delegate multiple tasks to the same hierarchy engineer over multiple turns.
-    You may modify the outermost layer of the game hierarchy based on feedback from hierarchy engineers and hierarchy reviewers.
-    You must store feedback from hierarchy engineers in files for later reference.
   backstory: 
     You should act as the experienced architect and project manager.
     Your team member, the hierarchy engineers, will handle the inner layers of the game hierarchy.
     There are two types of hierarchy engineers, hierarchy_entity_engineer and hierarchy_manager_engineer.
     Hierarchy_entity_engineer is responsible for creating the game object of each element in the game hierarchy.
     Hierarchy_manager_engineer is responsible for game logic, ui, graphics and other details.
-    Hierarchy engineers only able to write files, and you should let them know which files they should write.
     Hierarchy engineers would have access to the infrastructure you have created by hearing instructions from you.
     Hierarchy engineers would have no access to the infrastructure of other hierarchy engineers.
+    You may not create or modify the inner layers of the game hierarchy.
+    You may modify the outermost layer of the game hierarchy based on feedback from hierarchy engineers and hierarchy reviewers.
+    You must store feedback from hierarchy engineers in files for later reference.
   tools:
     - list_files
     - read_file
     - write_file
+    - batch_read_files
 
 hierarchy_entity_engineer:
   <<: *common_attributes_no_deleg
@@ -43,8 +41,11 @@ hierarchy_entity_engineer:
     If you can not fulfill the task, you should explain the challenges you faced as the final answer.
     Otherwise, your final answer should be the path to the file you have written.
   backstory: 
+    When you are asked to create a file, assume that the file does not exist.
+    When you are asked to refine a file, assume that the file exists.
     You should act as the experienced software engineer.
   tools:
+    - read_file
     - write_file
 
 hierarchy_manager_engineer:
@@ -58,8 +59,11 @@ hierarchy_manager_engineer:
     If you can not fulfill the task, you should explain the challenges you faced as the final answer.
     Otherwise, your final answer should be the path to the file you have written.
   backstory: 
+    When you are asked to create a file, assume that the file does not exist.
+    When you are asked to refine a file, assume that the file exists.
     You should act as the experienced software engineer.
   tools:
+    - read_file
     - write_file
 
 hierarchy_reviewer:
@@ -68,9 +72,6 @@ hierarchy_reviewer:
     Verify that the infrastructure of the game hierarchy is complete.
     Delegate the task of verifying the detailed of the game hierarchy to hierarchy_detailed_reviewer.
     Delegate the task of verifying the questions can be answered by the game hierarchy to hierarchy_question_reflector.
-    You should minimize the labor delegated to hierarchy engineers in each turn.
-    You should describe your delegation task as clearly as possible.
-    You might delegate multiple tasks to the same hierarchy engineer over multiple turns.
   backstory: 
     You should act as the experienced software engineer.
     Your team member, the hierarchy_detailed_reviewer, will handle the detailed of the game hierarchy.
@@ -109,5 +110,6 @@ hierarchy_assembler:
   tools:
     - list_files
     - read_file
+    - batch_read_files
 
 # vim: set foldmethod=indent foldlevel=0:
