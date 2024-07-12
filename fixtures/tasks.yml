@@ -6,10 +6,10 @@ game_hierarchy_representation:
   <<: *task_common
   agent: hierarchy_architect
   description: >
-    Assume you are reproducing a number game "Sudoku",  which already ships in multiple platforms including Microsoft Windows. 
-    Your task is to figure out the game hierarchy of the game.
+    You are being asked to create a game with following game specifications: "{game_specifications}".
+    Your task is to propose and iterate the game hierarchy of the game.
     The first level should be characterized by the object concepts for each visual game component,
-    as well as non-visible or ui game components such as the game logic, input handler, start screen, and ui elements.
+    as well as other game components such as the game logic, input handler, start screen, and ui elements.
     You would start from an empty working directory.
     You should create multiple files to represent the game hierarchy.
     Your working directory will be delivered to hierarchy reviewers.
@@ -29,7 +29,7 @@ hierarchy_review:
     Make sure there are enough information to answer following questions in the hierarchy:
     2. which component handles if the game is finished?
     3. which component handles the score?
-    4. which component takes user inputs and commands the ui or doodle actions? For each input, who will be the target to communicate with?
+    4. which component takes user inputs and commands the ui or player actions? For each input, who will be the target to communicate with?
   expected_output: >
     Your final answer should contain following information:
     1. The quality of the game hierarchy.

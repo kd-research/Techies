@@ -1,7 +1,7 @@
 import os
 import json
 from tempfile import TemporaryDirectory
-from typing import Type, List, Dict, Any
+from typing import Type, List, Dict, Any, Optional
 
 from pydantic.v1 import BaseModel, Field
 from crewai_tools import BaseTool
@@ -30,7 +30,10 @@ class WriteFileToolSchema(BaseModel):
     )
 
 class ListFilesToolSchema(BaseModel):
-    pass
+    args: Optional[Dict[str, Any]] = Field(
+        type=Optional[Dict[str, Any]],
+        description="Additional arguments"
+    )
 
 
 class ReadFileTool(BaseTool):
