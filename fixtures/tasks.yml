@@ -6,13 +6,16 @@ game_hierarchy_representation:
   <<: *task_common
   agent: hierarchy_architect
   description: >
-    Assume you are creating a doodle jump game. Your task is to figure out the game hierarchy of the game.
+    Assume you are reproducing a number game "Sudoku",  which already ships in multiple platforms including Microsoft Windows. 
+    Your task is to figure out the game hierarchy of the game.
     The first level should be characterized by the object concepts for each visual game component,
     as well as non-visible or ui game components such as the game logic, input handler, start screen, and ui elements.
     You would start from an empty working directory.
+    You should create multiple files to represent the game hierarchy.
     Your working directory will be delivered to hierarchy reviewers.
   expected_output: >
-    List of filenames that multiple files that contain the game hierarchy of the game. Do not repeat the content in the files.
+    List of filenames that multiple files that contain the game hierarchy and individual components of the game. 
+    Do not repeat the content in the files to your answer.
 
 hierarchy_review:
   <<: *task_common
@@ -24,9 +27,9 @@ hierarchy_review:
     Give feedback on the game hierarchy.
 
     Make sure there are enough information to answer following questions in the hierarchy:
-    1. which component handles the doodle colliding with other entities? which component handles the doodle go across the boarder or fall under the ground?
-    2. which component handles the score?
-    3. which component takes user inputs and commands the ui or doodle actions? For each input, who will be the target to communicate with?
+    2. which component handles if the game is finished?
+    3. which component handles the score?
+    4. which component takes user inputs and commands the ui or doodle actions? For each input, who will be the target to communicate with?
   expected_output: >
     Your final answer should contain following information:
     1. The quality of the game hierarchy.
@@ -56,7 +59,7 @@ game_hierarchy_assembling:
   expected_output: >
     The json file should contain the game hierarchy of the game.
     The content of a json file, which will be written to game_hierarchy.json.
-  output_file: game_hierarchy.json
+  output_file: game_hierarchy_sudoku.json
   depend_on:
     - game_hierarchy_representation
     - game_hierarchy_refinement

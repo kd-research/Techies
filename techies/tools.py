@@ -1,6 +1,7 @@
 import os
+import json
 from tempfile import TemporaryDirectory
-from typing import Type, List
+from typing import Type, List, Dict, Any
 
 from pydantic.v1 import BaseModel, Field
 from crewai_tools import BaseTool
@@ -23,8 +24,8 @@ class WriteFileToolSchema(BaseModel):
         description="The path to the file to read"
     )
 
-    content: str = Field(
-        type=str,
+    content: Any = Field(
+        type=Any,
         description="The content to write to the file"
     )
 
@@ -49,7 +50,8 @@ class ReadFileTool(BaseTool):
 
             return content
         except Exception as e:
-            return f"Failed to read file: {e}"
+            files_available = "\t".join(os.listdir(self.base_dir))
+            return f"Failed to read file: {e}.\nFiles available: {files_available}"
 
 class BatchReadFilesTool(BaseTool):
     name: str = "batch_read_files"
@@ -87,6 +89,10 @@ class WriteFileTool(BaseTool):
         try:
             path = kwargs['path'].replace("/", "-")
             content = kwargs['content']
+
+            if not isinstance(content, str):
+                content = json.dumps(content)
+
             with open(f"{self.base_dir}/{path}", "w") as f:
                 f.write(content)
 

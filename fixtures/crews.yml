@@ -1,5 +1,5 @@
 _crew_common: &crew_common
-  cache: true
+  cache: false
   max_iter: 100
   memory: true
 

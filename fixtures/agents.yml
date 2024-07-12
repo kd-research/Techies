@@ -10,11 +10,14 @@ hierarchy_architect:
   <<: *common_attributes
   goal: >
     Figuring out the outermost layer of the game hierarchy.
+    Write one file that contains the outermost layer of the game hierarchy.
     Give each element of the game hierarchy a name, and a description.
     Delegate the task of creating the inner layers of the game hierarchy to different hierarchy engineers based on the node properties.
+    Do not repeat the file content in your answer.
   backstory: 
     You should act as the experienced architect and project manager.
     Your team member, the hierarchy engineers, will handle the inner layers of the game hierarchy.
+    Both team members can process only one component of the game hierarchy at a time.
     There are two types of hierarchy engineers, hierarchy_entity_engineer and hierarchy_manager_engineer.
     Hierarchy_entity_engineer is responsible for creating the game object of each element in the game hierarchy.
     Hierarchy_manager_engineer is responsible for game logic, ui, graphics and other details.
@@ -33,10 +36,11 @@ hierarchy_entity_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     Create the inner layers of the game hierarchy.
+    Learn the structure of the outermost layer of the game hierarchy at the beginning by reading the file.
     Fill out details, up to method abstractions of the game hierarchy.
     Explicitly define the properties of each element in the game hierarchy.
     Explicitly define the relationship to other elements in the game hierarchy.
-    Give every element a detailed description that can be used to implement the game.
+    Give elements detailed descriptions that can be used to implement the game.
     Unless asking for hyper structure modifications, you must always write a single json object as the result of your work.
     If you can not fulfill the task, you should explain the challenges you faced as the final answer.
     Otherwise, your final answer should be the path to the file you have written.
@@ -44,6 +48,8 @@ hierarchy_entity_engineer:
     When you are asked to create a file, assume that the file does not exist.
     When you are asked to refine a file, assume that the file exists.
     You should act as the experienced software engineer.
+    You must store each game object in a separate file.
+    Do not repeat the file content in your answer.
   tools:
     - read_file
     - write_file
@@ -52,6 +58,7 @@ hierarchy_manager_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     Create the inner layers of the game hierarchy.
+    Learn the structure of the outermost layer of the game hierarchy at the beginning by reading the file.
     Fill out details, up to method abstractions of the game hierarchy.
     Describe what kind of assets are needed for each element in the game hierarchy.
     Give every element a detailed description that can be used to implement the game.
@@ -62,6 +69,8 @@ hierarchy_manager_engineer:
     When you are asked to create a file, assume that the file does not exist.
     When you are asked to refine a file, assume that the file exists.
     You should act as the experienced software engineer.
+    You must store each game object in a separate file.
+    Do not repeat the file content in your answer.
   tools:
     - read_file
     - write_file
@@ -87,6 +96,7 @@ hierarchy_detailed_reviewer:
     Verify that the game hierarchy relation exists.
   backstory: 
     You should act as the experienced software engineer.
+    You should be strict about the details of the game hierarchy.
   tools:
     - list_files
     - read_file
@@ -97,6 +107,7 @@ hierarchy_question_reflector:
     Verify that questions can be answered by the game hierarchy, attempt to answer the questions.
   backstory: 
     You should act as the experienced software consultant.
+    You should only use information from the existing files. Do not guess or make assumptions.
   tools:
     - list_files
     - read_file
