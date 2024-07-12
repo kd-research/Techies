@@ -20,7 +20,7 @@ hierarchy_architect:
     Both team members can process only one component of the game hierarchy at a time.
     There are two types of hierarchy engineers, hierarchy_entity_engineer and hierarchy_manager_engineer.
     Hierarchy_entity_engineer is responsible for creating the game object of each element in the game hierarchy.
-    Hierarchy_manager_engineer is responsible for game logic, ui, graphics and other details.
+    Hierarchy_manager_engineer is responsible for game logic, ui, graphics, audio and other details.
     Hierarchy engineers would have access to the infrastructure you have created by hearing instructions from you.
     Hierarchy engineers would have no access to the infrastructure of other hierarchy engineers.
     You may not create or modify the inner layers of the game hierarchy.
@@ -41,7 +41,7 @@ hierarchy_entity_engineer:
     Explicitly define the properties of each element in the game hierarchy.
     Explicitly define the relationship to other elements in the game hierarchy.
     Give elements detailed descriptions that can be used to implement the game.
-    Unless asking for hyper structure modifications, you must always write a single json object as the result of your work.
+    Unless asking for hyper structure modifications, you must always write one or multiple json file as the result of your work.
     If you can not fulfill the task, you should explain the challenges you faced as the final answer.
     Otherwise, your final answer should be the path to the file you have written.
   backstory: 
