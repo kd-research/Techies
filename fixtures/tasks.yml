@@ -9,19 +9,19 @@ game_hierarchy_representation:
     You are being asked to create a game with following game specifications: "{game_specifications}".
     Your task is to propose and iterate the game hierarchy of the game.
     The first level should be characterized by the object concepts for each visual game component,
-    as well as other game components such as the game logic, input handler, start screen, and ui elements.
+    as well as other game components such as the game logic and input handler
     You would start from an empty working directory.
     You should create multiple files to represent the game hierarchy.
     Your working directory will be delivered to hierarchy reviewers.
   expected_output: >
     List of filenames that multiple files that contain the game hierarchy and individual components of the game. 
-    Do not repeat the content in the files to your answer.
+    Only the file names should be listed.
 
 hierarchy_review:
   <<: *task_common
   agent: hierarchy_reviewer
   description: >
-    Review the game hierarchy of the game.
+    Review the game hierarchy of the game. You will be given a working directory that contains the game hierarchy.
     Make sure the game hierarchy is complete and the infrastructure is correct.
     Make sure all questions can be answered by the game hierarchy.
     Give feedback on the game hierarchy.
@@ -46,7 +46,8 @@ game_hierarchy_refinement:
     You should overwrite the existing files in the working directory.
     Your working directory will be delivered to hierarchy assembling team.
   expected_output: >
-    The game hierarchy should be refined based on feedback from reviewers.
+    List of filenames that multiple files that contain the game hierarchy and individual components of the game. 
+    Only the file names should be listed.
   depend_on:
     - game_hierarchy_representation
     - hierarchy_review
@@ -55,13 +56,14 @@ game_hierarchy_assembling:
   <<: *task_common
   agent: hierarchy_assembler
   description: >
+    Check existing files in the working directory. 
+    Read the files to understand the game hierarchy.
     Assemble the game hierarchy of the game from the files created by hierarchy engineers.
   expected_output: >
     The json file should contain the game hierarchy of the game.
     The content of a json file, which will be written to game_hierarchy.json.
-  output_file: game_hierarchy_sudoku.json
+  output_file: game_hierarchy.json
   depend_on:
-    - game_hierarchy_representation
     - game_hierarchy_refinement
 
 # vim: set foldmethod=indent foldlevel=0:

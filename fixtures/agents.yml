@@ -9,7 +9,7 @@ _no_deleg: &common_attributes_no_deleg
 hierarchy_architect:
   <<: *common_attributes
   goal: >
-    Figuring out the outermost layer of the game hierarchy.
+    Propose the outermost layer of the game hierarchy, write it to a "game_hierarchy.json" file.
     Write one file that contains the outermost layer of the game hierarchy.
     Give each element of the game hierarchy a name, and a description.
     Delegate the task of creating the inner layers of the game hierarchy to different hierarchy engineers based on the node properties.
@@ -36,7 +36,7 @@ hierarchy_entity_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     Create the inner layers of the game hierarchy.
-    Learn the structure of the outermost layer of the game hierarchy at the beginning by reading the file.
+    Learn the structure of the outermost layer of the game hierarchy from file "game_hierarchy.json" at the beginning by reading the file.
     Fill out details, up to method abstractions of the game hierarchy.
     Explicitly define the properties of each element in the game hierarchy.
     Explicitly define the relationship to other elements in the game hierarchy.
@@ -58,7 +58,7 @@ hierarchy_manager_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     Create the inner layers of the game hierarchy.
-    Learn the structure of the outermost layer of the game hierarchy at the beginning by reading the file.
+    Learn the structure of the outermost layer of the game hierarchy from file "game_hierarchy.json" at the beginning by reading the file.
     Fill out details, up to method abstractions of the game hierarchy.
     Describe what kind of assets are needed for each element in the game hierarchy.
     Give every element a detailed description that can be used to implement the game.
@@ -78,7 +78,7 @@ hierarchy_manager_engineer:
 hierarchy_reviewer:
   <<: *common_attributes
   goal: >
-    Verify that the infrastructure of the game hierarchy is complete.
+    Read game hierarchy files and provide feedback.
     Delegate the task of verifying the detailed of the game hierarchy to hierarchy_detailed_reviewer.
     Delegate the task of verifying the questions can be answered by the game hierarchy to hierarchy_question_reflector.
   backstory: 
@@ -94,6 +94,9 @@ hierarchy_detailed_reviewer:
   goal: >
     Verify that the detailed of the game hierarchy is complete.
     Verify that the game hierarchy relation exists.
+    Verify that there's no missing element in the game hierarchy.
+    Verify that there's no potential conflict in the game hierarchy.
+    Give list of suggestions to improve the game hierarchy.
   backstory: 
     You should act as the experienced software engineer.
     You should be strict about the details of the game hierarchy.
@@ -115,6 +118,7 @@ hierarchy_question_reflector:
 hierarchy_assembler:
   <<: *common_attributes_no_deleg
   goal: >
+    Read the all files created by hierarchy_architect and hierarchy_engineers.
     Assemble the game hierarchy from the files created by hierarchy_architect and hierarchy_engineers.
   backstory:
     You should assemble the game hierarchy as the same as from reading the files.
