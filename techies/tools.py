@@ -15,18 +15,18 @@ class ReadFileToolSchema(BaseModel):
 class BatchReadFilesToolSchema(BaseModel):
     paths: List[str] = Field(
         type=List[str],
-        description="An array of paths to the files to read"
+        description="An array of filenames to read"
     )
 
 class WriteFileToolSchema(BaseModel):
     path: str = Field(
         type=str,
-        description="The path to the file to read"
+        description="The path to the file to write"
     )
 
     content: Any = Field(
         type=Any,
-        description="The content to write to the file"
+        description="The content to write to the file. Field should be formatted as a string."
     )
 
 class ListFilesToolSchema(BaseModel):
@@ -58,7 +58,7 @@ class ReadFileTool(BaseTool):
 
 class BatchReadFilesTool(BaseTool):
     name: str = "batch_read_files"
-    description: str = "Read and concat the contents of multiple files in a batch"
+    description: str = "Read and concat the contents of multiple files"
     args_schema: Type[BaseModel] = BatchReadFilesToolSchema
     base_dir: str
 
@@ -120,8 +120,9 @@ class ListFilesTool(BaseTool):
             return f"Failed to list files: {e}"
 
 def get_all_tools():
-    base_dir = TemporaryDirectory(delete=False).name
-    print(f"Temp directory created at: {base_dir}")
+    # base_dir = TemporaryDirectory(delete=False).name
+    base_dir = "."
+    # print(f"Temp directory created at: {base_dir}")
 
     tools = {}
     toolklasses = [

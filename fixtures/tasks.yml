@@ -56,14 +56,33 @@ game_hierarchy_assembling:
   <<: *task_common
   agent: hierarchy_assembler
   description: >
-    Check existing files in the working directory. 
-    Read the files to understand the game hierarchy.
-    Assemble the game hierarchy of the game from the files created by hierarchy engineers.
+    List existing files in the working directory. Read all files to understand the game hierarchy.
+    Create a unified game hierarchy from the files.
   expected_output: >
-    The json file should contain the game hierarchy of the game.
-    The content of a json file, which will be written to game_hierarchy.json.
+    Your final answer should be a single json object that represents the game hierarchy.
   output_file: game_hierarchy.json
   depend_on:
     - game_hierarchy_refinement
+
+code_develop:
+  <<: *task_common
+  agent: game_develop_manager
+  description: >
+    Develop the game based on following game hierarchy.
+    You would expect a game hierarchy file with name game_hierarchy.json.
+  expected_output: >
+    List of filenames that contain the game code.
+
+code_assemble:
+  <<: *task_common
+  agent: game_develop_manager
+  description: >
+    Assemble the game code based on existing individual components.
+    Append game setup and logic at the end of the game code.
+    Create a index.html file that could run the game.
+  expected_output: >
+    Your final answer should be a single file that contains the game code.
+  depend_on:
+    - code_develop
 
 # vim: set foldmethod=indent foldlevel=0:

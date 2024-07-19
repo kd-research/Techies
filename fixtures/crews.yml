@@ -19,3 +19,11 @@ hierarchy_crew:
     - game_hierarchy_refinement
     - game_hierarchy_assembling
 
+code_crew:
+  <<: *crew_common
+  agents:
+    - game_develop_manager
+    - game_develop_engineer
+  tasks:
+    - code_develop
+    - code_assemble

@@ -27,12 +27,13 @@ def get_groq_crew():
 def get_openai_crew():
     from langchain_openai import ChatOpenAI
 
-    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o", temperature=0.1))
+    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o", temperature=0.0))
     task_pool = Task.eager_load_all(agent_pool)
     crew = Crew('hierarchy_crew', agent_pool=agent_pool, task_pool=task_pool)
 
     return crew
 
-inputs = { "game_specifications": game_specs("Word2048_game_specifications") }
 
-get_openai_crew().kickoff(inputs=inputs)
+def main():
+    inputs = { "game_specifications": game_specs("NumSeq_game_specifications") }
+    get_openai_crew().kickoff(inputs=inputs)
