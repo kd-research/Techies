@@ -21,7 +21,9 @@ hierarchy_review:
   <<: *task_common
   agent: hierarchy_reviewer
   description: >
-    Review the game hierarchy of the game. You will be given a working directory that contains the game hierarchy.
+    You will receive a list of files that contain the game hierarchy.
+    You will be given a set of tools under working directory that contains the game hierarchy.
+    Read the game hierarchy, review and give feedbacks as final answer. 
     Make sure the game hierarchy is complete and the infrastructure is correct.
     Make sure all questions can be answered by the game hierarchy.
     Give feedback on the game hierarchy.
@@ -40,7 +42,7 @@ hierarchy_review:
 
 game_hierarchy_refinement:
   <<: *task_common
-  agent: hierarchy_architect
+  agent: hierarchy_architect_refiner
   description: >
     Refine the game hierarchy based on feedback from reviewers.
     You should overwrite the existing files in the working directory.
@@ -68,8 +70,9 @@ code_develop:
   <<: *task_common
   agent: game_develop_manager
   description: >
-    Develop the game based on following game hierarchy.
+    Develop an html5 game based on following game hierarchy.
     You would expect a game hierarchy file with name game_hierarchy.json.
+    The game would be loaded into an empty html page using with src="index.js".
   expected_output: >
     List of filenames that contain the game code.
 
@@ -79,7 +82,9 @@ code_assemble:
   description: >
     Assemble the game code based on existing individual components.
     Append game setup and logic at the end of the game code.
-    Create a index.html file that could run the game.
+    The game would be compiled using webpack. Make sure you import everything in index.js.
+    The compiled game would be loaded into an empty html page using with src="main.js".
+    You would expect an empty DOM at beginning. Any DOM manipulation should be done in the game code.
   expected_output: >
     Your final answer should be a single file that contains the game code.
   depend_on:

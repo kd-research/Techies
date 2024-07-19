@@ -12,6 +12,9 @@ hierarchy_crew:
     - hierarchy_reviewer
     - hierarchy_detailed_reviewer
     - hierarchy_question_reflector
+    - hierarchy_architect_refiner
+    - hierarchy_entity_refiner
+    - hierarchy_manager_refiner
     - hierarchy_assembler
   tasks:
     - game_hierarchy_representation

@@ -35,5 +35,5 @@ def get_openai_crew():
 
 
 def main():
-    inputs = { "game_specifications": game_specs("NumSeq_game_specifications") }
+    inputs = { "game_specifications": game_specs("Boggle_game_specifications") }
     get_openai_crew().kickoff(inputs=inputs)

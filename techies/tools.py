@@ -9,19 +9,19 @@ from crewai_tools import BaseTool
 class ReadFileToolSchema(BaseModel):
     path: str = Field(
         type=str,
-        description="The path to the file to read"
+        description="The path to the file to read."
     )
 
 class BatchReadFilesToolSchema(BaseModel):
     paths: List[str] = Field(
         type=List[str],
-        description="An array of filenames to read"
+        description="An array of filenames to read."
     )
 
 class WriteFileToolSchema(BaseModel):
     path: str = Field(
         type=str,
-        description="The path to the file to write"
+        description="The path to the file to write."
     )
 
     content: Any = Field(
@@ -30,15 +30,12 @@ class WriteFileToolSchema(BaseModel):
     )
 
 class ListFilesToolSchema(BaseModel):
-    args: Optional[Dict[str, Any]] = Field(
-        type=Optional[Dict[str, Any]],
-        description="Additional arguments"
-    )
+    pass
 
 
 class ReadFileTool(BaseTool):
     name: str = "read_file"
-    description: str = "Read the contents of a file from the bucket"
+    description: str = "Read the contents of a file from the bucket."
     args_schema: Type[BaseModel] = ReadFileToolSchema
     base_dir: str
 
@@ -58,7 +55,7 @@ class ReadFileTool(BaseTool):
 
 class BatchReadFilesTool(BaseTool):
     name: str = "batch_read_files"
-    description: str = "Read and concat the contents of multiple files"
+    description: str = "Same as read_file but for multiple files."
     args_schema: Type[BaseModel] = BatchReadFilesToolSchema
     base_dir: str
 
@@ -81,7 +78,7 @@ class BatchReadFilesTool(BaseTool):
 
 class WriteFileTool(BaseTool):
     name: str = "write_file"
-    description: str = "Write content of a file to the bucket"
+    description: str = "Write content of a file to the bucket."
     args_schema: Type[BaseModel] = WriteFileToolSchema
     base_dir: str
 
@@ -105,7 +102,7 @@ class WriteFileTool(BaseTool):
 
 class ListFilesTool(BaseTool):
     name: str = "list_files"
-    description: str = "List the files in current bucket"
+    description: str = "List the files in current bucket."
     args_schema: Type[BaseModel] = ListFilesToolSchema
     base_dir: str
 
@@ -119,10 +116,14 @@ class ListFilesTool(BaseTool):
         except Exception as e:
             return f"Failed to list files: {e}"
 
+
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
     base_dir = "."
     # print(f"Temp directory created at: {base_dir}")
+    
+    def no_cache(args, result):
+        return False
 
     tools = {}
     toolklasses = [
@@ -133,6 +134,7 @@ def get_all_tools():
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
+        tool.cache_function = no_cache
         tools[tool.name] = tool
 
     return tools
