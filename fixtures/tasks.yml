@@ -8,35 +8,38 @@ game_hierarchy_representation:
   description: >
     You are being asked to create a game with following game specifications: "{game_specifications}".
     Your task is to propose and iterate the game hierarchy of the game.
+    The "game hierarchy" is a tree structure that represents the game components and their relationships.
+    Each game component should be a class abstraction that represents a game object or a game logic.
+    Each relation should be a indexable reference to another game component.
+    Relations could be one-to-one, one-to-many, many-to-one, or many-to-many.
     The first level should be characterized by the object concepts for each visual game component,
     as well as other game components such as the game logic and input handler
     You would start from an empty working directory.
     You should create multiple files to represent the game hierarchy.
     Your working directory will be delivered to hierarchy reviewers.
   expected_output: >
-    List of filenames that multiple files that contain the game hierarchy and individual components of the game. 
-    Only the file names should be listed.
+    A brief description of the game itself and the game hierarchy design in plain text with less than 300 words.
 
 hierarchy_review:
   <<: *task_common
   agent: hierarchy_reviewer
   description: >
-    You will receive a list of files that contain the game hierarchy.
-    You will be given a set of tools under working directory that contains the game hierarchy.
-    Read the game hierarchy, review and give feedbacks as final answer. 
-    Make sure the game hierarchy is complete and the infrastructure is correct.
-    Make sure all questions can be answered by the game hierarchy.
+    Your context is the introduction of a new game and the game hierarchy design.
+    All the files in the working directory are the game hierarchy representation.
+    Get the game hierarchy structure by listing files, then read those game hierarchy files, review and give feedbacks as final answer. 
+    Investigate to confirm if the game hierarchy is complete and the infrastructure is correct.
+    Investigate to confirm if all questions can be answered by the game hierarchy.
     Give feedback on the game hierarchy.
 
-    Make sure there are enough information to answer following questions in the hierarchy:
-    2. which component handles if the game is finished?
-    3. which component handles the score?
-    4. which component takes user inputs and commands the ui or player actions? For each input, who will be the target to communicate with?
+    Investigate to confirm whether there are enough information to answer following questions in the hierarchy:
+    Which component handles if the game is finished?
+    Which component handles the score?
+    Which component takes user inputs and commands the ui or player actions? For each input, who will be the target to communicate with?
   expected_output: >
-    Your final answer should contain following information:
-    1. The quality of the game hierarchy.
-    2. The expected answer to the questions.
-    3. The refining suggestions.
+    Report the quality of the game hierarchy.
+    Report the expected answer to the questions.
+    Report the refining suggestions.
+    The final answer should be a plain text with less than 300 words.
   depend_on:
     - game_hierarchy_representation
 
@@ -48,8 +51,7 @@ game_hierarchy_refinement:
     You should overwrite the existing files in the working directory.
     Your working directory will be delivered to hierarchy assembling team.
   expected_output: >
-    List of filenames that multiple files that contain the game hierarchy and individual components of the game. 
-    Only the file names should be listed.
+    A brief description of the game itself and the game hierarchy design in plain text with less than 300 words.
   depend_on:
     - game_hierarchy_representation
     - hierarchy_review

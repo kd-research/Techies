@@ -88,6 +88,7 @@ hierarchy_reviewer:
     You should act as the experienced software engineer.
     Your team member, the hierarchy_detailed_reviewer, will handle the detailed of the game hierarchy.
     Hierarchy_detailed_reviewer has the same file access as you. 
+    Your team member, the hierarchy_question_reflector, will investigate the questions can be answered by the game hierarchy.
     Hierarchy_question_reflector has the same file access as you.
   tools:
     - list_files

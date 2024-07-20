@@ -55,7 +55,7 @@ class ReadFileTool(BaseTool):
 
 class BatchReadFilesTool(BaseTool):
     name: str = "batch_read_files"
-    description: str = "Same as read_file but for multiple files."
+    description: str = "Read contents of files. Same as read_file but for multiple files."
     args_schema: Type[BaseModel] = BatchReadFilesToolSchema
     base_dir: str
 

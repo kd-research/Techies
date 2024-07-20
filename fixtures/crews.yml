@@ -1,7 +1,7 @@
 _crew_common: &crew_common
   cache: false
   max_iter: 100
-  memory: true
+  memory: false
 
 hierarchy_crew:
   <<: *crew_common
