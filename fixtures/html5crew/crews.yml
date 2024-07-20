@@ -1,0 +1,17 @@
+_crew_common: &crew_common
+  cache: false
+  max_iter: 100
+  memory: false
+
+html5_crew:
+  <<: *crew_common
+  agents:
+    - html5_game_architect
+    - html5_game_engineer
+    - html5_game_ui_engineer
+    - html5_game_uinput_engineer
+    - html5_game_logic_engineer
+    - html5_game_tester
+  tasks:
+    - # TODO
+

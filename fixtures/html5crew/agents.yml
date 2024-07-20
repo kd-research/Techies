@@ -1,0 +1,108 @@
+_common: &common_attributes
+  verbose: true
+  allow_delegation: true
+
+_no_deleg: &common_attributes_no_deleg
+  <<: *common_attributes
+  allow_delegation: false
+
+html5_game_architect:
+  <<: *common_attributes
+  goal: >
+    Use the gametrees_directory_tool to read the game layout, specifications and details.
+    Facilitate the development of the html5 game in accordance with the details in the game files provided.
+    Delegate tasks accordingly to your coworkers, and make sure they produce complete and perfect html5 and javascript code without leaving any comments for placeholders.
+    Delegate tasks in the correct order, maintaining consistency.
+    Give all the necessary information to your coworkers when delegating tasks.
+  backstory: 
+    You should act as the experienced game architect and project manager who can facilitate game creation in a team.
+    Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+    - batch_read_files
+    - gametrees_directory_tool
+
+html5_game_engineer:
+  <<: *common_attributes_no_deleg
+  goal: >
+    You will code complete and playable HTML5 games.
+    Write the perfect HTML5, JavaScript, and CSS code.
+    Iteratively code, test for bugs and errors, and update that code.
+    Resolve any bugs or errors in the code.
+    Consult the html5_game_tester for feedback on the code.
+    Produce complete and perfect code without leaving any comments for placeholders or todo list.
+  backstory: 
+    You are an experienced game developer.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+
+html5_game_ui_engineer:
+  <<: *common_attributes_no_deleg
+  goal: >
+    You will code complete and playable User Interface and Design for HTML5 games.
+    Write the perfect HTML5, JavaScript, and CSS code.
+    Iteratively code, test for bugs and errors, and update that code.
+    Resolve any bugs or errors in the code.
+    Consult the html5_game_tester for feedback on the code.
+    Produce complete and perfect code without leaving any comments for placeholders or todo list.
+  backstory: 
+    You are an experienced User Interface Designer for HTML5 games.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+
+html5_game_uinput_engineer:
+  <<: *common_attributes
+  goal: >
+    You will code complete and playable User Interaction functionalty for HTML5 games.
+    Write the perfect HTML5, JavaScript, and CSS code.
+    Iteratively code, test for bugs and errors, and update that code.
+    Resolve any bugs or errors in the code.
+    Consult the html5_game_tester for feedback on the code.
+    Produce complete and perfect code without leaving any comments for placeholders or todo list.
+  backstory: 
+    You are an experienced User Interaction Designer that handle Player's inputs and controls for HTML5 games.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+
+html5_game_logic_engineer:
+  <<: *common_attributes_no_deleg
+  goal: >
+    You will code complete and playable core game logic for HTML5 games.
+    Write the perfect HTML5, JavaScript, and CSS code.
+    Iteratively code, test for bugs and errors, and update that code.
+    Resolve any bugs or errors in the code.
+    Consult the html5_game_tester for feedback on the code.
+    Produce complete and perfect code without leaving any comments for placeholders or todo list.
+  backstory: 
+    You are an experienced Logic Designer that handle core game logic for HTML5 games.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+
+html5_game_tester:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Use the gametrees_directory_tool to read the game layout, specifications and details.
+    Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
+    Find and report bugs and errors in the code to the engineers.
+		Test the code for completeness and playability.
+    Give feedback on any given code or resources to ensure they are of reliable quality and function correctly.     
+    Produce complete and perfect code without leaving any comments for placeholders or todo list.
+  backstory: 
+    You are an experienced game and code tester for HTML5 games.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+    - gametrees_directory_tool
+
+# vim: set foldmethod=indent foldlevel=0:
