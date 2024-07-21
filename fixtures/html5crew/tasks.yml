@@ -1,0 +1,24 @@
+_task_common: &task_common
+  human_input: false
+  async_execution: false
+
+html5_game_coding:
+  <<: *task_common
+  agent: html5_game_architect
+  description: >
+    Read the game hierarchy file "game_hierarchy.json" to understand the game hierarchy, specifications and details.    
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
+    Write a perfect HTML5, CSS, and JavaScript code.
+    Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
+    Test and review the code with every change.
+    Delegate the task of coding the different parts of the game to the most fitting agents. 
+    For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
+    Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
+    Delegate the task of testing the code and giving feedback to the html5_game_tester.
+    Do not finalize your answer until the html5_game_tester says the game is complete and playable, and you have met all requirements.
+    Your final output should include code in a single file for the game and only HTML5 code for the game.
+  expected_output: >
+    Your final answer should be a single file game.html that contains the complete game code inlcuding html, javascrip and CSS.
+  output_file: game.html
+
+# vim: set foldmethod=indent foldlevel=0:

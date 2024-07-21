@@ -9,7 +9,7 @@ _no_deleg: &common_attributes_no_deleg
 html5_game_architect:
   <<: *common_attributes
   goal: >
-    Use the gametrees_directory_tool to read the game layout, specifications and details.
+    Read the game hierarchy file "game_hierarchy.json" to understand the game hierarchy, specifications and details.
     Facilitate the development of the html5 game in accordance with the details in the game files provided.
     Delegate tasks accordingly to your coworkers, and make sure they produce complete and perfect html5 and javascript code without leaving any comments for placeholders.
     Delegate tasks in the correct order, maintaining consistency.
@@ -22,7 +22,6 @@ html5_game_architect:
     - read_file
     - write_file
     - batch_read_files
-    - gametrees_directory_tool
 
 html5_game_engineer:
   <<: *common_attributes_no_deleg
@@ -91,7 +90,7 @@ html5_game_logic_engineer:
 html5_game_tester:
   <<: *common_attributes_no_deleg
   goal: >
-    Use the gametrees_directory_tool to read the game layout, specifications and details.
+    Read the game hierarchy file "game_hierarchy.json" to understand the game hierarchy, specifications and details.
     Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
     Find and report bugs and errors in the code to the engineers.
 		Test the code for completeness and playability.
@@ -103,6 +102,5 @@ html5_game_tester:
     - list_files
     - read_file
     - write_file
-    - gametrees_directory_tool
 
 # vim: set foldmethod=indent foldlevel=0:
