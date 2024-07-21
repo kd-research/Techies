@@ -13,5 +13,5 @@ html5_crew:
     - html5_game_logic_engineer
     - html5_game_tester
   tasks:
-    - # TODO
+    - html5_game_coding
 
