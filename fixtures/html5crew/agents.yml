@@ -93,7 +93,7 @@ html5_game_tester:
     Read the game hierarchy file "game_hierarchy.json" to understand the game hierarchy, specifications and details.
     Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
     Find and report bugs and errors in the code to the engineers.
-		Test the code for completeness and playability.
+    Test the code for completeness and playability.
     Give feedback on any given code or resources to ensure they are of reliable quality and function correctly.     
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
   backstory: 
