@@ -1,7 +1,7 @@
 from techies.agent import Agent
 from techies.task import Task
 from techies.crew import Crew
-from game_specs import game_specs
+from techies.game_specs import game_specs
 import agentops
 
 agentops.init()
