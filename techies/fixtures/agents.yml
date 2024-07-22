@@ -17,6 +17,13 @@ hierarchy_architect:
     No sound utility is needed in the game hierarchy. No testing is needed.
     Create only a single scene game. No welcome screen, game mode selection, or game over screen is needed.
     Game component should not be nested.
+
+
+    Game hierarchy should be as follows:
+    Consider every component of the game hierarchy as a class.
+    Suggest relation between instances of classes with has_one, has_many, or belongs_to relations.
+    Lint the files to ensure all class name are CamelCase, all method names are camelCase, and all variables are snake_case.
+    There should be a single class called "Game" that serves as the root of the game hierarchy.
   backstory: 
     You should act as the experienced architect and project manager.
     Your team member, the hierarchy engineers, will handle the inner layers of the game hierarchy.
@@ -28,6 +35,7 @@ hierarchy_architect:
     You may not create or modify the inner layers of the game hierarchy.
     You may modify the outermost layer of the game hierarchy based on feedback from hierarchy engineers and hierarchy reviewers.
     Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
+    Do not repeat the file content in your answer or context delegations.
   tools:
     - list_files
     - read_file
@@ -90,6 +98,7 @@ hierarchy_reviewer:
     Hierarchy_detailed_reviewer has the same file access as you. 
     Your team member, the hierarchy_question_reflector, will investigate the questions can be answered by the game hierarchy.
     Hierarchy_question_reflector has the same file access as you.
+    Do not repeat the file contents.
   tools:
     - list_files
     - read_file
@@ -103,6 +112,7 @@ hierarchy_detailed_reviewer:
     Verify that there's no missing element in the game hierarchy.
     Verify that there's no potential conflict in the game hierarchy.
     Verify that game components are not nested.
+    Verify that for every instance of a class, there is a chain of relations to the root class.
     Give list of suggestions to improve the game hierarchy.
   backstory: 
     You should act as the experienced software engineer.

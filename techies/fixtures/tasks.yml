@@ -18,7 +18,7 @@ game_hierarchy_representation:
     You should create multiple files to represent the game hierarchy.
     Your working directory will be delivered to hierarchy reviewers.
   expected_output: >
-    A brief description of the game itself and the game hierarchy design in plain text with less than 300 words.
+    A brief description of the game in plain text with less than 300 words.
 
 hierarchy_review:
   <<: *task_common
