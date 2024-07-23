@@ -17,13 +17,13 @@ def load_fixture(fixture_name):
     return merged
 
 def runtimedirs():
-    runtimedir_default = f"{_fixture_dir}:{os.getcwd()}"
+    runtimedir_default = os.pathsep.join([_fixture_dir, os.getcwd()])
 
     runtimedir = os.environ.get('TECHIES_RUNTIME', runtimedir_default)
     runtimedirs = []
 
     # Add runtime and first level subdirectories
-    for path in runtimedir.split(':'):
+    for path in runtimedir.split(os.pathsep):
         runtimedirs.append(path)
         for subpath in os.listdir(path):
             runtimedirs.append(os.path.join(path, subpath))
