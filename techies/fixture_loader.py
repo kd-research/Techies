@@ -4,7 +4,7 @@ import warnings
 
 _fixture_dir = os.path.normpath(__file__ + '/../fixtures')
 
-def load_fixture(fixture_name):
+def load_fixture(fixture_name, result="objects"):
     merged = {}
     indexies = {}
 
@@ -14,7 +14,10 @@ def load_fixture(fixture_name):
             if os.path.isfile(filename):
                 populate_fixture_from_file(merged, filename, indexies)
 
-    return merged
+    if result == "objects":
+        return merged
+    elif result == "locations":
+        return indexies
 
 def runtimedirs():
     runtimedir_default = os.pathsep.join([_fixture_dir, os.getcwd()])

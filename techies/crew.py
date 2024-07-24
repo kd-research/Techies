@@ -18,3 +18,7 @@ class Crew(_Crew):
 
         crew_config.update(kwargs)
         super().__init__(**crew_config)
+
+    @staticmethod
+    def list_crews():
+        return load_fixture('crews', result="locations")

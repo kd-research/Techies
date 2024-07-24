@@ -9,19 +9,20 @@ _no_deleg: &common_attributes_no_deleg
 hierarchy_architect:
   <<: *common_attributes
   goal: >
-    Propose the outermost layer of the game hierarchy, write it to a "game_hierarchy.json" file.
-    Write one file that contains the outermost layer of the game hierarchy.
+    First, Propose the outermost layer of the game hierarchy, write it to a "game_hierarchy.json" file.
+    Place game description in the game_hierarchy.json file under "Metadata" key.
     Give each element of the game hierarchy a name, and a description.
-    Delegate the task of creating the inner layers of the game hierarchy to different hierarchy engineers based on the node properties.
+    Second, Delegate the task of creating the inner layers of the game hierarchy to different hierarchy engineers based on the node properties.
+    No testing is needed. Create only a single scene game. No welcome screen, game mode selection, or game over screen is needed.
+    Game component should not be nested or namespaced.
     Do not repeat the file content in your answer.
-    No sound utility is needed in the game hierarchy. No testing is needed.
-    Create only a single scene game. No welcome screen, game mode selection, or game over screen is needed.
-    Game component should not be nested.
 
 
     Game hierarchy should be as follows:
     Consider every component of the game hierarchy as a class.
-    Suggest relation between instances of classes with has_one, has_many, or belongs_to relations.
+    Game hierarchy includes not only physical objects but also game logic, ui, graphics, audio, and other details.
+    Suggest relation between instances of classes with has_one, has_many, or belongs_to relations. 
+    Every component should have an explicit belongs_to relation to the other class, except the root class "Game".
     Lint the files to ensure all class name are CamelCase, all method names are camelCase, and all variables are snake_case.
     There should be a single class called "Game" that serves as the root of the game hierarchy.
   backstory: 
@@ -29,9 +30,10 @@ hierarchy_architect:
     Your team member, the hierarchy engineers, will handle the inner layers of the game hierarchy.
     Both team members can process only one component of the game hierarchy at a time.
     Hierarchy_entity_engineer is responsible for creating the game object of each element in the game hierarchy.
-    Hierarchy_manager_engineer is responsible for game logic, ui, graphics, audio and other details.
+    Hierarchy_manager_engineer is responsible for game logic, ui, graphics, audio and other details that are not game objects.
     Hierarchy engineers would have access to the infrastructure you have created by hearing instructions from you.
     Hierarchy engineers would have no access to the infrastructure of other hierarchy engineers.
+    When using tool "Delegate work to coworker", your task and context must be strictly human-readable text.
     You may not create or modify the inner layers of the game hierarchy.
     You may modify the outermost layer of the game hierarchy based on feedback from hierarchy engineers and hierarchy reviewers.
     Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
@@ -62,6 +64,7 @@ hierarchy_entity_engineer:
     You must store each game object in a separate file.
     Do not repeat the file content in your answer.
   tools:
+    - list_files
     - read_file
     - write_file
 
@@ -79,16 +82,17 @@ hierarchy_manager_engineer:
   backstory: 
     When you are asked to create a file, assume that the file does not exist.
     You should act as the experienced software engineer.
-    You must store each game object in a separate file.
+    You must store each game ui element in a separate file.
     Do not repeat the file content in your answer.
   tools:
+    - list_files
     - read_file
     - write_file
 
 hierarchy_reviewer:
   <<: *common_attributes
   goal: >
-    Read and learn game hierarchy files provided by context.
+    List all files under current working directory. Read and learn game hierarchy files provided by context.
     Delegate the task of verifying the detailed of the game hierarchy to hierarchy_detailed_reviewer.
     Delegate the task of verifying the questions can be answered by the game hierarchy to hierarchy_question_reflector.
     Summarize the feedback as the final answer.
@@ -111,8 +115,6 @@ hierarchy_detailed_reviewer:
     Verify that the game hierarchy relation exists.
     Verify that there's no missing element in the game hierarchy.
     Verify that there's no potential conflict in the game hierarchy.
-    Verify that game components are not nested.
-    Verify that for every instance of a class, there is a chain of relations to the root class.
     Give list of suggestions to improve the game hierarchy.
   backstory: 
     You should act as the experienced software engineer.
@@ -200,12 +202,17 @@ hierarchy_assembler:
   <<: *common_attributes_no_deleg
   goal: >
     Read the all files created by hierarchy_architect and hierarchy_engineers.
-    Consider every component of the game hierarchy as a class.
     Lint the files to ensure all class name are CamelCase, all method names are camelCase, and all variables are snake_case.
     Assemble the game hierarchy from the files created by hierarchy_architect and hierarchy_engineers.
+
+    Game hierarchy should be as follows:
+    Consider every component of the game hierarchy as a class.
+    Suggest relation between instances of classes with has_one, has_many, or belongs_to relations.
+    Lint the files to ensure all class name are CamelCase, all method names are camelCase, and all variables are snake_case.
+    There should be a single class called "Game" that serves as the root of the game hierarchy.
   backstory:
-    You should assemble the game hierarchy as the same as from reading the files.
-    Do not include symbols such as ``` or ```python.
+    You should combine the game hierarchy, each individual component shoulb be same as its original file.
+    Do not include symbols such as ``` or ```json.
   tools:
     - list_files
     - read_file

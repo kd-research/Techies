@@ -26,9 +26,8 @@ hierarchy_review:
   description: >
     Your context is the introduction of a new game and the game hierarchy design.
     All the files in the working directory are the game hierarchy representation.
-    Get the game hierarchy structure by listing files, then read those game hierarchy files, review and give feedbacks as final answer. 
-    Investigate to confirm if the game hierarchy is complete and the infrastructure is correct.
-    Investigate to confirm if all questions can be answered by the game hierarchy.
+    Review game hierarchy specifications and give feedbacks as final answer. 
+    Investigate to verify if all questions can be answered by the game hierarchy.
     Give feedback on the game hierarchy.
 
     Investigate to confirm whether there are enough information to answer following questions in the hierarchy:
