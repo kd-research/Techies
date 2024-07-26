@@ -6,6 +6,7 @@ from techies.agent import Agent
 from techies.task import Task
 from techies.crew import Crew
 from techies.game_specs import game_specs, specs
+from techies.fixture_loader import runtime_config
 
 def get_groq_crew(crewname):
     from langchain_groq import ChatGroq
@@ -69,7 +70,8 @@ class CLI:
         elif options.command == "list_game_specs":
             print("[Available game specifications]")
             print("\t".join(specs.keys()))
-
+        elif options.command == "get_runtime_path":
+            print(runtime_config())
         elif options.command == "run":
             args = [options.crew] + args
             if options.crew == "hierarchy_crew":

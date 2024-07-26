@@ -19,14 +19,16 @@ def load_fixture(fixture_name, result="objects"):
     elif result == "locations":
         return indexies
 
-def runtimedirs():
-    runtimedir_default = os.pathsep.join([_fixture_dir, os.getcwd()])
+def runtime_config():
+    runtimedir_default = os.pathsep.join([_fixture_dir, "."])
 
-    runtimedir = os.environ.get('TECHIES_RUNTIME', runtimedir_default)
+    return os.environ.get('TECHIES_RUNTIME', runtimedir_default)
+
+def runtimedirs():
     runtimedirs = []
 
     # Add runtime and first level subdirectories
-    for path in runtimedir.split(os.pathsep):
+    for path in runtime_config.split(os.pathsep):
         runtimedirs.append(path)
         for subpath in os.listdir(path):
             runtimedirs.append(os.path.join(path, subpath))
@@ -43,7 +45,7 @@ def populate_fixture_from_file(merged, filename, indexies):
 
     conflicts = merged.keys() & obj.keys()
     for key in conflicts:
-        warnings.warn(f"Instance {key} is defined multiple times. \n\tKey is found in {filename}\n\tWhile it has been defined in {indexies[key]}")
+        warnings.warn(f"Instance {key} is defined multiple times. \n\tCurrent key located at {filename}\n\tWhile it has been defined in {indexies[key]}")
 
     merged.update(obj)
     indexies.update({key: filename for key in obj.keys()})
