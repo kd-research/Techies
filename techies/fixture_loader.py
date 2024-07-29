@@ -28,7 +28,7 @@ def runtimedirs():
     runtimedirs = []
 
     # Add runtime and first level subdirectories
-    for path in runtime_config.split(os.pathsep):
+    for path in runtime_config().split(os.pathsep):
         runtimedirs.append(path)
         for subpath in os.listdir(path):
             runtimedirs.append(os.path.join(path, subpath))
