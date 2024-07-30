@@ -158,8 +158,7 @@ class SearchSoundTool(BaseTool):
         max_results = kwargs.get('max_results', 8)
 
         client = FreesoundClient()
-        client.set_token(os.environ['FREESOUND_CLIENT_API_KEY'], 'token')
-        # FreesoundClient().set_token("rp9Ai0SkDElZ547KLAQ29cBqDqhcd5UNJtMZzTBw", 'token')
+        client.set_token(os.environ.get('FREESOUND_CLIENT_API_KEY'), 'token')
         results = client.text_search(
             query=query, filter=f"duration:[{min_duration} TO {max_duration}]"
         )
