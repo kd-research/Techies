@@ -1,56 +1,47 @@
-import os
 import json
+import os
+import re
+import requests
+
+from bs4 import BeautifulSoup
+from crewai_tools import BaseTool
+from freesound import FreesoundClient
+from pydantic.v1 import BaseModel, Field
 from tempfile import TemporaryDirectory
 from typing import Type, List, Dict, Any, Optional
 
-from pydantic.v1 import BaseModel, Field
-from crewai_tools import BaseTool
-
-from freesound import FreesoundClient
-import os
-import requests
-from bs4 import BeautifulSoup
-import re
-import freesound
 
 class ReadFileToolSchema(BaseModel):
-    path: str = Field(
-        type=str,
-        description="The path to the file to read."
-    )
+    path: str = Field(type=str, description="The path to the file to read.")
+
 
 class BatchReadFilesToolSchema(BaseModel):
     paths: List[str] = Field(
-        type=List[str],
-        description="An array of filenames to read."
+        type=List[str], description="An array of filenames to read."
     )
 
+
 class WriteFileToolSchema(BaseModel):
-    path: str = Field(
-        type=str,
-        description="The path to the file to write."
-    )
+    path: str = Field(type=str, description="The path to the file to write.")
 
     content: Any = Field(
         type=Any,
-        description="The content to write to the file. Field should be formatted as a string."
+        description=
+        "The content to write to the file. Field should be formatted as a string."
     )
+
 
 class ListFilesToolSchema(BaseModel):
     pass
 
+
 class SearchSoundToolSchema(BaseModel):
-    query: str = Field(
-        type=str,
-        description="Search query for the sound."
-    )
+    query: str = Field(type=str, description="Search query for the sound.")
     min_duration: int = Field(
-        type=int,
-        description="Minimum duration of the sound in seconds."
+        type=int, description="Minimum duration of the sound in seconds."
     )
     max_duration: int = Field(
-        type=int,
-        description="Maximum duration of the sound in seconds."
+        type=int, description="Maximum duration of the sound in seconds."
     )
     max_results: int = Field(
         default=8,
@@ -60,14 +51,11 @@ class SearchSoundToolSchema(BaseModel):
 
 
 class SaveSoundToolSchema(BaseModel):
-    sound_id: int = Field(
-        type=int,
-        description="ID of the sound to save."
-    )
+    sound_id: int = Field(type=int, description="ID of the sound to save.")
     file_name: str = Field(
-        type=str,
-        description="Name of the saved sound file."
+        type=str, description="Name of the saved sound file."
     )
+
 
 class ReadFileTool(BaseTool):
     name: str = "read_file"
@@ -88,6 +76,7 @@ class ReadFileTool(BaseTool):
         except Exception as e:
             files_available = "\t".join(os.listdir(self.base_dir))
             return f"Failed to read file: {e}.\nFiles available: {files_available}"
+
 
 class BatchReadFilesTool(BaseTool):
     name: str = "batch_read_files"
@@ -136,6 +125,7 @@ class WriteFileTool(BaseTool):
         except Exception as e:
             return f"Failed to write file: {e}"
 
+
 class ListFilesTool(BaseTool):
     name: str = "list_files"
     description: str = "List the files in current bucket."
@@ -151,7 +141,6 @@ class ListFilesTool(BaseTool):
             return "\n".join(files)
         except Exception as e:
             return f"Failed to list files: {e}"
-
 
 
 class SearchSoundTool(BaseTool):
@@ -171,7 +160,9 @@ class SearchSoundTool(BaseTool):
         client = FreesoundClient()
         client.set_token(os.environ['FREESOUND_CLIENT_API_KEY'], 'token')
         # FreesoundClient().set_token("rp9Ai0SkDElZ547KLAQ29cBqDqhcd5UNJtMZzTBw", 'token')
-        results = client.text_search(query=query, filter=f"duration:[{min_duration} TO {max_duration}]")
+        results = client.text_search(
+            query=query, filter=f"duration:[{min_duration} TO {max_duration}]"
+        )
 
         fetched_results = []
         for idx, sound in enumerate(results):
@@ -187,11 +178,13 @@ class SearchSoundTool(BaseTool):
             sound_description = soup.find(id="soundDescriptionSection")
             sound_description = re.sub(r'<.*?>', '', str(sound_description))
 
-            fetched_results.append({
-                "sound": sound,
-                "name": sound.name,
-                "description": sound_description,
-            })
+            fetched_results.append(
+                {
+                    "sound": sound,
+                    "name": sound.name,
+                    "description": sound_description,
+                }
+            )
 
         return fetched_results
 
@@ -218,24 +211,21 @@ class SaveSoundTool(BaseTool):
             return f"Sound with id: {sound_id}, with name: {file_name}."
         except Exception as e:
             return f"Failed to save sound: {e}"
-            
+
 
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
     base_dir = "."
+
     # print(f"Temp directory created at: {base_dir}")
-    
+
     def no_cache(args, result):
         return False
 
     tools = {}
     toolklasses = [
-        ReadFileTool, 
-        BatchReadFilesTool,
-        WriteFileTool, 
-        ListFilesTool,
-        SaveSoundTool,
-        SearchSoundTool
+        ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
+        SaveSoundTool, SearchSoundTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
@@ -243,4 +233,3 @@ def get_all_tools():
         tools[tool.name] = tool
 
     return tools
-
