@@ -9,7 +9,7 @@ _no_deleg: &common_attributes_no_deleg
 html5_game_architect:
   <<: *common_attributes
   goal: >
-    Read the game hierarchy file "game_hierarchy.json" to understand the game hierarchy, specifications and details.
+    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
     Facilitate the development of the html5 game in accordance with the details in the game files provided.
     Delegate tasks accordingly to your coworkers, and make sure they produce complete and perfect html5 and javascript code without leaving any comments for placeholders.
     Delegate tasks in the correct order, maintaining consistency.
@@ -43,6 +43,7 @@ html5_game_ui_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     You will code complete and playable User Interface and Design for HTML5 games.
+    The User Interface and Design should be colorful neat and visually appealing.
     Write the perfect HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
@@ -90,7 +91,7 @@ html5_game_logic_engineer:
 html5_game_tester:
   <<: *common_attributes_no_deleg
   goal: >
-    Read the game hierarchy file "game_hierarchy.json" to understand the game hierarchy, specifications and details.
+    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
     Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
     Find and report bugs and errors in the code to the engineers.
     Test the code for completeness and playability.
