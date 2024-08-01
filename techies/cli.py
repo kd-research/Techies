@@ -76,6 +76,8 @@ class CLI:
             args = [options.crew] + args
             if options.crew == "hierarchy_crew":
                 self.kickoff_hierarchy_crew(args)
+            elif options.crew == "hierarchy_crew_v2":
+                self.kickoff_hierarchy_crew(args)
             else:
                 self.kickoff_default_crew(args)
         else:
