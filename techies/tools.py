@@ -53,7 +53,7 @@ class SearchSoundToolSchema(BaseModel):
 class SaveSoundToolSchema(BaseModel):
     sound_id: int = Field(type=int, description="ID of the sound to save.")
     file_name: str = Field(
-        type=str, description="Name of the saved sound file."
+        type=str, description="Name of the saved sound file without file ending. Do not include a directory. "
     )
 
 
