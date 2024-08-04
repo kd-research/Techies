@@ -107,4 +107,15 @@ CSS for styling, and JavaScript for functionality to ensure an immersive and int
 experience.
 """,
 
+Wordlenew_game_specifications = """
+The client envisions a Wordle-inspired game where the target word can vary between 3 to 5 letters. 
+Players will have up to 10 guesses to identify the correct word. To aid players, an alphabet 
+chart will be provided, utilizing color-coded indicators: grey for unseen letters, red for 
+incorrect letters, green for correct letters in the right position, and yellow for correct 
+letters in the wrong position. The game aims to enhance the typical Wordle experience while 
+maintaining a similar core mechanic, adding a twist with variable word lengths. No additional 
+features or mechanics such as themed word lists, daily challenges, or power-ups have been 
+specified, but these can be considered in future conversations to enrich the player experience.
+""",
+
 )
