@@ -107,6 +107,7 @@ CSS for styling, and JavaScript for functionality to ensure an immersive and int
 experience.
 """,
 
+<<<<<<< HEAD
 Wordlenew_game_specifications = """
 The client envisions a Wordle-inspired game where the target word can vary between 3 to 5 letters. 
 Players will have up to 10 guesses to identify the correct word. To aid players, an alphabet 
@@ -118,4 +119,6 @@ features or mechanics such as themed word lists, daily challenges, or power-ups 
 specified, but these can be considered in future conversations to enrich the player experience.
 """,
 
+=======
+>>>>>>> 5dadd703ec8faec47da0308494e1e3b432775c94
 )
