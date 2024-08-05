@@ -92,12 +92,8 @@ html5_game_tester:
   <<: *common_attributes_no_deleg
   goal: >
     Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-<<<<<<< HEAD
     Make sure that the sound files downloaded by the html5_sound_engineer are properly used in the code.
-    Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.    
-=======
     Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
->>>>>>> 5dadd703ec8faec47da0308494e1e3b432775c94
     Find and report bugs and errors in the code to the engineers.
     Test the code for completeness and playability.
     Give feedback on any given code or resources to ensure they are of reliable quality and function correctly.     
@@ -122,4 +118,5 @@ html5_sound_engineer:
     - write_file
     - search_sound
     - save_sound
+
 # vim: set foldmethod=indent foldlevel=0:
