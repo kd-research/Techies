@@ -107,4 +107,20 @@ CSS for styling, and JavaScript for functionality to ensure an immersive and int
 experience.
 """,
 
+Pure2048_game_specifications = """
+The client has requested the development of a simple 2048 game featuring a
+standard 4x4 game board. The primary objective is to maintain the classic
+essence of the 2048 gameplay while ensuring the overall user experience remains
+straightforward and engaging. The client has expressed that complexity should
+be avoided, and the game's mechanics should closely follow the traditional
+rules of 2048: players combine tiles of matching numbers to create higher-value
+tiles, ultimately aiming to achieve a tile with the number 2048. No additional
+unique features, special tiles, power-ups, or thematic elements are specified
+by the client at this time. The focus is purely on delivering a clean, simple,
+and enjoyable version of the 2048 game that adheres to the well-known and loved
+format. In conclusion, the task is to develop a classic 2048 game with a 4x4
+grid, ensuring that the resulting game is both user-friendly and faithful to
+the original design and gameplay mechanics.
+""",
+
 )
