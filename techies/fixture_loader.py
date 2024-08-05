@@ -33,7 +33,8 @@ def runtimedirs():
         for subpath in os.listdir(path):
             runtimedirs.append(os.path.join(path, subpath))
 
-    return [runtimedir for runtimedir in runtimedirs if os.path.isdir(runtimedir)]
+    realpaths = [os.path.realpath(d) for d in runtimedirs if os.path.isdir(d)]
+    return set(realpaths)
 
 def populate_fixture_from_file(merged, filename, indexies):
     with open(filename, 'r') as f:
