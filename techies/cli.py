@@ -109,7 +109,6 @@ Usage:
         crew = self.get_crew(options.crew).kickoff()
 
     def kickoff_hierarchy_crew(self, extra_args):
-        print(extra_args)
         parser = argparse.ArgumentParser(prog=f"{self.prog_name} run", description=f"{extra_args[0]} - Description-included crew interface")
         parser.add_argument('crew', type=str, help='Crew to use, with {extra_args[0]}')
         parser.add_argument('--game', type=str, help='Predefined game specification')
@@ -125,7 +124,7 @@ Usage:
             print("No game specification provided")
             sys.exit(1)
 
-        input = { "game_specifications": game_specifications }
+        inputs = { "game_specifications": game_specifications }
         crew = self.get_crew(options.crew).kickoff(inputs=inputs)
 
 
