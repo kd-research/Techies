@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wordle Game</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f0f0f0;
+      }
+
+      #wordle-board {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-gap: 5px;
+        max-width: 250px;
+        margin: 20px auto;
+      }
+
+      .cell {
+        width: 50px;
+        height: 50px;
+        background-color: #fff;
+        border: 1px solid #000;
+        text-align: center;
+        line-height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .cell.correct {
+        background-color: #6aaa64;
+        color: #fff;
+      }
+
+      .cell.present {
+        background-color: #c9b458;
+        color: #fff;
+      }
+
+      .cell.absent {
+        background-color: #787c7e;
+        color: #fff;
+      }
+
+      #keyboard {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-gap: 5px;
+        max-width: 500px;
+        margin: 20px auto;
+      }
+
+      .key {
+        width: 45px;
+        height: 45px;
+        background-color: #ddd;
+        border: 1px solid #000;
+        text-align: center;
+        line-height: 45px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .key.correct {
+        background-color: #6aaa64;
+        color: #fff;
+      }
+
+      .key.present {
+        background-color: #c9b458;
+        color: #fff;
+      }
+
+      .key.absent {
+        background-color: #787c7e;
+        color: #fff;
+      }
+
+      #controls {
+        margin: 20px;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #end-game {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="start-menu">
+      <h1>Welcome to Wordle</h1>
+      <button id="start-game-button">Start Game</button>
+    </div>
+    <div id="game-container" style="display: none">
+      <div id="wordle-board"></div>
+      <div id="keyboard"></div>
+      <div id="controls">
+        <button id="submit-word">Submit</button>
+      </div>
+      <div id="end-game" style="display: none">
+        <h2 id="end-message"></h2>
+        <button id="play-again">Play Again</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const startButton = document.getElementById("start-game-button");
+        const gameContainer = document.getElementById("game-container");
+        const startMenu = document.getElementById("start-menu");
+        const wordleBoard = document.getElementById("wordle-board");
+        const keyboard = document.getElementById("keyboard");
+        const submitWordButton = document.getElementById("submit-word");
+        const endGameContainer = document.getElementById("end-game");
+        const endMessage = document.getElementById("end-message");
+        const playAgainButton = document.getElementById("play-again");
+
+        // Fetch the word list from an external source
+        const response = await fetch(
+          "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt"
+        );
+        const text = await response.text();
+        const allWords = text
+          .split("\n")
+          .map((word) => word.trim().toLowerCase());
+        const validWords = allWords.filter((word) => word.length === 5);
+
+        class WordleUI {
+          constructor(boardElement, keyboardElement) {
+            this.boardElement = boardElement;
+            this.keyboardElement = keyboardElement;
+            this.resetBoard();
+            this.setupKeyboard();
+          }
+
+          resetBoard() {
+            this.boardElement.innerHTML = "";
+            for (let i = 0; i < 30; i++) {
+              // 6 guesses, 5 letters each
+              const cellElement = document.createElement("div");
+              cellElement.classList.add("cell");
+              cellElement.contentEditable = false; // All cells non-editable initially
+              this.boardElement.appendChild(cellElement);
+            }
+          }
+
+          setupKeyboard() {
+            const keys = [
+              "Q",
+              "W",
+              "E",
+              "R",
+              "T",
+              "Y",
+              "U",
+              "I",
+              "O",
+              "P",
+              "A",
+              "S",
+              "D",
+              "F",
+              "G",
+              "H",
+              "J",
+              "K",
+              "L",
+              "Z",
+              "X",
+              "C",
+              "V",
+              "B",
+              "N",
+              "M",
+            ];
+            this.keyboardElement.innerHTML = "";
+
+            keys.forEach((key) => {
+              const keyElement = document.createElement("div");
+              keyElement.classList.add("key");
+              keyElement.textContent = key;
+              this.keyboardElement.appendChild(keyElement);
+            });
+
+            const backspaceKey = document.createElement("div");
+            backspaceKey.classList.add("key");
+            backspaceKey.textContent = "←";
+            this.keyboardElement.appendChild(backspaceKey);
+
+            const enterKey = document.createElement("div");
+            enterKey.classList.add("key");
+            enterKey.textContent = "Enter";
+            this.keyboardElement.appendChild(enterKey);
+          }
+
+          updateBoard(guesses) {
+            const cells = Array.from(
+              this.boardElement.getElementsByClassName("cell")
+            );
+            guesses.forEach((guess, rowIndex) => {
+              guess.forEach((letter, colIndex) => {
+                const cell = cells[rowIndex * 5 + colIndex];
+                cell.textContent = letter.char;
+                cell.className = "cell " + letter.status;
+                cell.contentEditable = false;
+              });
+            });
+            // Make the next row editable
+            if (guesses.length < 6) {
+              for (let i = 0; i < 5; i++) {
+                const cell = cells[guesses.length * 5 + i];
+                cell.textContent = "";
+                cell.contentEditable = true;
+              }
+              cells[guesses.length * 5].focus();
+            }
+          }
+
+          updateKeyboard(guesses) {
+            const keyElements = Array.from(
+              this.keyboardElement.getElementsByClassName("key")
+            );
+            keyElements.forEach((keyElement) => {
+              keyElement.className = "key"; // Reset the class names
+            });
+
+            guesses.forEach((guess) => {
+              guess.forEach((letter) => {
+                const keyElement = keyElements.find(
+                  (key) => key.textContent === letter.char.toUpperCase()
+                );
+                if (keyElement) {
+                  keyElement.className = "key " + letter.status;
+                }
+              });
+            });
+          }
+        }
+
+        class WordleLogic {
+          constructor(words) {
+            this.words = words;
+            this.solution = this.getRandomWord();
+            this.guesses = [];
+          }
+
+          getRandomWord() {
+            return this.words[Math.floor(Math.random() * this.words.length)];
+          }
+
+          submitGuess(guess) {
+            guess = guess.toLowerCase();
+            if (
+              guess.length !== 5 ||
+              !/^[a-zA-Z]+$/.test(guess) ||
+              !this.words.includes(guess)
+            ) {
+              return false;
+            }
+            const result = this.checkGuess(guess);
+            this.guesses.push(result);
+            return result;
+          }
+
+          checkGuess(guess) {
+            const result = [];
+            const solutionArray = this.solution.split("");
+            const guessArray = guess.split("");
+
+            // First pass: mark all correct letters
+            guessArray.forEach((char, index) => {
+              if (char === this.solution[index]) {
+                result.push({ char, status: "correct" });
+                solutionArray[index] = null; // Mark this position as resolved
+              } else {
+                result.push({ char, status: "absent" });
+              }
+            });
+
+            // Second pass: mark present letters
+            guessArray.forEach((char, index) => {
+              if (
+                result[index].status !== "correct" &&
+                solutionArray.includes(char)
+              ) {
+                result[index].status = "present";
+                solutionArray[solutionArray.indexOf(char)] = null; // Mark this occurrence as resolved
+              }
+            });
+
+            return result;
+          }
+
+          isGameOver() {
+            return (
+              this.guesses.length === 6 ||
+              this.guesses.some((guess) =>
+                guess.every((letter) => letter.status === "correct")
+              )
+            );
+          }
+
+          isCorrectGuess(guess) {
+            return guess.every((letter) => letter.status === "correct");
+          }
+
+          reset() {
+            this.solution = this.getRandomWord();
+            this.guesses = [];
+          }
+        }
+
+        class WordleGame {
+          constructor(ui, logic) {
+            this.ui = ui;
+            this.logic = logic;
+          }
+
+          start() {
+            this.logic.reset();
+            this.ui.resetBoard();
+          }
+
+          submitGuess(guess) {
+            const result = this.logic.submitGuess(guess);
+            if (result) {
+              this.ui.updateBoard(this.logic.guesses);
+              this.ui.updateKeyboard(this.logic.guesses);
+              if (this.logic.isGameOver()) {
+                if (this.logic.isCorrectGuess(result)) {
+                  endMessage.textContent =
+                    "Congratulations! You guessed the word!";
+                } else {
+                  endMessage.textContent = `Game over! The word was ${this.logic.solution}.`;
+                }
+                endGameContainer.style.display = "block";
+              }
+            } else {
+              alert("Invalid guess. Please enter a 5-letter word.");
+              this.clearCurrentRow();
+            }
+          }
+
+          clearCurrentRow() {
+            const cells = Array.from(
+              this.ui.boardElement.getElementsByClassName("cell")
+            );
+            for (let i = 0; i < 5; i++) {
+              const cell = cells[this.logic.guesses.length * 5 + i];
+              cell.textContent = "";
+              cell.contentEditable = true;
+            }
+            cells[this.logic.guesses.length * 5].focus();
+          }
+
+          reset() {
+            this.logic.reset();
+            this.ui.resetBoard();
+            this.ui.updateKeyboard([]);
+            endGameContainer.style.display = "none";
+          }
+        }
+
+        class WordleInput {
+          constructor(boardElement, keyboardElement, gameInstance) {
+            this.boardElement = boardElement;
+            this.keyboardElement = keyboardElement;
+            this.gameInstance = gameInstance;
+            this.currentGuess = "";
+            this.currentRowIndex = 0;
+            this.setupKeyboard();
+            this.setupBoardInput();
+          }
+
+          setupKeyboard() {
+            const keys = Array.from(
+              this.keyboardElement.getElementsByClassName("key")
+            );
+            keys.forEach((key) => {
+              key.addEventListener("click", () =>
+                this.handleKeyInput(key.textContent)
+              );
+            });
+          }
+
+          setupBoardInput() {
+            document.addEventListener("keydown", (event) => {
+              const cells = Array.from(
+                this.boardElement.getElementsByClassName("cell")
+              );
+              if (event.key === "Backspace") {
+                if (this.currentGuess.length > 0) {
+                  this.currentGuess = this.currentGuess.slice(0, -1);
+                  const lastCell =
+                    cells[this.currentRowIndex * 5 + this.currentGuess.length];
+                  lastCell.textContent = "";
+                  lastCell.focus();
+                }
+              } else if (event.key === "Enter") {
+                this.submitGuess();
+              } else if (
+                /^[a-zA-Z]$/.test(event.key) &&
+                this.currentGuess.length < 5
+              ) {
+                this.currentGuess += event.key.toUpperCase();
+                const nextCell =
+                  cells[
+                    this.currentRowIndex * 5 + this.currentGuess.length - 1
+                  ];
+                nextCell.textContent = event.key.toUpperCase();
+                if (this.currentGuess.length < 5) {
+                  cells[
+                    this.currentRowIndex * 5 + this.currentGuess.length
+                  ].focus();
+                }
+              }
+              event.preventDefault();
+            });
+          }
+
+          handleKeyInput(key) {
+            const cells = Array.from(
+              this.boardElement.getElementsByClassName("cell")
+            );
+            if (key === "←") {
+              if (this.currentGuess.length > 0) {
+                this.currentGuess = this.currentGuess.slice(0, -1);
+                const lastCell =
+                  cells[this.currentRowIndex * 5 + this.currentGuess.length];
+                lastCell.textContent = "";
+                lastCell.focus();
+              }
+            } else if (key === "Enter") {
+              this.submitGuess();
+            } else if (/^[a-zA-Z]$/.test(key) && this.currentGuess.length < 5) {
+              this.currentGuess += key.toUpperCase();
+              const nextCell =
+                cells[this.currentRowIndex * 5 + this.currentGuess.length - 1];
+              nextCell.textContent = key.toUpperCase();
+              if (this.currentGuess.length < 5) {
+                cells[
+                  this.currentRowIndex * 5 + this.currentGuess.length
+                ].focus();
+              }
+            }
+          }
+
+          submitGuess() {
+            if (this.currentGuess.length === 5) {
+              this.gameInstance.submitGuess(this.currentGuess);
+              if (
+                this.gameInstance.logic.guesses.length ===
+                this.currentRowIndex + 1
+              ) {
+                this.currentGuess = "";
+                this.currentRowIndex++;
+              } else {
+                this.clearCurrentRow();
+              }
+            } else {
+              alert("Invalid guess. Please enter a 5-letter word.");
+            }
+          }
+
+          clearCurrentRow() {
+            const cells = Array.from(
+              this.boardElement.getElementsByClassName("cell")
+            );
+            for (let i = 0; i < 5; i++) {
+              const cell = cells[this.currentRowIndex * 5 + i];
+              cell.textContent = "";
+              cell.contentEditable = true;
+            }
+            cells[this.currentRowIndex * 5].focus();
+            this.currentGuess = "";
+          }
+        }
+
+        const wordleUI = new WordleUI(wordleBoard, keyboard);
+        const wordleLogic = new WordleLogic(validWords);
+        const wordleGame = new WordleGame(wordleUI, wordleLogic);
+        const wordleInput = new WordleInput(wordleBoard, keyboard, wordleGame);
+
+        startButton.addEventListener("click", () => {
+          startMenu.style.display = "none";
+          gameContainer.style.display = "block";
+          wordleGame.start();
+        });
+
+        submitWordButton.addEventListener("click", () => {
+          wordleInput.submitGuess();
+        });
+
+        playAgainButton.addEventListener("click", () => {
+          wordleGame.reset();
+          wordleInput.currentGuess = "";
+          wordleInput.currentRowIndex = 0;
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sudoku Game</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f0f0f0;
+      }
+
+      #sudoku-board {
+        display: grid;
+        grid-template-columns: repeat(9, 1fr);
+        grid-gap: 1px;
+        max-width: 360px;
+        margin: 20px auto;
+      }
+
+      .cell {
+        width: 40px;
+        height: 40px;
+        background-color: #fff;
+        border: 1px solid #000;
+        text-align: center;
+        line-height: 40px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .cell.readonly {
+        background-color: #e0e0e0;
+      }
+
+      .cell:nth-child(3n + 1) {
+        border-left: 2px solid #000;
+      }
+
+      .cell:nth-child(3n) {
+        border-right: 2px solid #000;
+      }
+
+      .cell:nth-child(27n + 1) {
+        border-top: 2px solid #000;
+      }
+
+      .cell:nth-child(27n) {
+        border-bottom: 2px solid #000;
+      }
+
+      #controls {
+        margin: 20px;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #end-game {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="start-menu">
+      <h1>Welcome to Sudoku</h1>
+      <button id="start-game-button">Start Game</button>
+    </div>
+    <div id="game-container" style="display: none">
+      <div id="sudoku-board"></div>
+      <div id="controls">
+        <button id="check-solution">Check Solution</button>
+        <button id="reset-board">Reset Board</button>
+      </div>
+      <div id="end-game" style="display: none">
+        <h2 id="end-message"></h2>
+        <button id="play-again">Play Again</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const startButton = document.getElementById("start-game-button");
+        const gameContainer = document.getElementById("game-container");
+        const startMenu = document.getElementById("start-menu");
+        const sudokuBoard = document.getElementById("sudoku-board");
+        const checkSolutionButton = document.getElementById("check-solution");
+        const resetBoardButton = document.getElementById("reset-board");
+        const endGameContainer = document.getElementById("end-game");
+        const endMessage = document.getElementById("end-message");
+        const playAgainButton = document.getElementById("play-again");
+
+        class SudokuUI {
+          constructor(boardElement) {
+            this.boardElement = boardElement;
+          }
+
+          initializeBoard(board) {
+            this.boardElement.innerHTML = "";
+            board.forEach((row, rowIndex) => {
+              row.forEach((cell, cellIndex) => {
+                const cellElement = document.createElement("div");
+                cellElement.classList.add("cell");
+                if (cell !== 0) {
+                  cellElement.textContent = cell;
+                  cellElement.classList.add("readonly");
+                } else {
+                  cellElement.contentEditable = true;
+                }
+                cellElement.dataset.row = rowIndex;
+                cellElement.dataset.cell = cellIndex;
+                this.boardElement.appendChild(cellElement);
+              });
+            });
+          }
+
+          getBoardValues() {
+            const cells = Array.from(
+              this.boardElement.getElementsByClassName("cell")
+            );
+            const board = Array.from({ length: 9 }, () => Array(9).fill(0));
+            cells.forEach((cell) => {
+              const row = parseInt(cell.dataset.row, 10);
+              const cellIndex = parseInt(cell.dataset.cell, 10);
+              const value = cell.textContent.trim();
+              board[row][cellIndex] = value ? parseInt(value, 10) : 0;
+            });
+            return board;
+          }
+        }
+
+        class SudokuLogic {
+          constructor() {
+            this.size = 9;
+            this.boxSize = 3;
+          }
+
+          generateBoard() {
+            let board = this.createEmptyBoard();
+            this.fillDiagonalBoxes(board);
+            this.fillRemaining(board, 0, this.boxSize);
+            this.removeNumbers(board);
+            return board;
+          }
+
+          createEmptyBoard() {
+            return Array.from({ length: this.size }, () =>
+              Array(this.size).fill(0)
+            );
+          }
+
+          fillDiagonalBoxes(board) {
+            for (let i = 0; i < this.size; i += this.boxSize) {
+              this.fillBox(board, i, i);
+            }
+          }
+
+          fillBox(board, row, col) {
+            let num;
+            for (let i = 0; i < this.boxSize; i++) {
+              for (let j = 0; j < this.boxSize; j++) {
+                do {
+                  num = this.randomNumber(this.size);
+                } while (!this.isSafeInBox(board, row, col, num));
+                board[row + i][col + j] = num;
+              }
+            }
+          }
+
+          isSafeInBox(board, boxStartRow, boxStartCol, num) {
+            for (let i = 0; i < this.boxSize; i++) {
+              for (let j = 0; j < this.boxSize; j++) {
+                if (board[boxStartRow + i][boxStartCol + j] === num) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          }
+
+          randomNumber(max) {
+            return Math.floor(Math.random() * max) + 1;
+          }
+
+          fillRemaining(board, row, col) {
+            if (col >= this.size && row < this.size - 1) {
+              row++;
+              col = 0;
+            }
+            if (row >= this.size && col >= this.size) {
+              return true;
+            }
+            if (row < this.boxSize) {
+              if (col < this.boxSize) {
+                col = this.boxSize;
+              }
+            } else if (row < this.size - this.boxSize) {
+              if (col === Math.floor(row / this.boxSize) * this.boxSize) {
+                col += this.boxSize;
+              }
+            } else {
+              if (col === this.size - this.boxSize) {
+                row++;
+                col = 0;
+                if (row >= this.size) {
+                  return true;
+                }
+              }
+            }
+
+            for (let num = 1; num <= this.size; num++) {
+              if (this.isSafe(board, row, col, num)) {
+                board[row][col] = num;
+                if (this.fillRemaining(board, row, col + 1)) {
+                  return true;
+                }
+                board[row][col] = 0;
+              }
+            }
+            return false;
+          }
+
+          isSafe(board, row, col, num) {
+            return (
+              this.isSafeInRow(board, row, num) &&
+              this.isSafeInCol(board, col, num) &&
+              this.isSafeInBox(
+                board,
+                row - (row % this.boxSize),
+                col - (col % this.boxSize),
+                num
+              )
+            );
+          }
+
+          isSafeInRow(board, row, num) {
+            return !board[row].includes(num);
+          }
+
+          isSafeInCol(board, col, num) {
+            for (let i = 0; i < this.size; i++) {
+              if (board[i][col] === num) {
+                return false;
+              }
+            }
+            return true;
+          }
+
+          removeNumbers(board) {
+            let removeCount = 40; // Increase the number of cells to remove for more difficulty
+            while (removeCount > 0) {
+              const cellId = this.randomNumber(this.size * this.size) - 1;
+              const row = Math.floor(cellId / this.size);
+              const col = cellId % this.size;
+              if (board[row][col] !== 0) {
+                const backup = board[row][col];
+                board[row][col] = 0;
+                const copyBoard = board.map((row) => [...row]);
+                if (!this.hasUniqueSolution(copyBoard)) {
+                  board[row][col] = backup;
+                } else {
+                  removeCount--;
+                }
+              }
+            }
+          }
+
+          hasUniqueSolution(board) {
+            const solutions = [];
+            this.solveBoard(board, solutions);
+            return solutions.length === 1;
+          }
+
+          solveBoard(board, solutions, row = 0, col = 0) {
+            if (row === this.size - 1 && col === this.size) {
+              solutions.push(board.map((row) => [...row]));
+              return solutions.length <= 1;
+            }
+            if (col === this.size) {
+              row++;
+              col = 0;
+            }
+            if (board[row][col] !== 0) {
+              return this.solveBoard(board, solutions, row, col + 1);
+            }
+            for (let num = 1; num <= this.size; num++) {
+              if (this.isSafe(board, row, col, num)) {
+                board[row][col] = num;
+                if (this.solveBoard(board, solutions, row, col + 1)) {
+                  return true;
+                }
+                board[row][col] = 0;
+              }
+            }
+            return false;
+          }
+
+          isSolutionValid(board) {
+            for (let row = 0; row < this.size; row++) {
+              for (let col = 0; col < this.size; col++) {
+                const num = board[row][col];
+                if (num !== 0) {
+                  board[row][col] = 0;
+                  if (!this.isSafe(board, row, col, num)) {
+                    return false;
+                  }
+                  board[row][col] = num;
+                }
+              }
+            }
+            return true;
+          }
+
+          isBoardComplete(board) {
+            for (let row = 0; row < this.size; row++) {
+              for (let col = 0; col < this.size; col++) {
+                if (board[row][col] === 0) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          }
+        }
+
+        class SudokuGame {
+          constructor(ui, logic) {
+            this.ui = ui;
+            this.logic = logic;
+            this.board = this.logic.generateBoard();
+          }
+
+          start() {
+            this.ui.initializeBoard(this.board);
+          }
+
+          checkSolution() {
+            const currentBoard = this.ui.getBoardValues();
+            if (
+              this.logic.isBoardComplete(currentBoard) &&
+              this.logic.isSolutionValid(currentBoard)
+            ) {
+              endMessage.textContent =
+                "Congratulations! You solved the puzzle!";
+            } else {
+              endMessage.textContent =
+                "The solution is incorrect or incomplete. Try again!";
+            }
+            endGameContainer.style.display = "block";
+          }
+
+          reset() {
+            this.board = this.logic.generateBoard();
+            this.ui.initializeBoard(this.board);
+            endGameContainer.style.display = "none";
+          }
+        }
+
+        const sudokuUI = new SudokuUI(sudokuBoard);
+        const sudokuLogic = new SudokuLogic();
+        const sudokuGame = new SudokuGame(sudokuUI, sudokuLogic);
+
+        startButton.addEventListener("click", () => {
+          startMenu.style.display = "none";
+          gameContainer.style.display = "block";
+          sudokuGame.start();
+        });
+
+        checkSolutionButton.addEventListener("click", () => {
+          sudokuGame.checkSolution();
+        });
+
+        resetBoardButton.addEventListener("click", () => {
+          sudokuGame.reset();
+        });
+
+        playAgainButton.addEventListener("click", () => {
+          endGameContainer.style.display = "none";
+          sudokuGame.reset();
+        });
+      });
+    </script>
+  </body>
+</html>
