@@ -223,7 +223,7 @@ class ReadHtmlExamplesTool(BaseTool):
         super().__init__(**kwargs)
 
     def _run(self, **kwargs) -> Dict[str, Dict[str, str]]:
-        examples_dir = os.path.abspath(os.path.join(self.base_dir, '..', 'ref', 'html_game_examples')).replace('\\', '/')
+        examples_dir = os.path.abspath(os.path.join(self.base_dir, 'refs', 'html_game_examples')).replace('\\', '/')
         examples = {}
 
         try:
