@@ -68,6 +68,10 @@ Usage:
         parser.add_argument('command', type=str, help='Command to run')
         parser.add_argument('crew', type=str, help='Crew to use', nargs='?', default="hierarchy_crew")
         parser.add_argument('--ai', type=str, help='AI to use', default="openai", choices=["groq", "openai"])
+        if not argv:
+            parser.print_help()
+            sys.exit(1)
+
         options, args = parser.parse_known_args(argv)
 
         self.assign_ai_crew(options.ai)

@@ -140,6 +140,8 @@ class ListFilesTool(BaseTool):
     def _run(self, **kwargs) -> str:
         try:
             files = os.listdir(self.base_dir)
+            if not files:
+                return "# -- Theres nothing to be listed -- #"
             return "\n".join(files)
         except Exception as e:
             return f"Failed to list files: {e}"
