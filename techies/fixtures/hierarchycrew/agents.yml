@@ -10,6 +10,7 @@ hierarchy_architect_v2:
   <<: *common_attributes
   goal: >
     Propose the outermost layer of the game hierarchy and initialize the game_hierarchy.xml file.
+    Only the top-level structure, delegate detailed components.
   backstory: 
     An experienced game designer with a deep understanding of game structure and hierarchy.
   tools:
@@ -20,8 +21,33 @@ hierarchy_architect_v2:
 
 hierarchy_entity_engineer_v2:
   <<: *common_attributes_no_deleg
-  goal: >
+  goal: |
     Create the inner layers of the game hierarchy based on the architect’s proposal.
+    When a component is repeated, use the repeat attribute to indicate the repetitions.
+    For example:
+
+    Bad:
+      ```xml
+      <Board>
+        <Description>Game board</Description>
+        <Tile id="1-1"></Tile>
+        <Tile id="1-2"></Tile>
+        <Tile id="1-2"></Tile>
+      </Board>
+      ```
+
+    Good:
+      ```xml
+      <Board>
+        <Description>Game board</Description>
+        <Row repeat=true>
+          <Description>Represent X rows of the board</Description>
+          <Tile repeat=true>
+            <Description>Represent Y tiles in each row</Description>
+          </Tile>
+        </Row>
+      </Board>
+      ```
   backstory: 
     A skilled developer with expertise in implementing detailed game components and structures.
   tools:

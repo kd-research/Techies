@@ -56,6 +56,8 @@ class SaveSoundToolSchema(BaseModel):
         type=str, description="Name of the saved sound file without file ending. Do not include a directory. "
     )
 
+class ReadHtmlExamplesToolSchema(BaseModel):
+    pass
 
 class ReadFileTool(BaseTool):
     name: str = "read_file"
@@ -138,6 +140,9 @@ class ListFilesTool(BaseTool):
     def _run(self, **kwargs) -> str:
         try:
             files = os.listdir(self.base_dir)
+            files = [f for f in files if not f.startswith('.') and os.path.isfile(f"{self.base_dir}/{f}")]
+            if not files:
+                return "# -- Theres nothing to be listed -- #"
             return "\n".join(files)
         except Exception as e:
             return f"Failed to list files: {e}"
@@ -211,6 +216,29 @@ class SaveSoundTool(BaseTool):
         except Exception as e:
             return f"Failed to save sound: {e}"
 
+class ReadHtmlExamplesTool(BaseTool):
+    name: str = "read_examples_html"
+    description: str = "Read all example html games."
+    args_schema: Type[BaseModel] = ReadHtmlExamplesToolSchema
+    base_dir: str
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> Dict[str, Dict[str, str]]:
+        examples_dir = os.path.normpath(__file__ + '/../refs/html_game_examples')
+        examples = {}
+
+        try:
+            for filename in os.listdir(examples_dir):
+                file_path = os.path.join(examples_dir, filename)
+                if filename.endswith('.html'):
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        examples[filename] = f.read()
+
+            return examples
+        except Exception as e:
+            return f"Failed to read examples: {e}"
 
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
@@ -224,7 +252,7 @@ def get_all_tools():
     tools = {}
     toolklasses = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool
+        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)

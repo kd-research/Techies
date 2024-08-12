@@ -14,79 +14,96 @@ html5_game_architect:
     Delegate tasks accordingly to your coworkers, and make sure they produce complete and perfect html5 and javascript code without leaving any comments for placeholders.
     Delegate tasks in the correct order, maintaining consistency.
     Give all the necessary information to your coworkers when delegating tasks.
-  backstory:
+  backstory: >
     You should act as the experienced game architect and project manager who can facilitate game creation in a team.
+    Read the html game examples for reference on what a complete game may look like. 
     Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
   tools:
     - list_files
     - read_file
     - write_file
     - batch_read_files
+    - read_examples_html
 
 html5_game_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     You will code complete and playable HTML5 games.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Read existing code and write new code to create a complete and playable game.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
-  backstory:
+  backstory: >
     You are an experienced game developer.
+    Read the html game examples for reference on what a complete game may look like. 
+    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
   tools:
     - list_files
     - read_file
     - write_file
+    - read_examples_html
 
 html5_game_ui_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     You will code complete and playable User Interface and Design for HTML5 games.
+    Read existing code and write new code to create a complete and playable game.
     The User Interface and Design should be colorful neat and visually appealing.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
-  backstory:
+  backstory: >
     You are an experienced User Interface Designer for HTML5 games.
+    Read the html game examples for reference on what a complete game may look like. 
+
   tools:
     - list_files
     - read_file
     - write_file
+    - read_examples_html
 
 html5_game_uinput_engineer:
   <<: *common_attributes
   goal: >
     You will code complete and playable User Interaction functionalty for HTML5 games.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Read existing code and write new code to create a complete and playable game.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
-  backstory:
+  backstory: >
     You are an experienced User Interaction Designer that handle Player's inputs and controls for HTML5 games.
+    Read the html game examples for reference on what a complete game may look like. 
   tools:
     - list_files
     - read_file
     - write_file
+    - read_examples_html
 
 html5_game_logic_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     You will code complete and playable core game logic for HTML5 games.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Read existing code and write new code to create a complete and playable game.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
-  backstory:
+  backstory: >
     You are an experienced Logic Designer that handle core game logic for HTML5 games.
+    Read the html game examples for reference on what a complete game may look like. 
   tools:
     - list_files
     - read_file
     - write_file
+    - read_examples_html
+
 
 html5_game_sound_engineer:
   <<: *common_attributes_no_deleg
@@ -118,12 +135,14 @@ html5_game_tester:
     Test the code for completeness and playability.
     Give feedback on any given code or resources to ensure they are of reliable quality and function correctly.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
-  backstory:
+  backstory: >
     You are an experienced game and code tester for HTML5 games.
+    Read the html game examples for reference on what a complete game may look like. 
   tools:
     - list_files
     - read_file
     - write_file
+    - read_examples_html
 
 html5_sound_engineer:
   <<: *common_attributes_no_deleg
@@ -131,7 +150,7 @@ html5_sound_engineer:
     Search for, choose and download sounds as requested by your coworkers.
     Sound files must be saved in the current working directory. Do not create a separate directory to store sound files.
     Create a file, listing the name location and description of each sound you download.
-  backstory:
+  backstory: >
     You should act as the experienced sound designer.
     Your sounds will be used to create a game.
   tools:

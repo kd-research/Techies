@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkers Game</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+        font-family: Arial, sans-serif;
+      }
+
+      .hidden {
+        display: none !important; /* Use !important to ensure this takes precedence */
+      }
+
+      #startScreen,
+      #endScreen {
+        text-align: center;
+      }
+
+      #gameScreen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #gameInfo {
+        margin-bottom: 20px;
+      }
+
+      #gameBoard {
+        display: grid;
+        grid-template-columns: repeat(8, 60px);
+        grid-template-rows: repeat(8, 60px);
+        gap: 0;
+      }
+
+      .square {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .dark {
+        background-color: #8b4513;
+      }
+
+      .light {
+        background-color: #f0d9b5;
+      }
+
+      .piece {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+
+      .black {
+        background-color: black;
+      }
+
+      .white {
+        background-color: white;
+      }
+
+      .king {
+        border: 2px solid gold;
+      }
+
+      .selected {
+        outline: 2px solid yellow;
+      }
+
+      .valid-move {
+        outline: 2px solid green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="startScreen">
+      <h1>Welcome to Checkers</h1>
+      <button id="startButton">Start Game</button>
+    </div>
+    <div id="gameScreen" class="hidden">
+      <div id="gameInfo">
+        <p id="currentPlayer">Current Player:</p>
+        <p id="blackPieces">Black Pieces: 12</p>
+        <p id="whitePieces">White Pieces: 12</p>
+        <button id="resetButton">Reset Game</button>
+      </div>
+      <div id="gameBoard"></div>
+    </div>
+    <div id="endScreen" class="hidden">
+      <h1 id="endMessage"></h1>
+      <button id="restartButton">Play Again</button>
+    </div>
+    <script>
+      class UI {
+        static updateCurrentPlayer(player) {
+          document.getElementById(
+            "currentPlayer"
+          ).innerText = `Current Player: ${player}`;
+        }
+
+        static updatePieceCount(blackPieces, whitePieces) {
+          document.getElementById(
+            "blackPieces"
+          ).innerText = `Black Pieces: ${blackPieces}`;
+          document.getElementById(
+            "whitePieces"
+          ).innerText = `White Pieces: ${whitePieces}`;
+        }
+
+        static showStartScreen() {
+          document.getElementById("startScreen").classList.remove("hidden");
+          document.getElementById("gameScreen").classList.add("hidden");
+          document.getElementById("endScreen").classList.add("hidden");
+        }
+
+        static showGameScreen() {
+          document.getElementById("startScreen").classList.add("hidden");
+          document.getElementById("gameScreen").classList.remove("hidden");
+          document.getElementById("endScreen").classList.add("hidden");
+        }
+
+        static showEndScreen(winner) {
+          document.getElementById("endMessage").innerText = `${winner} Wins!`;
+          document.getElementById("startScreen").classList.add("hidden");
+          document.getElementById("gameScreen").classList.add("hidden");
+          document.getElementById("endScreen").classList.remove("hidden");
+        }
+
+        static updateBoard(board, selectedPiece, validMoves) {
+          const gameBoard = document.getElementById("gameBoard");
+          gameBoard.innerHTML = "";
+
+          for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+              const square = document.createElement("div");
+              square.classList.add("square");
+              square.classList.add((row + col) % 2 === 0 ? "light" : "dark");
+              square.dataset.row = row;
+              square.dataset.col = col;
+
+              const piece = board[row][col];
+              if (piece) {
+                const pieceElement = document.createElement("div");
+                pieceElement.classList.add("piece", piece.player);
+                if (piece.isKing) {
+                  pieceElement.classList.add("king");
+                }
+                square.appendChild(pieceElement);
+              }
+
+              if (
+                selectedPiece &&
+                selectedPiece.row === row &&
+                selectedPiece.col === col
+              ) {
+                square.classList.add("selected");
+              }
+
+              if (
+                validMoves.some((move) => move.row === row && move.col === col)
+              ) {
+                square.classList.add("valid-move");
+              }
+
+              gameBoard.appendChild(square);
+            }
+          }
+        }
+
+        static clearHighlights() {
+          document.querySelectorAll(".valid-move").forEach((square) => {
+            square.classList.remove("valid-move");
+            square.replaceWith(square.cloneNode(true));
+          });
+          document.querySelectorAll(".selected").forEach((square) => {
+            square.classList.remove("selected");
+          });
+        }
+      }
+
+      class Logic {
+        static createBoard() {
+          const board = [];
+          for (let row = 0; row < 8; row++) {
+            const rowArray = [];
+            for (let col = 0; col < 8; col++) {
+              if (row < 3 && (row + col) % 2 !== 0) {
+                rowArray.push({ player: "black", isKing: false });
+              } else if (row > 4 && (row + col) % 2 !== 0) {
+                rowArray.push({ player: "white", isKing: false });
+              } else {
+                rowArray.push(null);
+              }
+            }
+            board.push(rowArray);
+          }
+          return board;
+        }
+
+        static getValidMoves(board, row, col, jumpsOnly = false) {
+          const piece = board[row][col];
+          const moves = [];
+          const directions = piece.isKing
+            ? [
+                [1, 1],
+                [1, -1],
+                [-1, 1],
+                [-1, -1],
+              ]
+            : piece.player === "black"
+            ? [
+                [1, 1],
+                [1, -1],
+              ]
+            : [
+                [-1, 1],
+                [-1, -1],
+              ];
+          directions.forEach(([dr, dc]) => {
+            const newRow = row + dr;
+            const newCol = col + dc;
+            if (
+              !jumpsOnly &&
+              this.isValidMove(board, row, col, newRow, newCol)
+            ) {
+              moves.push({ row: newRow, col: newCol });
+            }
+            const jumpRow = row + 2 * dr;
+            const jumpCol = col + 2 * dc;
+            if (
+              this.isValidJump(
+                board,
+                row,
+                col,
+                newRow,
+                newCol,
+                jumpRow,
+                jumpCol
+              )
+            ) {
+              moves.push({ row: jumpRow, col: jumpCol });
+            }
+          });
+          return moves;
+        }
+
+        static isValidMove(board, row, col, newRow, newCol) {
+          return (
+            newRow >= 0 &&
+            newRow < 8 &&
+            newCol >= 0 &&
+            newCol < 8 &&
+            !board[newRow][newCol]
+          );
+        }
+
+        static isValidJump(board, row, col, newRow, newCol, jumpRow, jumpCol) {
+          const piece = board[row][col];
+          return (
+            this.isValidMove(board, row, col, jumpRow, jumpCol) &&
+            board[newRow][newCol] &&
+            board[newRow][newCol].player !== piece.player
+          );
+        }
+
+        static movePiece(board, row, col, newRow, newCol) {
+          const piece = board[row][col];
+          board[row][col] = null;
+          board[newRow][newCol] = piece;
+
+          const isPromotion =
+            (piece.player === "black" && newRow === 7) ||
+            (piece.player === "white" && newRow === 0);
+          if (isPromotion) {
+            piece.isKing = true;
+          }
+
+          if (Math.abs(newRow - row) === 2) {
+            const jumpedRow = (row + newRow) / 2;
+            const jumpedCol = (col + newCol) / 2;
+            const jumpedPiece = board[jumpedRow][jumpedCol];
+            board[jumpedRow][jumpedCol] = null;
+            return jumpedPiece.player;
+          }
+
+          return null;
+        }
+
+        static hasMandatoryCapture(board, player) {
+          for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+              if (board[row][col] && board[row][col].player === player) {
+                const piece = board[row][col];
+                const directions = piece.isKing
+                  ? [
+                      [1, 1],
+                      [1, -1],
+                      [-1, 1],
+                      [-1, -1],
+                    ]
+                  : piece.player === "black"
+                  ? [
+                      [1, 1],
+                      [1, -1],
+                    ]
+                  : [
+                      [-1, 1],
+                      [-1, -1],
+                    ];
+                for (let [dr, dc] of directions) {
+                  const newRow = row + dr;
+                  const newCol = col + dc;
+                  const jumpRow = row + 2 * dr;
+                  const jumpCol = col + 2 * dc;
+                  if (
+                    this.isValidJump(
+                      board,
+                      row,
+                      col,
+                      newRow,
+                      newCol,
+                      jumpRow,
+                      jumpCol
+                    )
+                  ) {
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+          return false;
+        }
+
+        static getMandatoryCaptures(board, row, col) {
+          const piece = board[row][col];
+          const moves = [];
+          const directions = piece.isKing
+            ? [
+                [1, 1],
+                [1, -1],
+                [-1, 1],
+                [-1, -1],
+              ]
+            : piece.player === "black"
+            ? [
+                [1, 1],
+                [1, -1],
+              ]
+            : [
+                [-1, 1],
+                [-1, -1],
+              ];
+          directions.forEach(([dr, dc]) => {
+            const jumpRow = row + 2 * dr;
+            const jumpCol = col + 2 * dc;
+            if (
+              this.isValidJump(
+                board,
+                row,
+                col,
+                row + dr,
+                col + dc,
+                jumpRow,
+                jumpCol
+              )
+            ) {
+              moves.push({ row: jumpRow, col: jumpCol });
+            }
+          });
+          return moves;
+        }
+      }
+
+      class Input {
+        constructor(game) {
+          this.game = game;
+          this.attachEventListeners();
+        }
+
+        attachEventListeners() {
+          document
+            .getElementById("gameBoard")
+            .addEventListener("click", (event) => {
+              const square = event.target.closest(".square");
+              if (square) {
+                const row = parseInt(square.dataset.row);
+                const col = parseInt(square.dataset.col);
+                this.game.handleSquareClick(row, col);
+              }
+            });
+
+          document
+            .getElementById("startButton")
+            .addEventListener("click", () => this.game.startGame());
+          document
+            .getElementById("resetButton")
+            .addEventListener("click", () => this.game.resetGame());
+          document
+            .getElementById("restartButton")
+            .addEventListener("click", () => this.game.restartGame());
+        }
+      }
+
+      class Game {
+        constructor() {
+          this.board = Logic.createBoard();
+          this.currentPlayer = "white"; // White goes first
+          this.blackPieces = 12;
+          this.whitePieces = 12;
+          this.selectedPiece = null;
+          this.mustCapture = false;
+          new Input(this);
+          UI.updatePieceCount(this.blackPieces, this.whitePieces);
+        }
+
+        startGame() {
+          UI.showGameScreen();
+          UI.updateCurrentPlayer(this.currentPlayer);
+          UI.updateBoard(this.board, this.selectedPiece, []);
+        }
+
+        resetGame() {
+          this.board = Logic.createBoard();
+          this.currentPlayer = "white"; // White goes first
+          this.blackPieces = 12;
+          this.whitePieces = 12;
+          this.selectedPiece = null;
+          this.mustCapture = false;
+          UI.updatePieceCount(this.blackPieces, this.whitePieces);
+          UI.updateBoard(this.board, this.selectedPiece, []);
+          UI.updateCurrentPlayer(this.currentPlayer);
+        }
+
+        restartGame() {
+          this.resetGame();
+          UI.showGameScreen();
+        }
+
+        handleSquareClick(row, col) {
+          const piece = this.board[row][col];
+          if (piece && piece.player !== this.currentPlayer) {
+            return; // Only allow selection and movement of the current player's pieces
+          }
+
+          if (this.mustCapture) {
+            if (
+              this.selectedPiece &&
+              (this.selectedPiece.row !== row || this.selectedPiece.col !== col)
+            ) {
+              return; // Cannot switch pieces during a multi-jump
+            }
+            if (piece && piece.player === this.currentPlayer) {
+              this.selectedPiece = { row, col };
+              const mandatoryMoves = Logic.getMandatoryCaptures(
+                this.board,
+                row,
+                col
+              );
+              UI.updateBoard(this.board, this.selectedPiece, mandatoryMoves);
+            } else if (this.selectedPiece) {
+              const mandatoryMoves = Logic.getMandatoryCaptures(
+                this.board,
+                this.selectedPiece.row,
+                this.selectedPiece.col
+              );
+              if (
+                mandatoryMoves.some(
+                  (move) => move.row === row && move.col === col
+                )
+              ) {
+                const jumpedPlayer = Logic.movePiece(
+                  this.board,
+                  this.selectedPiece.row,
+                  this.selectedPiece.col,
+                  row,
+                  col
+                );
+                if (jumpedPlayer) {
+                  if (jumpedPlayer === "black") {
+                    this.blackPieces--;
+                  } else {
+                    this.whitePieces--;
+                  }
+                  UI.updatePieceCount(this.blackPieces, this.whitePieces);
+                }
+                UI.clearHighlights();
+                this.selectedPiece = { row, col };
+
+                const piece = this.board[row][col];
+                if (
+                  (piece.player === "black" && row === 7) ||
+                  (piece.player === "white" && row === 0)
+                ) {
+                  piece.isKing = true;
+                  this.mustCapture = false; // End turn if promotion happens
+                  this.endTurn(); // Call end turn to switch players
+                  return;
+                }
+
+                const nextMandatoryMoves = Logic.getMandatoryCaptures(
+                  this.board,
+                  row,
+                  col
+                );
+                if (nextMandatoryMoves.length > 0) {
+                  UI.updateBoard(
+                    this.board,
+                    this.selectedPiece,
+                    nextMandatoryMoves
+                  );
+                  return;
+                } else {
+                  this.mustCapture = false; // No more captures, end turn
+                  this.endTurn(); // Call end turn to switch players
+                }
+              }
+            }
+          } else {
+            if (piece && piece.player === this.currentPlayer) {
+              if (this.selectedPiece) {
+                UI.clearHighlights();
+              }
+              this.selectedPiece = { row, col };
+              const jumpsOnly = Logic.hasMandatoryCapture(
+                this.board,
+                this.currentPlayer
+              );
+              const validMoves = Logic.getValidMoves(
+                this.board,
+                row,
+                col,
+                jumpsOnly
+              );
+              UI.updateBoard(this.board, this.selectedPiece, validMoves);
+            } else if (this.selectedPiece) {
+              const jumpsOnly = Logic.hasMandatoryCapture(
+                this.board,
+                this.currentPlayer
+              );
+              const validMoves = Logic.getValidMoves(
+                this.board,
+                this.selectedPiece.row,
+                this.selectedPiece.col,
+                jumpsOnly
+              );
+              if (
+                validMoves.some((move) => move.row === row && move.col === col)
+              ) {
+                const jumpedPlayer = Logic.movePiece(
+                  this.board,
+                  this.selectedPiece.row,
+                  this.selectedPiece.col,
+                  row,
+                  col
+                );
+                if (jumpedPlayer) {
+                  if (jumpedPlayer === "black") {
+                    this.blackPieces--;
+                  } else {
+                    this.whitePieces--;
+                  }
+                  UI.updatePieceCount(this.blackPieces, this.whitePieces);
+                }
+                UI.clearHighlights();
+                this.selectedPiece = { row, col };
+
+                const piece = this.board[row][col];
+                if (
+                  (piece.player === "black" && row === 7) ||
+                  (piece.player === "white" && row === 0)
+                ) {
+                  piece.isKing = true;
+                  this.mustCapture = false; // End turn if promotion happens
+                  this.endTurn(); // Call end turn to switch players
+                  return;
+                }
+
+                if (jumpedPlayer) {
+                  const forcedCaptures = Logic.getMandatoryCaptures(
+                    this.board,
+                    row,
+                    col
+                  );
+                  if (forcedCaptures.length > 0) {
+                    UI.updateBoard(
+                      this.board,
+                      this.selectedPiece,
+                      forcedCaptures
+                    );
+                    return;
+                  } else {
+                    this.mustCapture = false; // No more captures, end turn
+                  }
+                }
+
+                this.endTurn(); // Call end turn to switch players
+              }
+            }
+          }
+        }
+
+        endTurn() {
+          this.currentPlayer =
+            this.currentPlayer === "black" ? "white" : "black";
+          this.selectedPiece = null; // Reset the selected piece
+          UI.updateBoard(this.board, this.selectedPiece, []);
+          UI.updateCurrentPlayer(this.currentPlayer);
+
+          if (this.blackPieces === 0 || this.whitePieces === 0) {
+            UI.showEndScreen(
+              this.currentPlayer === "black" ? "White" : "Black"
+            );
+          }
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        UI.showStartScreen();
+        new Game();
+      });
+    </script>
+  </body>
+</html>

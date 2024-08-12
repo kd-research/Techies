@@ -68,6 +68,10 @@ Usage:
         parser.add_argument('command', type=str, help='Command to run')
         parser.add_argument('crew', type=str, help='Crew to use', nargs='?', default="hierarchy_crew")
         parser.add_argument('--ai', type=str, help='AI to use', default="openai", choices=["groq", "openai"])
+        if not argv:
+            parser.print_help()
+            sys.exit(1)
+
         options, args = parser.parse_known_args(argv)
 
         self.assign_ai_crew(options.ai)
@@ -87,13 +91,13 @@ Usage:
             print(runtime_config())
         elif options.command == "run":
             args = [options.crew] + args
-            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2"]:
+            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2", "html5_crew"]:
                 self.kickoff_hierarchy_crew(args)
             else:
                 self.kickoff_default_crew(args)
         elif options.command == "help":
             args = [options.crew, "--help"] + args
-            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2"]:
+            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2", "html5_crew"]:
                 self.kickoff_hierarchy_crew(args)
             else:
                 self.kickoff_default_crew(args)
