@@ -30,13 +30,16 @@ class Agent(_Agent):
 
         agent_tools = []
         for tool_name in agent_config.get('tools', []):
-            # intentionally raise if tool is not available
             agent_tools.append(tools_available.get(tool_name))
 
         agent_config['tools'] = agent_tools
 
         if agent_pool is not None:
             agent_pool[config_name] = self
+
+        max_iter = kwargs.pop('max_iter', None)
+        if max_iter is not None:
+            agent_config['max_iter'] = max_iter
 
         agent_config.update(kwargs)
         super().__init__(**agent_config)
