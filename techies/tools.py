@@ -9,6 +9,12 @@ from freesound import FreesoundClient
 from pydantic.v1 import BaseModel, Field
 from tempfile import TemporaryDirectory
 from typing import Type, List, Dict, Any, Optional
+from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
+from langchain_community.utilities import GoogleSerperAPIWrapper
+
+import subprocess
+
+from langchain_community.agent_toolkits.load_tools import load_tools
 
 
 class ReadFileToolSchema(BaseModel):
@@ -56,8 +62,24 @@ class SaveSoundToolSchema(BaseModel):
         type=str, description="Name of the saved sound file without file ending. Do not include a directory. "
     )
 
+class SearchPhotoToolSchema(BaseModel):
+    query: str
+    per_page: int = 1
+    page: int = 1
+
+class SavePhotoToolSchema(BaseModel):
+    url: str = Field(type=str, description="URL of the image to download.")
+    file_name: str = Field(
+        type=str, description="Name of the file to save the image as, including file extension. Do not include a directory. "
+    )
+
 class ReadHtmlExamplesToolSchema(BaseModel):
     pass
+
+class GenerateImageToolSchema(BaseModel):
+    prompt: str = Field(type=str, description="The text prompt for generating the image. Prompt must be very detailed and specific. ")
+    size: str = Field(type=str, description="The size of the generated image, e.g., '1024x1024'.")
+
 
 class ReadFileTool(BaseTool):
     name: str = "read_file"
@@ -216,6 +238,195 @@ class SaveSoundTool(BaseTool):
         except Exception as e:
             return f"Failed to save sound: {e}"
 
+class SearchPhotoTool(BaseTool):
+    name: str = "search_photo"
+    description: str = "Search for photos using the Pexels API."
+    args_schema: Type[BaseModel] = SearchPhotoToolSchema
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> List[Dict[str, Any]]:
+        query = kwargs['query']
+        per_page = kwargs.get('per_page', 1)
+        page = kwargs.get('page', 1)
+
+        # Replace with your actual Pexels API key
+        api_key = os.environ.get('PEXELS_API_KEY')
+
+        headers = {
+            'Authorization': api_key
+        }
+
+        url = f"https://api.pexels.com/v1/search?query={query}&per_page={per_page}&page={page}"
+
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raises HTTPError if the HTTP request returned an unsuccessful status code
+        
+        results = response.json()
+        fetched_results = []
+
+        for photo in results.get('photos', []):
+            photo_id = photo.get('id')
+            photographer = photo.get('photographer')
+            photo_url = photo.get('url')
+            src = photo.get('src', {})
+            original_url = src.get('original')
+
+            fetched_results.append(
+                {
+                    "photo_id": photo_id,
+                    "photographer": photographer,
+                    "photo_url": photo_url,
+                    "original_url": original_url,
+                    "width": src.get('width'),
+                    "height": src.get('height')
+                }
+            )
+
+        return fetched_results
+
+class SavePhotoTool(BaseTool):
+    name: str = "save_photo"
+    description: str = "Download an image from a URL and save it with the specified file name."
+    args_schema: Type[BaseModel] = SavePhotoToolSchema
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> str:
+        url = kwargs['url']
+        file_name = kwargs['file_name']
+
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Check for HTTP errors
+            with open(file_name, "wb") as file:
+                file.write(response.content)
+            return f"File downloaded as {file_name}"
+        except requests.RequestException as e:
+            return f"Failed to download image: {e}"
+        except Exception as e:
+            return f"An error occurred: {e}"
+
+class GenerateImageTool(BaseTool):
+    name: str = "generate_image"
+    description: str = "Generates an image from a text prompt using the DALL-E image generator."
+    args_schema: Type[BaseModel] = GenerateImageToolSchema
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> Dict[str, Any]:
+        prompt = kwargs['prompt']
+        size = kwargs['size']
+
+        combined_prompt = prompt + " " + size
+        try:
+            # Initialize the DallEAPIWrapper
+            dalle_wrapper = DallEAPIWrapper(model="dall-e-3")
+
+            # Use the `run` method to get the image URL
+            image_url = dalle_wrapper.run(combined_prompt)
+            return image_url
+        except Exception as e:
+            return {"error": str(e)}
+
+class SearchPhotoTool(BaseTool):
+    name: str = "search_photo"
+    description: str = "Search for photos using the Pexels API."
+    args_schema: Type[BaseModel] = SearchPhotoToolSchema
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> List[Dict[str, Any]]:
+        query = kwargs['query']
+        per_page = kwargs.get('per_page', 1)
+        page = kwargs.get('page', 1)
+
+        # Replace with your actual Pexels API key
+        api_key = os.environ.get('PEXELS_API_KEY')
+
+        headers = {
+            'Authorization': api_key
+        }
+
+        url = f"https://api.pexels.com/v1/search?query={query}&per_page={per_page}&page={page}"
+
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raises HTTPError if the HTTP request returned an unsuccessful status code
+        
+        results = response.json()
+        fetched_results = []
+
+        for photo in results.get('photos', []):
+            photo_id = photo.get('id')
+            photographer = photo.get('photographer')
+            photo_url = photo.get('url')
+            src = photo.get('src', {})
+            original_url = src.get('original')
+
+            fetched_results.append(
+                {
+                    "photo_id": photo_id,
+                    "photographer": photographer,
+                    "photo_url": photo_url,
+                    "original_url": original_url,
+                    "width": src.get('width'),
+                    "height": src.get('height')
+                }
+            )
+
+        return fetched_results
+
+class SavePhotoTool(BaseTool):
+    name: str = "save_photo"
+    description: str = "Download an image from a URL and save it with the specified file name."
+    args_schema: Type[BaseModel] = SavePhotoToolSchema
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> str:
+        url = kwargs['url']
+        file_name = kwargs['file_name']
+
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Check for HTTP errors
+            with open(file_name, "wb") as file:
+                file.write(response.content)
+            return f"File downloaded as {file_name}"
+        except requests.RequestException as e:
+            return f"Failed to download image: {e}"
+        except Exception as e:
+            return f"An error occurred: {e}"
+
+class GenerateImageTool(BaseTool):
+    name: str = "generate_image"
+    description: str = "Generates an image from a text prompt using the DALL-E image generator."
+    args_schema: Type[BaseModel] = GenerateImageToolSchema
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> Dict[str, Any]:
+        prompt = kwargs['prompt']
+        size = kwargs['size']
+
+        combined_prompt = prompt + " " + size
+        try:
+            # Initialize the DallEAPIWrapper
+            dalle_wrapper = DallEAPIWrapper(model="dall-e-3")
+
+            # Use the `run` method to get the image URL
+            image_url = dalle_wrapper.run(combined_prompt)
+            return image_url
+        except Exception as e:
+            return {"error": str(e)}
+
+
 class ReadHtmlExamplesTool(BaseTool):
     name: str = "read_examples_html"
     description: str = "Read all example html games."
@@ -252,11 +463,11 @@ def get_all_tools():
     tools = {}
     toolklasses = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool
+        SaveSoundTool, SearchSoundTool, SearchPhotoTool, SavePhotoTool, GenerateImageTool, ReadHtmlExamplesTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
         tool.cache_function = no_cache
         tools[tool.name] = tool
-
+    
     return tools
