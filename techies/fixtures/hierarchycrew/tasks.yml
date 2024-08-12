@@ -72,7 +72,7 @@ game_hierarchy_inner_layers_task:
     Complete the following steps:
 
     Step 1 - Learn the structure of the outermost layer of the game hierarchy from file "game_hierarchy.xml" at the beginning by reading the file.
-    Step 2 - Fill out details, up to method abstractions of the game hierarchy, including details for Board, Bag, TurnManager, Player, Logic, Audio and other necessary components. Here is a detailed outline for the inner layer elements for each component in the outer layer of the game hierarchy that you need to generate for the provided game description: {game_specifications}:
+    Step 2 - Fill out details, up to method abstractions of the game hierarchy, including details for Board, Bag, TurnManager, Player, Logic, Audio and other necessary components. Here is a detailed outline for the inner layer elements for each component in the outer layer of the game hierarchy that you need to generate for the provided game description: {game_specifications}. All features in game description should be covered in the inner layer elements.
 
     - Game (root): The root node representing the overall game and its main components.
 

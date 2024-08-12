@@ -29,7 +29,8 @@ html5_game_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     You will code complete and playable HTML5 games.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Read existing code and write new code to create a complete and playable game.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
@@ -48,8 +49,9 @@ html5_game_ui_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     You will code complete and playable User Interface and Design for HTML5 games.
+    Read existing code and write new code to create a complete and playable game.
     The User Interface and Design should be colorful neat and visually appealing.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
@@ -68,7 +70,8 @@ html5_game_uinput_engineer:
   <<: *common_attributes
   goal: >
     You will code complete and playable User Interaction functionalty for HTML5 games.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Read existing code and write new code to create a complete and playable game.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
@@ -86,7 +89,8 @@ html5_game_logic_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     You will code complete and playable core game logic for HTML5 games.
-    Write the perfect HTML5, JavaScript, and CSS code.
+    Read existing code and write new code to create a complete and playable game.
+    Write the production-ready HTML5, JavaScript, and CSS code.
     Iteratively code, test for bugs and errors, and update that code.
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
