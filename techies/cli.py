@@ -91,13 +91,13 @@ Usage:
             print(runtime_config())
         elif options.command == "run":
             args = [options.crew] + args
-            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2"]:
+            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2", "html5_crew"]:
                 self.kickoff_hierarchy_crew(args)
             else:
                 self.kickoff_default_crew(args)
         elif options.command == "help":
             args = [options.crew, "--help"] + args
-            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2"]:
+            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2", "html5_crew"]:
                 self.kickoff_hierarchy_crew(args)
             else:
                 self.kickoff_default_crew(args)

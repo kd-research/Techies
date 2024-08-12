@@ -140,6 +140,7 @@ class ListFilesTool(BaseTool):
     def _run(self, **kwargs) -> str:
         try:
             files = os.listdir(self.base_dir)
+            files = [f for f in files if not f.startswith('.') and os.path.isfile(f"{self.base_dir}/{f}")]
             if not files:
                 return "# -- Theres nothing to be listed -- #"
             return "\n".join(files)
