@@ -5,8 +5,9 @@ _task_common: &task_common
 game_hierarchy_representation_v2:
   <<: *task_common
   agent: hierarchy_architect_v2
-  description: |
-    You are given the details and specification of an HTML5 game: {game_specifications}
+  description: >
+    You are given the details and specification of an HTML5 game: {game_specifications}    
+    Read the list of neccesary game mechanics from the current directory.
     Follow these steps to produce your output that will be a single file called game_hierarch.xml:
 
     Step 1 - Place the original game_specifications under the "Metadata" element as the first element in the game_hierarchy.xml
@@ -18,16 +19,16 @@ game_hierarchy_representation_v2:
     designers, artists, and other stakeholders involved in the game's creation.
     """
 
-    Step 3 - The outermost layer should include the following components with the descriptions according to the give game specifications:
-
+    Step 3 - The outermost layer should include the following components with the descriptions according to the given game specifications add any additional components as deemed necessary:
+    
     - Metadata: game_specifications of the game
     - Game (root)
       - Board: represents the game grid
-      - Bag: contains tiles players can draw
-      - TurnManager: manages player turns
       - Player: represents a player in the game
       - Logic: the core game mechanics
       - Audio: the required audio resources for the game
+      - Images: the required image resources for the game
+      - Rules: the rules of the game
 
     Step 4 - Provide names and descriptions for each component and define their relationships.
     Step 5 - Delegate the creation of inner layers to hierarchy_entity_engineer_v2. One component at a time.
@@ -46,12 +47,6 @@ game_hierarchy_representation_v2:
         <Board>
             <Description>Represents the 15x15 grid where players place their tiles.</Description>
         </Board>
-        <Bag>
-            <Description>Contains tiles players can draw.</Description>
-        </Bag>
-        <TurnManager>
-            <Description>Manages player turns.</Description>
-        </TurnManager>
         <Player>
             <Description>Represents a player in the game.</Description>
         </Player>
@@ -61,6 +56,18 @@ game_hierarchy_representation_v2:
         <Audio>
             <Description>The required audio resources for the game.</Description>
         </Audio>
+        <Images>
+            <Description>The required image resources for the game.</Description>
+        </Images>
+        <Rules>
+            <Description>The rules of the game.</Description>
+        </Rules>
+        <Bag>
+            <Description>Contains tiles players can draw.</Description>
+        </Bag>
+        <TurnManager>
+            <Description>Manages player turns.</Description>
+        </TurnManager>
     </Game>
     """
 
@@ -76,28 +83,14 @@ game_hierarchy_inner_layers_task:
 
     - Game (root): The root node representing the overall game and its main components.
 
-    -- Board:
+    -- Board
     --- Description: Represents the game grid where the gameplay occurs.
     --- Grid Layout: Dimensions of the grid (e.g., 10x10, 8x8).
     --- Cell Properties: Types of cells (e.g., normal, special, obstacles).
     --- Initialization: How the board is set up at the beginning of the game.
     --- Interaction: How players interact with the board (e.g., placing tiles, moving pieces).
     --- State Management: How the state of the board is tracked and updated.
-
-    -- Bag
-    --- Description: Contains the tiles or pieces that players can draw during the game.
-    --- Tile Types: Different types of tiles available (e.g., letter tiles, number tiles, special tiles).
-    --- Tile Distribution: Quantity and distribution of each tile type.
-    --- Draw Mechanism: How players draw tiles from the bag (e.g., random draw, specific conditions).
-    --- Reshuffling: Rules for reshuffling the tiles if necessary.
-
-    -- TurnManager
-    --- Description: Manages the sequence of player turns.
-    --- Turn Order: Rules for determining the order of turns (e.g., clockwise, random).
-    --- Turn Phases: Breakdown of actions in each turn (e.g., draw phase, action phase, end phase).
-    --- Timers: Any time limits on player turns.
-    --- Special Conditions: Handling of special turn-related events (e.g., skipping a turn, extra turn).
-
+    
     -- Player
     --- Description: Represents a player in the game.
     --- Player Properties: Attributes of players (e.g., name, score, current tiles).
@@ -120,6 +113,20 @@ game_hierarchy_inner_layers_task:
     --- Voice Acting: Any voice lines or narrations (e.g., tutorial guidance, character dialogues).
     --- Audio Integration: How audio is integrated and triggered within the game (e.g., event-based sounds, background loops).
     --- Volume Control: Options for adjusting audio settings (e.g., music volume, sound effects volume).
+
+    -- Images
+    --- Description: Visual representations associated with the game.
+    --- Board Images: Images for different parts of the game (e.g., background, board, pieces, buttons).
+    --- Player Avatars: Images representing different player characters or avatars.
+    --- Item Icons: Icons or images for different items, tiles, or game pieces.
+    --- UI: Images for UI elements (e.g., buttons, menus, HUD elements).
+
+    -- Rules
+    --- Description: The rules of the game.
+    --- Rule Set: Detailed list of rules that define gameplay and interactions.
+    --- Exceptions: Any exceptions or special cases within the rules.
+    --- Rule Enforcement: How rules are enforced during the game.
+    --- Rule Changes: Any rules that change during gameplay or through different game modes.
 
     Step 3 - Explicitly define the properties of each element in the game hierarchy.
     Step 4 - Explicitly define the relationship to other elements in the game hierarchy.
