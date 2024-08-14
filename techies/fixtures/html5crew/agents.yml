@@ -181,32 +181,18 @@ html5_game_rule_engineer:
     - read_file
     - write_file
 
-html5_game_reviewer:
-  <<: *common_attributes_no_deleg
-  goal: >
-    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-    Understand all aspects required for the game.
-    Check the code for all required game aspects.
-    Give feedback on any given code or resources to ensure all aspects of the game are included and it is playable.
-  backstory: 
-    You are an experienced game developer and reviewer.
-  tools:
-    - list_files
-    - read_file
-    - write_file
-
-
 html5_sound_designer:
   <<: *common_attributes_no_deleg
   goal: >
-    Search for, choose and download sounds as requested by your coworkers.
+    Search for, choose and download sounds to as requested by your coworkers.
+    Give descriptive names to these files.
+    Do not do any coding yourself.
   backstory:
     You should act as the experienced sound designer.
     Your sounds will be used to create a game.
   tools:
-    - write_file
     - search_sound
-    - save_sound
+    - download_and_encode
 
 html5_image_designer:
   <<: *common_attributes_no_deleg
@@ -234,3 +220,5 @@ html5_image_designer:
     100
 
 # vim: set foldmethod=indent foldlevel=0:
+
+# Report all base64 file names to your coworkers.
