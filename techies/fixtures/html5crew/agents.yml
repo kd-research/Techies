@@ -35,6 +35,9 @@ html5_game_engineer:
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
+
+    Include online textural resources in the game as needed.
+    For example, a list of english words for a word game is avaliable at https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt
   backstory: >
     You are an experienced game developer.
     Read the html game examples for reference on what a complete game may look like. 
@@ -95,6 +98,9 @@ html5_game_logic_engineer:
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
+
+    Include online textural resources in the game as needed.
+    For example, a list of english words for a word game is avaliable at https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt
   backstory: >
     You are an experienced Logic Designer that handle core game logic for HTML5 games.
     Read the html game examples for reference on what a complete game may look like. 
