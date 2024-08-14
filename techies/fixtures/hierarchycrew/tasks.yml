@@ -28,7 +28,7 @@ game_hierarchy_representation_v2:
       - Logic: the core game mechanics
       - Audio: the required audio resources for the game
       - Images: the required image resources for the game
-      - Rules: the rules of the game
+      - Rules: The rules of the game 
 
     Step 4 - Provide names and descriptions for each component and define their relationships.
     Step 5 - Delegate the creation of inner layers to hierarchy_entity_engineer_v2. One component at a time.
@@ -122,11 +122,20 @@ game_hierarchy_inner_layers_task:
     --- UI: Images for UI elements (e.g., buttons, menus, HUD elements).
 
     -- Rules
-    --- Description: The rules of the game.
-    --- Rule Set: Detailed list of rules that define gameplay and interactions.
-    --- Exceptions: Any exceptions or special cases within the rules.
-    --- Rule Enforcement: How rules are enforced during the game.
-    --- Rule Changes: Any rules that change during gameplay or through different game modes.
+    --- Description: The required rules menu that gives comprehensive rules and instructions for playing the game. It includes information on how players interact with the game world, achieve objectives, and any specific guidelines or restrictions.
+
+    --- Objective
+    ----- Description: The primary goal or purpose of the game that players strive to achieve. This can include winning conditions, completing specific tasks, or reaching a certain score.
+    ----- Victory Conditions: Detailed criteria for winning the game. This may include scenarios such as achieving the highest score, fulfilling a series of objectives, or outlasting opponents.
+
+    --- Controls
+    ----- Description: The input methods used to control gameplay. This section defines the various controls available to players and their corresponding actions.
+    ----- Control Scheme: A comprehensive list of controls and their functions (e.g., keyboard keys, mouse clicks, gamepad buttons). For each control, specify what it does in the context of the game.
+
+    --- Actions
+    ----- Description: Defines the possible actions a player can take during gameplay, including interactions with the game world and other players.
+    ----- Action List: A detailed list of all actions available to players, such as moving pieces, drawing cards, or using special abilities. Each action should be described with its effects and any relevant rules.
+    ----- Action Restrictions: Guidelines on when and how actions can be performed, including any limitations or conditions that must be met.
 
     Step 3 - Explicitly define the properties of each element in the game hierarchy.
     Step 4 - Explicitly define the relationship to other elements in the game hierarchy.
@@ -143,7 +152,7 @@ hierarchy_review_v2:
     Review the game_hierarchy.xml file for detailedness and completeness in accordance with the provided game_specifications. Ensure that all components
     are well-defined and relationships are correctly implemented. Lint the file to ensure proper naming
     conventions for classes, methods, and variables. Check for the following:
-    - Completeness: Ensure all components (Board, Tile, Player, Bag, TurnManager, Score, Logic, Audio) are present with detailed descriptions.
+    - Completeness: Ensure all components (Board, Tile, Player, Logic, Audio, and Rules) are present with detailed descriptions.
     - Relationships: Verify that all relationships (has_one, has_many, belongs_to) are correctly defined.
     - Naming Conventions: Ensure class names are CamelCase, method names are camelCase, and variables are snake_case.
     Provide feedback and suggest improvements if necessary.
