@@ -94,6 +94,7 @@ game_hierarchy_inner_layers_task:
         - Create XML elements for each sub-component within its respective outer component. For each sub-component: 
           - Add a description tag explaining what the subcomponent is, its role, and how it contributes to the game
           - Provide detailed descriptions of how the sub-component should be implemented, including any specific logic, UI behaviors, or interactions that it involves.
+          - When it comes to the game's logic, be sure to handle anything and everything a player may encounter: the logic must handle things such as ensuring randomness/fairness, player input handling, and edge cases.
           - If the sub-component interacts with other components, has dependencies, or is a sub-component of another sub-component, clearly define and specify those relationships.
 
       Below are some examples of inner layer elements, each example enclosed in triple backquotes:
@@ -182,6 +183,7 @@ game_hierarchy_review_v2:
         - Missing Elements: Identify any missing components or sub-components that should have been included based on the game specifications.
         - Inconsistencies: Look for inconsistencies in the descriptions, logic, or structure of the XML elements compared to the game specifications.
         - Ambiguities: Note any ambiguous or unclear descriptions that could lead to misinterpretation during implementation.
+        - Localisation of logic: Check to see if the hierarchy handles all logic, anything and everything a player may encounter within the game; the logic must cover concepts such as randomness/fairness/drawing from a limited number of pieces, player input handling, and edge cases.
 
       Propose and Delegate Changes:
         - Propose Changes: For any discrepancies, missing elements, or areas needing improvement, propose specific changes to the XML structure or content. Document these proposed changes clearly.
