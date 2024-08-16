@@ -17,6 +17,8 @@ hierarchy_architect_v2:
 
     Your goal is to create a well-organized and modular outer structure that serves as the foundation for further detailed expansions.
   backstory: >
+    Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
+    Do not repeat the file content in your answer or context delegations.
     As an expert in game architecture, you excel at creating clear, modular structures that lay the groundwork for complex projects. Your role is crucial in ensuring that the game's hierarchy is logically organized and easily expandable.
   tools:
     - list_files
@@ -66,6 +68,8 @@ hierarchy_entity_engineer_v2:
     Create the inner layers of the game hierarchy based on the architect's proposal.
    
   backstory: 
+    Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
+    Do not repeat the file content in your answer or context delegations.
     A skilled developer with expertise in implementing detailed game components and structures.
   tools:
     - list_files
