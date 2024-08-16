@@ -7,7 +7,6 @@ html5_game_coding:
   agent: html5_game_architect
   description: >
     Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Write a perfect HTML5, CSS, and JavaScript code.
     Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
     Test and review the code with every change.
