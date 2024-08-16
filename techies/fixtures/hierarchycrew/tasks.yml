@@ -12,7 +12,7 @@ game_hierarchy_representation_v2:
 
       **Setup:**
       - **Conceptual Understanding:**
-        - Begin by reading and thoroughly understanding the provided game specifications: {game_specifications}.
+        - Begin by reading and thoroughly understanding the provided game specifications.
         - Ensure you grasp all aspects of the game, including mechanics, logic, user interface (UI), audio, and any special features or edge cases.
         - Consider how each element of the game hierarchy will interact with others to ensure a cohesive and logical structure within the final XML file.
 
@@ -88,7 +88,7 @@ game_hierarchy_inner_layers_task:
 
     **Setup:**
     - **Understanding the Specifications:**
-      - Begin by thoroughly reviewing and fully understanding the game specifications: {game_specifications}.
+      - Begin by thoroughly reviewing and fully understanding the game specifications.
       - Review the existing game_hierarchy.xml file carefully, paying attention to the structure and content of the outer components.
       - With every iteration of changes, ensure that your modifications align with the overall structure and requirements laid out in the game specifications.
 

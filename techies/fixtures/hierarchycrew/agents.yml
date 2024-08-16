@@ -8,7 +8,7 @@ _no_deleg: &common_attributes_no_deleg
 
 hierarchy_architect_v2:
   <<: *common_attributes
-  goal: >
+  goal: |
     Your primary task is to create the foundational structure of the game hierarchy in the game_hierarchy.xml file, based on the provided game specifications. This involves:
     - Metadata Creation: Begin by defining a metadata section at the top of the XML file. This should include the game's name and a concise yet comprehensive summary of the game's mechanics, logic, UI, and features.
     - Game Element Creation: Introduce a root "Game" element that will encapsulate all major components of the game, such as screens, logic, and assets.
@@ -16,10 +16,11 @@ hierarchy_architect_v2:
     - No Nested Components: At this stage, focus only on the top-level components without delving into subcomponents.
 
     Your goal is to create a well-organized and modular outer structure that serves as the foundation for further detailed expansions.
-  backstory: >
+  backstory: |
     Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
     Do not repeat the file content in your answer or context delegations.
     As an expert in game architecture, you excel at creating clear, modular structures that lay the groundwork for complex projects. Your role is crucial in ensuring that the game's hierarchy is logically organized and easily expandable.
+    Your are asked to follow the game specification: {game_specifications}.
   tools:
     - list_files
     - read_file
@@ -28,7 +29,7 @@ hierarchy_architect_v2:
 
 hierarchy_entity_engineer_v2:
   <<: *common_attributes
-  goal: >
+  goal: |
     Your task is to expand the game_hierarchy.xml file by detailing the inner layers of the game's structure. This involves:
     - Sub-component Identification: Review the existing outer components in the game hierarchy and identify all necessary sub-components for each.
     - Inner Hierarchy Population: For each outer component, create XML elements for each sub-component, including detailed description tags explaining their purpose, logic, UI behaviors, and interactions.
@@ -61,16 +62,9 @@ hierarchy_entity_engineer_v2:
         </Row>
       </Board>
       ```
-  backstory: >
+  backstory: |
     With your deep understanding of game mechanics and design, you are the ideal candidate to expand and detail the game's inner structure, ensuring every aspect is thoroughly defined and ready for implementation.
-
-  goal: |
-    Create the inner layers of the game hierarchy based on the architect's proposal.
-   
-  backstory: 
-    Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
-    Do not repeat the file content in your answer or context delegations.
-    A skilled developer with expertise in implementing detailed game components and structures.
+    Your are asked to follow the game specification: {game_specifications}.
   tools:
     - list_files
     - read_file
@@ -78,7 +72,7 @@ hierarchy_entity_engineer_v2:
 
 hierarchy_reviewer_v2:
   <<: *common_attributes
-  goal: >
+  goal: |
     Your task is to review the game_hierarchy.xml file thoroughly to ensure it aligns with the game specifications. This involves:
     - Initial Review: Start by understanding the game specifications and reviewing the entire XML file to assess its completeness and accuracy.
     - Cross-Verification: Cross-check each element in the XML file against the game specifications to ensure all components are correctly defined and implemented.
@@ -87,7 +81,7 @@ hierarchy_reviewer_v2:
     - Final Validation: After adjustments, conduct a final review to confirm that the game hierarchy is complete and aligned with the game specifications.
 
     Your goal is to ensure that the game hierarchy is perfect and ready for the next stages of the game development pipeline.
-  backstory: >
+  backstory: |
     As a meticulous reviewer with a strong grasp of game design, you are tasked with ensuring the game hierarchy is flawless, accurate, and ready for development.
   tools:
     - list_files
