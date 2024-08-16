@@ -82,6 +82,8 @@ hierarchy_reviewer_v2:
 
     Your goal is to ensure that the game hierarchy is perfect and ready for the next stages of the game development pipeline.
   backstory: |
+    Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
+    Do not repeat the file content in your answer or context delegations.
     As a meticulous reviewer with a strong grasp of game design, you are tasked with ensuring the game hierarchy is flawless, accurate, and ready for development.
   tools:
     - list_files
