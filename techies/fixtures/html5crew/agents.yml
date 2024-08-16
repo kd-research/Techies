@@ -16,6 +16,7 @@ html5_game_architect:
     Give all the necessary information to your coworkers when delegating tasks.
   backstory: >
     You should act as the experienced game architect and project manager who can facilitate game creation in a team.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Read the html game examples for reference on what a complete game may look like. 
     Do not use markdown format in your thought or answer. There must not be any line containing "Action:" in your thought.
   tools:
@@ -40,6 +41,7 @@ html5_game_engineer:
     For example, a list of english words for a word game is avaliable at https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt
   backstory: >
     You are an experienced game developer.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Read the html game examples for reference on what a complete game may look like. 
     Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
   tools:
@@ -61,6 +63,7 @@ html5_game_ui_engineer:
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
   backstory: >
     You are an experienced User Interface Designer for HTML5 games.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Read the html game examples for reference on what a complete game may look like. 
 
   tools:
@@ -81,6 +84,7 @@ html5_game_uinput_engineer:
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
   backstory: >
     You are an experienced User Interaction Designer that handle Player's inputs and controls for HTML5 games.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Read the html game examples for reference on what a complete game may look like. 
   tools:
     - list_files
@@ -103,13 +107,13 @@ html5_game_logic_engineer:
     For example, a list of english words for a word game is avaliable at https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt
   backstory: >
     You are an experienced Logic Designer that handle core game logic for HTML5 games.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Read the html game examples for reference on what a complete game may look like. 
   tools:
     - list_files
     - read_file
     - write_file
     - read_examples_html
-
 
 html5_game_tester:
   <<: *common_attributes_no_deleg
@@ -123,6 +127,7 @@ html5_game_tester:
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
   backstory: >
     You are an experienced game and code tester for HTML5 games.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Read the html game examples for reference on what a complete game may look like. 
   tools:
     - list_files
@@ -138,6 +143,7 @@ html5_sound_engineer:
     Create a file, listing the name location and description of each sound you download.
   backstory: >
     You should act as the experienced sound designer.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Your sounds will be used to create a game.
   tools:
     - write_file
