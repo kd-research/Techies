@@ -167,8 +167,10 @@ html5_game_rules_engineer:
     Resolve any bugs or errors in the code.
     Consult the html5_game_tester for feedback on the code.
     Produce complete and perfect code without leaving any comments for placeholders or todo list.
-  backstory:
-    You are an experienced game and code tester for HTML5 games.
+  backstory: >
+    You are an experienced Rules and Instructions Designer that handle game rules and instructions for HTML5 games.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
+    Read the html game examples for reference on what a complete game may look like. 
   tools:
     - list_files
     - read_file
