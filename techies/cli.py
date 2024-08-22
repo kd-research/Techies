@@ -35,11 +35,29 @@ def get_openai_crew(crewname):
 
     agentops.init()
 
-    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o", temperature=0.2))
+    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0.2))
     task_pool = Task.eager_load_all(agent_pool)
     crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
 
     return crew
+
+
+def get_anthropic_crew(crewname):
+    try:
+        import agentops
+        print("Anthropic crew is not fully supported and is not compatible with agentops. An isolated environment without agentopt install is required.")
+        exit(1)
+    except ImportError:
+        pass
+
+    from langchain_anthropic import ChatAnthropic
+
+    agent_pool = Agent.eager_load_all(llm=ChatAnthropic(model="claude-3-5-sonnet-20240620"))
+    task_pool = Task.eager_load_all(agent_pool)
+    crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
+
+    return crew
+
 
 class CLI:
     def __init__(self):
@@ -50,6 +68,8 @@ class CLI:
             self.get_crew = get_groq_crew
         elif ai == "openai":
             self.get_crew = get_openai_crew
+        elif ai == "anthropic":
+            self.get_crew = get_anthropic_crew
 
     def execute(self, argv):
         description = f"""{self.prog_name} - Command line interface
@@ -67,7 +87,7 @@ Usage:
         parser = argparse.ArgumentParser(prog=self.prog_name, description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
         parser.add_argument('command', type=str, help='Command to run')
         parser.add_argument('crew', type=str, help='Crew to use', nargs='?', default="hierarchy_crew")
-        parser.add_argument('--ai', type=str, help='AI to use', default="openai", choices=["groq", "openai"])
+        parser.add_argument('--ai', type=str, help='AI to use', default="openai", choices=["groq", "openai", "anthropic"])
         if not argv:
             parser.print_help()
             sys.exit(1)
