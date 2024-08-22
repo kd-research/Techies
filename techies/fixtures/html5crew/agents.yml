@@ -120,6 +120,8 @@ html5_game_tester:
   goal: >
     Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
     Make sure that the sound files downloaded by the html5_sound_engineer are properly used in the code.
+    Make sure that the instructions menu is present and that it contains key bindings.
+    Ensure all aspects of the game_hierarchy have been implemented.
     Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
     Find and report bugs and errors in the code to the engineers.
     Test the code for completeness and playability.
@@ -149,5 +151,29 @@ html5_sound_engineer:
     - write_file
     - search_sound
     - save_sound
+
+html5_game_rules_engineer:
+  <<: *common_attributes_no_deleg
+  goal: >
+    You will code complete and playable Rules and Instructions menus for HTML5 games. Ensure these menus are in the game and not seperate files.
+    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications, details and rules.
+    Use the information from the rules section and the inputs section.
+    Identify and generate the rules of the game, and instructions on how to play the game.
+    The Rules and Instructions menus should contain information on the objective of the game, and the specific controls (inputs) and corresponding actions of the game.
+    List the controls with specific actions in a clear, structured format.
+    Use bullet points or numbered lists to ensure readability.
+    Write the perfect HTML5, JavaScript, and CSS code.
+    Iteratively code, test for bugs and errors, and update that code.
+    Resolve any bugs or errors in the code.
+    Consult the html5_game_tester for feedback on the code.
+    Produce complete and perfect code without leaving any comments for placeholders or todo list.
+  backstory: >
+    You are an experienced Rules and Instructions Designer that handle game rules and instructions for HTML5 games.
+    You are being asked to create a html5 game with following game specifications: "{game_specifications}".
+    Read the html game examples for reference on what a complete game may look like. 
+  tools:
+    - list_files
+    - read_file
+    - write_file
 
 # vim: set foldmethod=indent foldlevel=0:

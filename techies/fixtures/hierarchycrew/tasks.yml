@@ -31,6 +31,7 @@ game_hierarchy_representation_v2:
         - Break down the game into its fundamental outer components. Consider elements such as:
           - **Board:** The game board or screen for games which utilize one.
           - **Logic:** Core game logic, including turn management, scoring system, and progression mechanics.
+          - **Rules:** How the game is played, objective of the game, controls of the game, actions with corresponding controls.
           - **Assets:** Includes audio for sound effects and background music, and images for visual assets.
           - **Input:** Represents the player control schemas for the game (e.g., keyboard controls, mouse controls, on-screen interactables).
 
@@ -47,6 +48,7 @@ game_hierarchy_representation_v2:
           - **Board:** `<Board>` element covering the game's board or playing window.
           - **Screens:** `<Screens>` element with sub-elements for each screen type.
           - **Logic:** `<Logic>` element covering game mechanics, including player control and scoring.
+          - **Rules:** `<Rules>` element covering rules of the game, including objectives, controls and actions.
           - **Assets:** `<Assets>` element for audio and visual assets.
           - **Input:** `<Input>` element detailing the control mechanisms.
 
@@ -60,6 +62,9 @@ game_hierarchy_representation_v2:
             <Logic>
                 <Description>Handles the core game logic, including player control and turn management. This involves processing player inputs, updating the game state, and managing the game's progression through different levels or states.</Description>
             </Logic>
+            <Rules>
+              <Description>Details the guidelines for gameplay, including how objectives are achieved, how controls translate into actions, how points are scored, and how penalties are applied. It outlines win/loss conditions, scoring system, control mappings to actions, penalties for rule violations, and any unique game events or special rules.</Description>
+            </Rules>
             <Assets>
                 <Description>Includes all audio and visual assets necessary for the game. These assets are used to create the game's aesthetic and auditory experience, providing feedback to the player and enhancing the overall gameplay.</Description>
             </Assets>
