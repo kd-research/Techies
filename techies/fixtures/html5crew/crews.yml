@@ -13,6 +13,7 @@ html5_crew:
     - html5_game_logic_engineer
     - html5_game_tester
     - html5_sound_engineer
+    - html5_game_rules_engineer
   tasks:
     - html5_game_coding
 
