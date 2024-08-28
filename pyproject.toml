@@ -1,7 +1,7 @@
 [tool.poetry]
 authors = ["Kaidong Hu"]
 description = "LLM enhanced game generation"
-name =  "techies"
+name =	"techies"
 readme = "README.md"
 version = "0.1.2"
 
@@ -9,18 +9,20 @@ version = "0.1.2"
 techies = "techies.cli:main"
 
 [tool.poetry.dependencies]
-python                 =  "3.12.4"
+python		       =  "3.12.4"
 
-agentops               =  "^0.3.0"
-beautifulsoup4         =  "^4.12.3"
-gpt4all                =  "^2.7.0"
-groq                   =  "^0.9.0"
-langchain-community    =  "^0.2.6"
-langchain-groq         =  "^0.1.6"
+agentops	       =  "^0.3.0"
+beautifulsoup4	       =  "^4.12.3"
+gpt4all		       =  "^2.7.0"
+groq		       =  "^0.9.0"
+langchain	       =  "0.2.6"
+langchain-core	       =  "0.2.15"
+langchain-community    =  "0.2.6"
+langchain-groq	       =  "^0.1.6"
 langchain-huggingface  =  "^0.0.3"
-pyyaml                 =  "^6.0.1"
-crewai                 =  {extras    =  ["tools"],                                  version  =  "^0.36.0"}
-freesound-python       =  {git       =  "https://github.com/MTG/freesound-python",  rev      =  "5be99a3689d17303c01cb122bbb0d5a96eba04f6"}
+pyyaml		       =  "^6.0.1"
+crewai		       =  {extras    =	["tools"],				    version  =	"^0.36.0"}
+freesound-python       =  {git	     =	"https://github.com/MTG/freesound-python",  rev      =	"5be99a3689d17303c01cb122bbb0d5a96eba04f6"}
 
 
 [build-system]
