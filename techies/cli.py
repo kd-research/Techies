@@ -9,7 +9,7 @@ from techies.crew import Crew
 from techies.game_specs import game_specs, specs
 from techies.fixture_loader import runtime_config
 
-def get_groq_crew(crewname):
+def get_groq_crew(crewname, **kwargs):
     from langchain_groq import ChatGroq
 
     agent_pool = Agent.eager_load_all(llm=ChatGroq(model="llama3-8b-8192"))
@@ -29,11 +29,12 @@ def get_groq_crew(crewname):
 
     return crew
 
-def get_openai_crew(crewname):
-    import agentops
-    from langchain_openai import ChatOpenAI
+def get_openai_crew(crewname, manage_agentops=False):
+    if manage_agentops:
+        import agentops
+        agentops.init()
 
-    agentops.init()
+    from langchain_openai import ChatOpenAI
 
     agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0.2))
     task_pool = Task.eager_load_all(agent_pool)
@@ -42,7 +43,7 @@ def get_openai_crew(crewname):
     return crew
 
 
-def get_anthropic_crew(crewname):
+def get_anthropic_crew(crewname, **kwargs):
     try:
         import agentops
         print("Anthropic crew is not fully supported and is not compatible with agentops. An isolated environment without agentopt install is required.")
@@ -130,7 +131,7 @@ Usage:
         parser.add_argument('crew', type=str, help=f'Crew to use, with {extra_args[0]}')
         options = parser.parse_args(extra_args)
 
-        crew = self.get_crew(options.crew).kickoff()
+        crew = self.get_crew(options.crew, manage_agentops=True).kickoff()
 
     def kickoff_hierarchy_crew(self, extra_args):
         parser = argparse.ArgumentParser(prog=f"{self.prog_name} run", description=f"{extra_args[0]} - Description-included crew interface")
@@ -149,7 +150,7 @@ Usage:
             sys.exit(1)
 
         inputs = { "game_specifications": game_specifications }
-        crew = self.get_crew(options.crew).kickoff(inputs=inputs)
+        crew = self.get_crew(options.crew, manage_agentops=True).kickoff(inputs)
 
 
 def main():
