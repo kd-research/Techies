@@ -38,9 +38,14 @@ def get_openai_crew(crewname, manage_agentops=False):
 
     agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0.2))
     task_pool = Task.eager_load_all(agent_pool)
-    crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
-
-    return crew
+    if isinstance(crewname, str):
+        crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
+        return crew
+    elif isinstance(crewname, list):
+        crews = [Crew(crew, agent_pool=agent_pool, task_pool=task_pool) for crew in crewname]
+        return crews
+    else:
+        raise ValueError("crewname must be a string or a list of strings")
 
 
 def get_anthropic_crew(crewname, **kwargs):
