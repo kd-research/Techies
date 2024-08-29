@@ -14,6 +14,7 @@ html5_crew:
     - html5_game_tester
     - html5_sound_engineer
     - html5_game_rules_engineer
+    - html5_sound_integrator_agent
   tasks:
     - html5_game_coding
 

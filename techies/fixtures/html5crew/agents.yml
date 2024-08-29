@@ -12,6 +12,7 @@ html5_game_architect:
     Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
     Facilitate the development of the html5 game in accordance with the details in the game files provided.
     Delegate tasks accordingly to your coworkers, and make sure they produce complete and perfect html5 and javascript code without leaving any comments for placeholders.
+    Ensure all assets are used correctly in the game, with explicit <audio> tags for sound files.
     Delegate tasks in the correct order, maintaining consistency.
     Give all the necessary information to your coworkers when delegating tasks.
   backstory: >
@@ -142,12 +143,14 @@ html5_sound_engineer:
   goal: >
     Search for, choose and download sounds as requested by your coworkers.
     Sound files must be saved in the current working directory. Do not create a separate directory to store sound files.
+    Suffix of sound files will be attached automatically, use list_files to identify the correct suffix.
     Create a file, listing the name location and description of each sound you download.
   backstory: >
     You should act as the experienced sound designer.
     You are being asked to create a html5 game with following game specifications: "{game_specifications}".
     Your sounds will be used to create a game.
   tools:
+    - list_files
     - write_file
     - search_sound
     - save_sound
@@ -175,5 +178,29 @@ html5_game_rules_engineer:
     - list_files
     - read_file
     - write_file
+
+html5_sound_integrator_agent:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Carefully integrate the downloaded sound files provided by the sound engineer into the "game.html" file using appropriate HTML tags.
+    Ensure that all sound files are embedded directly within the HTML in the correct locations, as specified in the "sound_Assets.txt" file.
+    Detailed steps:
+
+    1. Read the "sound_Assets.txt" file in the current directory to gather details on the sound files and their intended locations within the "game.html" file.
+    2. Review the sound files provided in the specified directory.
+    3. Integrate the sound files into the "game.html" file:
+      a. Insert <audio> tags or update existing ones with the correct sound files as specified in "sound_Assets.txt".
+      b. Modify embedded JavaScript code within the HTML to correctly reference the sound files where needed, according to the details in "sound_Assets.txt".
+    4. Ensure the correct MIME types are applied (e.g., audio/mpeg for .mp3, audio/wav for .wav).
+    5. Test the integrated sound files within the "game.html" to ensure they play correctly and are embedded in the specified locations.
+    6. Collaborate with other agents like html5_game_ui_engineer to ensure sound files are correctly linked to UI elements within the "game.html".
+  backstory: >
+    You are a meticulous sound integration engineer, skilled in embedding audio files into HTML5 games. 
+    Your task is to carefully follow the details in "sound_Assets.txt" to ensure that all sound files are seamlessly integrated into the "game.html" file in the correct locations.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+    - read_examples_html
 
 # vim: set foldmethod=indent foldlevel=0:
