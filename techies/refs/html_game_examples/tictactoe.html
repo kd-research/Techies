@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screen.active {
+            display: flex;
+        }
+        #welcome-screen h1, #game-over-screen h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #game-board {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+        .score {
+            font-size: 1.2em;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            border: 1px solid #ccc;
+            font-size: 2em;
+            cursor: pointer;
+        }
+        .cell:hover {
+            background-color: #f9f9f9;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-screen" class="screen">
+        <h1>Welcome to Tic Tac Toe</h1>
+        <button id="play-button">Play</button>
+    </div>
+    <div id="game-board" class="screen hidden">
+        <div id="scoreboard">
+            <div id="player1-score" class="score">Player 1: 0</div>
+            <div id="player2-score" class="score">Player 2: 0</div>
+        </div>
+        <div id="board">
+            <div class="row">
+                <div class="cell" data-cell="0-0"></div>
+                <div class="cell" data-cell="0-1"></div>
+                <div class="cell" data-cell="0-2"></div>
+            </div>
+            <div class="row">
+                <div class="cell" data-cell="1-0"></div>
+                <div class="cell" data-cell="1-1"></div>
+                <div class="cell" data-cell="1-2"></div>
+            </div>
+            <div class="row">
+                <div class="cell" data-cell="2-0"></div>
+                <div class="cell" data-cell="2-1"></div>
+                <div class="cell" data-cell="2-2"></div>
+            </div>
+        </div>
+    </div>
+    <div id="game-over-screen" class="screen hidden">
+        <h1 id="game-over-message"></h1>
+        <button id="reset-button">Reset</button>
+        <button id="main-menu-button">Main Menu</button>
+    </div>
+    <div id="main-menu" class="screen hidden">
+        <button id="restart-button">Restart</button>
+        <button id="quit-button">Quit</button>
+    </div>
+    <audio id="background-music" loop>
+        <source src="background_music.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="place-mark-sound">
+        <source src="place-mark-sound.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="win-sound">
+        <source src="win-sound.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="draw-sound">
+        <source src="draw-sound.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const playButton = document.getElementById('play-button');
+            const gameBoard = document.getElementById('game-board');
+            const cells = document.querySelectorAll('.cell');
+            const gameOverScreen = document.getElementById('game-over-screen');
+            const gameOverMessage = document.getElementById('game-over-message');
+            const resetButton = document.getElementById('reset-button');
+            const mainMenuButton = document.getElementById('main-menu-button');
+            const mainMenu = document.getElementById('main-menu');
+            const restartButton = document.getElementById('restart-button');
+            const quitButton = document.getElementById('quit-button');
+            const player1ScoreElement = document.getElementById('player1-score');
+            const player2ScoreElement = document.getElementById('player2-score');
+
+            const backgroundMusic = document.getElementById('background-music');
+            const placeMarkSound = document.getElementById('place-mark-sound');
+            const winSound = document.getElementById('win-sound');
+            const drawSound = document.getElementById('draw-sound');
+
+            let player1Score = 0;
+            let player2Score = 0;
+            let currentPlayer = 'X';
+            let board = ['', '', '', '', '', '', '', '', ''];
+            let gameActive = true;
+
+            playButton.addEventListener('click', startGame);
+            cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+            resetButton.addEventListener('click', resetGame);
+            mainMenuButton.addEventListener('click', showMainMenu);
+            restartButton.addEventListener('click', restartGame);
+            quitButton.addEventListener('click', quitGame);
+
+            function startGame() {
+                welcomeScreen.classList.add('hidden');
+                gameBoard.classList.remove('hidden');
+                gameBoard.classList.add('active');
+                playBackgroundMusic();
+            }
+
+            function handleCellClick(event) {
+                const cell = event.target;
+                const cellIndex = Array.from(cells).indexOf(cell);
+
+                if (board[cellIndex] !== '' || !gameActive) {
+                    return;
+                }
+
+                updateCell(cell, cellIndex);
+                playSoundEffect(placeMarkSound);
+                checkResult();
+            }
+
+            function updateCell(cell, index) {
+                board[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+
+            function checkResult() {
+                const winningConditions = [
+                    [0, 1, 2],
+                    [3, 4, 5],
+                    [6, 7, 8],
+                    [0, 3, 6],
+                    [1, 4, 7],
+                    [2, 5, 8],
+                    [0, 4, 8],
+                    [2, 4, 6]
+                ];
+
+                let roundWon = false;
+                for (let i = 0; i < winningConditions.length; i++) {
+                    const [a, b, c] = winningConditions[i];
+                    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                        roundWon = true;
+                        break;
+                    }
+                }
+
+                if (roundWon) {
+                    gameActive = false;
+                    gameOverMessage.textContent = `${currentPlayer === 'X' ? 'O' : 'X'} Wins!`;
+                    gameOverScreen.classList.remove('hidden');
+                    gameOverScreen.classList.add('active');
+                    updateScore(currentPlayer === 'X' ? 'O' : 'X');
+                    playSoundEffect(winSound);
+                    stopBackgroundMusic();
+                    return;
+                }
+
+                if (!board.includes('')) {
+                    gameActive = false;
+                    gameOverMessage.textContent = 'Draw!';
+                    gameOverScreen.classList.remove('hidden');
+                    gameOverScreen.classList.add('active');
+                    playSoundEffect(drawSound);
+                    stopBackgroundMusic();
+                    return;
+                }
+            }
+
+            function updateScore(winner) {
+                if (winner === 'X') {
+                    player1Score++;
+                    player1ScoreElement.textContent = `Player 1: ${player1Score}`;
+                } else {
+                    player2Score++;
+                    player2ScoreElement.textContent = `Player 2: ${player2Score}`;
+                }
+            }
+
+            function resetGame() {
+                board = ['', '', '', '', '', '', '', '', ''];
+                cells.forEach(cell => cell.textContent = '');
+                gameActive = true;
+                gameOverScreen.classList.add('hidden');
+                gameOverScreen.classList.remove('active');
+                playBackgroundMusic();
+            }
+
+            function showMainMenu() {
+                gameBoard.classList.add('hidden');
+                gameBoard.classList.remove('active');
+                mainMenu.classList.remove('hidden');
+                mainMenu.classList.add('active');
+                stopBackgroundMusic();
+            }
+
+            function restartGame() {
+                mainMenu.classList.add('hidden');
+                mainMenu.classList.remove('active');
+                gameBoard.classList.remove('hidden');
+                gameBoard.classList.add('active');
+                resetGame();
+            }
+
+            function quitGame() {
+                mainMenu.classList.add('hidden');
+                mainMenu.classList.remove('active');
+                welcomeScreen.classList.remove('hidden');
+                resetGame();
+                player1Score = 0;
+                player2Score = 0;
+                player1ScoreElement.textContent = 'Player 1: 0';
+                player2ScoreElement.textContent = 'Player 2: 0';
+                stopBackgroundMusic();
+            }
+
+            function playBackgroundMusic() {
+                backgroundMusic.play();
+            }
+
+            function stopBackgroundMusic() {
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0;
+            }
+
+            function playSoundEffect(sound) {
+                sound.play();
+            }
+        });
+    </script>
+</body>
+</html>

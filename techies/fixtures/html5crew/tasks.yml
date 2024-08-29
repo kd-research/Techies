@@ -10,6 +10,7 @@ html5_game_coding:
     Write a perfect HTML5, CSS, and JavaScript code.
     Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
     Test and review the code with every change.
+    Sound is required for the game.
     Delegate the task of coding the different parts of the game to the most fitting agents.
     For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
     Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
