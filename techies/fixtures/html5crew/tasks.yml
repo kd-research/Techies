@@ -14,6 +14,7 @@ html5_game_coding:
     Delegate the task of coding the different parts of the game to the most fitting agents.
     For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
     Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
+    Delegate the task of generating and integrating a comprehensive Rules and Instructions menu into the "game.html" to html5_game_rules_engineer agent based on the game hierarchy and interactions outlined in game_hierarchy.xml and game.html files.
     Delegate the task of downloading the sound resources as per the "game_hierarchy.xml" to html5_sound_engineer agent.
     Delegate the task of integrating the downloaded sounds to html5_sound_integrator_agent agent. Make sure that html5_sound_integrator_agent agent consult with co-workers to carefully integrate the downloaded sound files provided by the sound engineer into the "game.html" file using the <audio> tags at their appropriate places.
     Delegate the task of testing the code and giving feedback to the html5_game_tester.
