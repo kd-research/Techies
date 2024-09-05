@@ -93,20 +93,30 @@
       #end-game {
         margin-top: 20px;
       }
+
+      .active {
+        display: block !important;
+      }
+
+      #start-menu,
+      #game-container,
+      #end-game {
+        display: none;
+      }
     </style>
   </head>
   <body>
-    <div id="start-menu">
+    <div id="start-menu" class="active">
       <h1>Welcome to Wordle</h1>
       <button id="start-game-button">Start Game</button>
     </div>
-    <div id="game-container" style="display: none">
+    <div id="game-container">
       <div id="wordle-board"></div>
       <div id="keyboard"></div>
       <div id="controls">
         <button id="submit-word">Submit</button>
       </div>
-      <div id="end-game" style="display: none">
+      <div id="end-game">
         <h2 id="end-message"></h2>
         <button id="play-again">Play Again</button>
       </div>
@@ -490,8 +500,8 @@
         const wordleInput = new WordleInput(wordleBoard, keyboard, wordleGame);
 
         startButton.addEventListener("click", () => {
-          startMenu.style.display = "none";
-          gameContainer.style.display = "block";
+	  startMenu.classList.remove("active");
+          gameContainer.classList.add("active");
           wordleGame.start();
         });
 

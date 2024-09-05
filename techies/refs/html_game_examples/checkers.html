@@ -14,17 +14,19 @@
         font-family: Arial, sans-serif;
       }
 
-      .hidden {
-        display: none !important; /* Use !important to ensure this takes precedence */
+      .active {
+        display: block !important;
       }
 
       #startScreen,
-      #endScreen {
+      #endScreen,
+      #gameScreen {
+        display: none; /* Set default display to none */
         text-align: center;
       }
 
+
       #gameScreen {
-        display: flex;
         flex-direction: column;
         align-items: center;
       }
@@ -89,7 +91,7 @@
       <h1>Welcome to Checkers</h1>
       <button id="startButton">Start Game</button>
     </div>
-    <div id="gameScreen" class="hidden">
+    <div id="gameScreen">
       <div id="gameInfo">
         <p id="currentPlayer">Current Player:</p>
         <p id="blackPieces">Black Pieces: 12</p>
@@ -98,7 +100,7 @@
       </div>
       <div id="gameBoard"></div>
     </div>
-    <div id="endScreen" class="hidden">
+    <div id="endScreen">
       <h1 id="endMessage"></h1>
       <button id="restartButton">Play Again</button>
     </div>
@@ -120,22 +122,25 @@
         }
 
         static showStartScreen() {
-          document.getElementById("startScreen").classList.remove("hidden");
-          document.getElementById("gameScreen").classList.add("hidden");
-          document.getElementById("endScreen").classList.add("hidden");
+          UI.hideAllScreens();
+          document.getElementById("startScreen").classList.add("active");
         }
 
         static showGameScreen() {
-          document.getElementById("startScreen").classList.add("hidden");
-          document.getElementById("gameScreen").classList.remove("hidden");
-          document.getElementById("endScreen").classList.add("hidden");
+          UI.hideAllScreens();
+          document.getElementById("gameScreen").classList.add("active");
         }
 
         static showEndScreen(winner) {
           document.getElementById("endMessage").innerText = `${winner} Wins!`;
-          document.getElementById("startScreen").classList.add("hidden");
-          document.getElementById("gameScreen").classList.add("hidden");
-          document.getElementById("endScreen").classList.remove("hidden");
+          UI.hideAllScreens();
+          document.getElementById("endScreen").classList.add("active");
+        }
+
+        static hideAllScreens() {
+          document.getElementById("startScreen").classList.remove("active");
+          document.getElementById("gameScreen").classList.remove("active");
+          document.getElementById("endScreen").classList.remove("active");
         }
 
         static updateBoard(board, selectedPiece, validMoves) {
