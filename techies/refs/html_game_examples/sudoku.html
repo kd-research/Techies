@@ -64,20 +64,28 @@
       #end-game {
         margin-top: 20px;
       }
+
+      .active {
+        display: block !important;
+      }
+
+      #start-menu, #game-container, #end-game {
+        display: none;
+      }
     </style>
   </head>
   <body>
-    <div id="start-menu">
+    <div id="start-menu" class="active">
       <h1>Welcome to Sudoku</h1>
       <button id="start-game-button">Start Game</button>
     </div>
-    <div id="game-container" style="display: none">
+    <div id="game-container">
       <div id="sudoku-board"></div>
       <div id="controls">
         <button id="check-solution">Check Solution</button>
         <button id="reset-board">Reset Board</button>
       </div>
-      <div id="end-game" style="display: none">
+      <div id="end-game">
         <h2 id="end-message"></h2>
         <button id="play-again">Play Again</button>
       </div>
@@ -350,13 +358,13 @@
               endMessage.textContent =
                 "The solution is incorrect or incomplete. Try again!";
             }
-            endGameContainer.style.display = "block";
+            endGameContainer.classList.add("active");
           }
 
           reset() {
             this.board = this.logic.generateBoard();
             this.ui.initializeBoard(this.board);
-            endGameContainer.style.display = "none";
+            endGameContainer.classList.remove("active");
           }
         }
 
@@ -365,8 +373,8 @@
         const sudokuGame = new SudokuGame(sudokuUI, sudokuLogic);
 
         startButton.addEventListener("click", () => {
-          startMenu.style.display = "none";
-          gameContainer.style.display = "block";
+          startMenu.classList.remove("active");
+          gameContainer.classList.add("active");
           sudokuGame.start();
         });
 
@@ -379,7 +387,7 @@
         });
 
         playAgainButton.addEventListener("click", () => {
-          endGameContainer.style.display = "none";
+          endGameContainer.classList.remove("active");
           sudokuGame.reset();
         });
       });
