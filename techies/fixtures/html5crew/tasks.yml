@@ -21,7 +21,6 @@ html5_game_coding:
     Do not finalize your answer until the html5_game_tester says the game is complete and playable, and you have met all requirements.
     Your final output should include code in a single file for the game and only HTML5 code for the game.
   expected_output: >
-    Your final answer should be a single file game.html that contains the complete game code inlcuding html, javascript and CSS.
-  output_file: game.html
+    After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
 
 # vim: set foldmethod=indent foldlevel=0:

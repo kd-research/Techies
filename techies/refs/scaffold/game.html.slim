@@ -1,0 +1,90 @@
+doctype 5
+html
+  head
+    meta charset="utf-8"
+    meta name="viewport" content="width=640, height=960, user-scalable=no"
+    title
+      /! Your game title
+    sass:
+      body
+        margin: 0
+        padding: 0
+
+      .active
+        display: block !important
+
+      .screen
+        display: none
+        /* Change game window size when needed
+        width: 640px
+        height: 960px
+        position: absolute
+        top: calc(50% - 480px)
+        left: calc(50% - 320px)
+        border: 1px solid black
+
+      #start-menu-screen .container
+        display: flex
+        /* Change display properties when needed
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        height: 100%
+
+        #game-title
+          /* Title styles here
+        button
+          /* Button styles here
+
+      #settings-screen.screen .container
+        /* Settings screen styles here
+        button
+          /* Button styles here
+
+      #instructions-screen.screen .container
+        /* Instructions screen styles here
+        button
+          /* Button styles here
+
+      #game-container.screen .container
+        /* Game container styles here
+        button
+          /* Button styles here
+
+      #game-over-screen.screen .container
+        /* Game over screen styles here
+        #game-over-message
+          /* Game over message styles here
+        button
+          /* Button styles here
+
+      /* Add more styles here
+  body
+    #start-menu-screen.active.screen
+      .container
+        h1#game-title Your Game Title
+        button#play-button Play
+        button#settings-button Settings
+        button#instructions-button Instructions
+    #settings-screen.screen
+      .container
+        button#setting-back-button.main-menu-button Back
+    #instructions-screen.screen
+      .container
+        button#instructions-back-button.main-menu-button Back
+    #game-container.screen: .container
+    #game-over-screen.screen
+      .container
+        #game-over-message
+        button#play-again-button Play Again
+        button#game-over-main-menu-button.main-menu-button Main Menu
+    audio#background-music autoplay=true loop=true
+      source src="background-music.mp3" type="audio/mpeg"
+    audio#start-game-sound
+      source src="start-game-sound.mp3" type="audio/mpeg"
+
+    /! Extra audio tags for sound effects
+
+    script
+      include game.js
+

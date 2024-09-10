@@ -2,12 +2,14 @@ import argparse
 import os
 import sys
 import fileinput
+import shutil
 
 from techies.agent import Agent
 from techies.task import Task
 from techies.crew import Crew
 from techies.game_specs import game_specs, specs
 from techies.fixture_loader import runtime_config
+from importlib.metadata import version
 
 def get_groq_crew(crewname, **kwargs):
     from langchain_groq import ChatGroq
@@ -123,8 +125,10 @@ Usage:
                 self.kickoff_default_crew(args)
         elif options.command == "help":
             args = [options.crew, "--help"] + args
-            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2", "html5_crew"]:
+            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2"]:
                 self.kickoff_hierarchy_crew(args)
+            elif options.crew in ["html5_crew"]:
+                self.kickoff_html5_crew(args)
             else:
                 self.kickoff_default_crew(args)
 
@@ -157,6 +161,16 @@ Usage:
         inputs = { "game_specifications": game_specifications }
         crew = self.get_crew(options.crew, manage_agentops=True).kickoff(inputs)
 
+    def kickoff_html5_crew(self, extra_args):
+        if "--help" in extra_args:
+            kickoff_hierarchy_crew(extra_args)
+            return
+
+        if not os.path.exists("game.html"):
+            scaffold_file_path = os.path.normpath(__file__ + "../refs/build/game.html")
+            shutil.copy(scaffold_file_path, "game.html")
+
+        kickoff_hierarchy_crew(extra_args)
 
 def main():
     cli = CLI()
