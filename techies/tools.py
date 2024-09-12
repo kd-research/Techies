@@ -24,8 +24,8 @@ class BatchReadFilesToolSchema(BaseModel):
 class WriteFileToolSchema(BaseModel):
     path: str = Field(type=str, description="The path to the file to write.")
 
-    content: Any = Field(
-        type=Any,
+    content: str = Field(
+        type=str,
         description=
         "The content to write to the file. Field should be formatted as a string."
     )
@@ -60,7 +60,8 @@ class ReadHtmlExamplesToolSchema(BaseModel):
     pass
 
 class ReadFileTool(BaseTool):
-    name: str = "read_file"
+    name: str = "Read a File"
+    id: str = "read_file"
     description: str = "Read the contents of a file from the bucket."
     args_schema: Type[BaseModel] = ReadFileToolSchema
     base_dir: str
@@ -81,7 +82,8 @@ class ReadFileTool(BaseTool):
 
 
 class BatchReadFilesTool(BaseTool):
-    name: str = "batch_read_files"
+    name: str = "Read Some Files"
+    id: str = "batch_read_files"
     description: str = "Read contents of files. Same as read_file but for multiple files."
     args_schema: Type[BaseModel] = BatchReadFilesToolSchema
     base_dir: str
@@ -104,7 +106,8 @@ class BatchReadFilesTool(BaseTool):
 
 
 class WriteFileTool(BaseTool):
-    name: str = "write_file"
+    name: str = "Update a File"
+    id: str = "write_file"
     description: str = "Write content of a file to the bucket."
     args_schema: Type[BaseModel] = WriteFileToolSchema
     base_dir: str
@@ -114,22 +117,37 @@ class WriteFileTool(BaseTool):
 
     def _run(self, **kwargs) -> str:
         try:
+            import difflib
+
             path = kwargs['path'].replace("/", "-")
             content = kwargs['content']
 
             if not isinstance(content, str):
                 content = json.dumps(content)
 
-            with open(f"{self.base_dir}/{path}", "w") as f:
-                f.write(content)
+            if not os.path.exists(self.base_dir):
+                with open(f"{self.base_dir}/{path}", "w") as f:
+                    f.write(content)
 
-            return "File written successfully"
+                return f"File {path} created successfully."
+            else:
+                with open(f"{self.base_dir}/{path}", "r") as f:
+                    old_content = f.read()
+
+                with open(f"{self.base_dir}/{path}", "w") as f:
+                    f.write(content)
+
+                diff = difflib.unified_diff(old_content.splitlines(), content.splitlines(), fromfile=f"before/{path}", tofile=f"after/{path}")
+                diff = "\n".join(diff)
+                return f"File {path} updated successfully.Summary of Changes:\n\n{diff}"
+
         except Exception as e:
             return f"Failed to write file: {e}"
 
 
 class ListFilesTool(BaseTool):
-    name: str = "list_files"
+    name: str = "List Existing Files"
+    id: str = "list_files"
     description: str = "List the files in current bucket."
     args_schema: Type[BaseModel] = ListFilesToolSchema
     base_dir: str
@@ -150,6 +168,7 @@ class ListFilesTool(BaseTool):
 
 class SearchSoundTool(BaseTool):
     name: str = "search_sound"
+    id: str = "search_sound"
     description: str = "Search for sounds using the FreeSound API."
     args_schema: Type[BaseModel] = SearchSoundToolSchema
 
@@ -195,6 +214,7 @@ class SearchSoundTool(BaseTool):
 
 class SaveSoundTool(BaseTool):
     name: str = "save_sound"
+    id: str = "save_sound"
     description: str = "Save a sound file from FreeSound using the sound ID."
     args_schema: Type[BaseModel] = SaveSoundToolSchema
 
@@ -217,7 +237,8 @@ class SaveSoundTool(BaseTool):
             return f"Failed to save sound: {e}"
 
 class ReadHtmlExamplesTool(BaseTool):
-    name: str = "read_examples_html"
+    name: str = "Read HTML examples"
+    id: str = "read_examples_html"
     description: str = "Read all example html games."
     args_schema: Type[BaseModel] = ReadHtmlExamplesToolSchema
     base_dir: str
@@ -257,6 +278,6 @@ def get_all_tools():
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
         tool.cache_function = no_cache
-        tools[tool.name] = tool
+        tools[tool.id] = tool
 
     return tools
