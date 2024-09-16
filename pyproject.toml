@@ -32,6 +32,9 @@ freesound-python       =  {git       =  "https://github.com/MTG/freesound-python
 # groq = ["groq", "langchain-groq"]
 # local = ["gpt4all", "langchain-huggingface"]
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
