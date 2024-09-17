@@ -3,6 +3,10 @@ import functools
 import re
 
 from openai import OpenAI, AuthenticationError, RateLimitError
+from typing import List
+from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
 
 @functools.lru_cache(maxsize=1)
 def is_openai_available():
@@ -35,4 +39,20 @@ def expect_all_present(string, targets):
 
 def refute_any_present(string, targets):
     return not any((target in string) for target in targets)
+
+class MockLLM(BaseChatModel):
+    DEFAULT_RESPONSE = "Thought: I now can give a great answer\nFinal Answer: my final answer"
+    called_times: int = 0
+    last_messages: List[str] = []
+    responses: List[str] = []
+
+    def _generate(self, messages, **kwargs):
+        self.called_times += 1
+        self.last_messages.append(messages[-1].content)
+        response = self.responses.pop(0) if self.responses else self.DEFAULT_RESPONSE
+        return ChatResult(generations=[ChatGeneration(message=AIMessage(content=response))])
+
+    @property
+    def _llm_type(self):
+        return "mocked"
 

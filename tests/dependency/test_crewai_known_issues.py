@@ -1,30 +1,10 @@
-import re
 import crewai
 import pytest
 
 from importlib.metadata import version
 from crewai_tools import BaseTool, tool
-from typing import List
-from tests.helpers import expect_all_present, refute_any_present
-from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage
-from langchain_core.outputs import ChatGeneration, ChatResult
+from tests.helpers import expect_all_present, refute_any_present, MockLLM
 
-class MockLLM(BaseChatModel):
-    DEFAULT_RESPONSE = "Thought: I now can give a great answer\nFinal Answer: my final answer"
-    called_times: int = 0
-    last_messages: List[str] = []
-    responses: List[str] = []
-
-    def _generate(self, messages, **kwargs):
-        self.called_times += 1
-        self.last_messages.append(messages[-1].content)
-        response = self.responses.pop(0) if self.responses else self.DEFAULT_RESPONSE
-        return ChatResult(generations=[ChatGeneration(message=AIMessage(content=response))])
-
-    @property
-    def _llm_type(self):
-        return "mocked"
 
 class TruthyTools(BaseTool):
     name: str = "TRUTHYTOOL"
@@ -62,7 +42,7 @@ Provided message:
 """
     assert otherllm.called_times == 0
 
-    assert result == "my final answer"
+    assert str(result) == "my final answer"
 
 class CountingTool(BaseTool):
     name: str = "COUNTINGTOOL"
@@ -123,7 +103,7 @@ Action Input: {{}}
     assert expect_all_present(message, "Observation,I tried reusing the same input".split(","))
 
     assert get_tool_number_of_calls(tool) == 1
-    assert result == "my final answer"
+    assert str(result) == "my final answer"
 
 
 @pytest.mark.parametrize("tool", [CountingTool(), FUNCTIONTOOL])
@@ -164,5 +144,5 @@ Provided message:
 
     assert get_tool_number_of_calls(tool) == 2
 
-    assert result == "my final answer"
+    assert str(result) == "my final answer"
 

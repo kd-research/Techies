@@ -3,27 +3,7 @@ import crewai
 import pytest
 
 from crewai_tools import BaseTool
-from typing import List
-from tests.helpers import expect_all_present, refute_any_present
-from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage
-from langchain_core.outputs import ChatGeneration, ChatResult
-
-class MockLLM(BaseChatModel):
-    DEFAULT_RESPONSE = "Thought: I now can give a great answer\nFinal Answer: my final answer"
-    called_times: int = 0
-    last_messages: List[str] = []
-    responses: List[str] = []
-
-    def _generate(self, messages, **kwargs):
-        self.called_times += 1
-        self.last_messages.append(messages[-1].content)
-        response = self.responses.pop(0) if self.responses else self.DEFAULT_RESPONSE
-        return ChatResult(generations=[ChatGeneration(message=AIMessage(content=response))])
-
-    @property
-    def _llm_type(self):
-        return "mocked"
+from tests.helpers import expect_all_present, refute_any_present, MockLLM
 
 # CrewAI agent should see all the information
 def test_crewai_calls_llm():
