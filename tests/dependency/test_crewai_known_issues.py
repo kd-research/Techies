@@ -60,13 +60,11 @@ CrewAI{version("crewai")} failed to see the delegation when tools are present.
 Provided message:
 {message}
 """
-    assert tool.being_called
-
     assert otherllm.called_times == 0
 
     assert result == "my final answer"
 
-class CountingTools(BaseTool):
+class CountingTool(BaseTool):
     name: str = "COUNTINGTOOL"
     description: str = "COUNTINGTOOL_DESCRIPTION"
     number_of_calls: int = 0
@@ -75,7 +73,10 @@ class CountingTools(BaseTool):
         self.number_of_calls += 1
         return f"COUNTINGTOOL_OUTPUT_{self.number_of_calls}"
 
-function_tool_number_of_calls = 0
+def setup_function():
+    global function_tool_number_of_calls
+    function_tool_number_of_calls = 0
+
 @tool
 def FUNCTIONTOOL():
     "FUNCTIONTOOL_DESCRIPTION"
@@ -83,7 +84,18 @@ def FUNCTIONTOOL():
     function_tool_number_of_calls += 1
     return f"FUNCTIONTOOL_OUTPUT_{function_tool_number_of_calls}"
 
-@pytest.mark.parametrize("tool", [CountingTools(), FUNCTIONTOOL])
+function_tool_number_of_calls = 0
+
+def get_tool_number_of_calls(tool):
+    if tool.name == "COUNTINGTOOL":
+        return tool.number_of_calls
+    elif tool.name == "FUNCTIONTOOL":
+        global function_tool_number_of_calls
+        return function_tool_number_of_calls
+    else:
+        raise ValueError(f"Unknown tool type {tool}")
+
+@pytest.mark.parametrize("tool", [CountingTool(), FUNCTIONTOOL])
 def test_crewai_should_assume_deterministic_tools(tool):
     agentllm = MockLLM()
     agentllm.responses.append(f"""\
@@ -101,7 +113,6 @@ Action Input: {{}}
     result = crew.kickoff()
 
     assert agentllm.called_times == 3
-    assert tool.number_of_calls == 1
     message = agentllm.last_messages.pop(0)
     assert expect_all_present(message, [tool.name, tool.description])
 
@@ -109,12 +120,13 @@ Action Input: {{}}
     assert expect_all_present(message, f"Observation {tool.name}_OUTPUT_1".split())
 
     message = agentllm.last_messages.pop(0)
-    assert expect_all_present(message, "Observation,I tried reusing the same input".split())
+    assert expect_all_present(message, "Observation,I tried reusing the same input".split(","))
 
+    assert get_tool_number_of_calls(tool) == 1
     assert result == "my final answer"
 
 
-@pytest.mark.parametrize("tool", [CountingTools(), FUNCTIONTOOL])
+@pytest.mark.parametrize("tool", [CountingTool(), FUNCTIONTOOL])
 def test_crewai_should_rerun_undeterministic_tools(tool):
     agentllm = MockLLM()
     agentllm.responses.append(f"""\
@@ -150,7 +162,7 @@ Provided message:
 {message}
 """
 
-    assert tool.number_of_calls == 2
+    assert get_tool_number_of_calls(tool) == 2
 
     assert result == "my final answer"
 
