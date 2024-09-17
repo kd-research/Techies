@@ -1,3 +1,4 @@
+import os
 import functools
 import re
 
@@ -5,7 +6,12 @@ from openai import OpenAI, AuthenticationError, RateLimitError
 
 @functools.lru_cache(maxsize=1)
 def is_openai_available():
-    client = OpenAI()
+    if "OPENAI_TEST_KEY" not in os.environ:
+        return False, "OPENAI_TEST_KEY is not set"
+
+    del os.environ["OPENAI_API_KEY"]
+
+    client = OpenAI(api_key=os.environ["OPENAI_TEST_KEY"])
 
     try:
         client.models.list()
