@@ -40,7 +40,7 @@ def test_crewai_calls_llm():
     assert expect_all_present(agentllm.last_messages[-1], "AGENT_AGENT AGENT_GOAL AGENT_BACKSTORY TASK_DESCRIPTION TAST_EXPECTED_OUTPUT".split())
     assert otherllm.called_times == 0
 
-    assert result == "my final answer"
+    assert str(result) == "my final answer"
 
 # When the agent is not allowed to delegate, it should not see any other agent
 def test_agent_should_sees_no_delegation():
@@ -57,7 +57,7 @@ def test_agent_should_sees_no_delegation():
     refute_any_present(agentllm.last_messages[-1], "Delegate work to coworker,Ask question to coworker,UNUSEDAGENT_AGENT".split(","))
     assert otherllm.called_times == 0
 
-    assert result == "my final answer"
+    assert str(result) == "my final answer"
 
 def test_crewai_seeing_delegation():
     agentllm = MockLLM()
@@ -89,7 +89,7 @@ Action Input: {"task": "DELEGATE_GOAL", "context": "DELEGATE_BACKSTORY", coworke
     assert expect_all_present(message, "DELEGATE_GOAL DELEGATE_BACKSTORY".split())
     assert refute_any_present(message, "Delegate work to coworker,AGENT_AGENT".split(","))
 
-    assert result == "my final answer"
+    assert str(result) == "my final answer"
 
 
 class TruthyTools(BaseTool):
@@ -134,5 +134,5 @@ Action Input: {"argument": "TRUTHYTOOL_ARGUMENT"}
     message = otherllm.last_messages.pop(0)
     assert refute_any_present(message, "TRUTHYTOOL TRUTHYTOOL_DESCRIPTION".split())
 
-    assert result == "OTHER_AGENT's final answer"
+    assert str(result) == "OTHER_AGENT's final answer"
 
