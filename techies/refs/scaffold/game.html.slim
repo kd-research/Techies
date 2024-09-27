@@ -2,7 +2,7 @@ doctype 5
 html
   head
     meta charset="utf-8"
-    meta name="viewport" content="width=device-width, user-scalable=no"
+    meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"
     title
       /! Your game title
     sass:
@@ -15,13 +15,12 @@ html
 
       .screen
         display: none
-        /* Change game window size when needed
-        width: 640px
-        height: 960px
-        position: absolute
-        top: calc(50% - 480px)
-        left: calc(50% - 320px)
-        border: 1px solid black
+        position: fixed
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        /* background-color: #000000
 
       #start-menu-screen .container
         display: flex
