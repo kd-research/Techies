@@ -3,17 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
     <title><!--Your game title--></title>
     <style>
       body {
         margin: 0;
         padding: 0;
       }
-      
+
       .active {
         display: block !important;
       }
-      
+
       .screen {
         display: none;
         position: fixed;
@@ -23,54 +24,188 @@
         height: 100%;
         /* background-color: #000000 */
       }
-      
+
       #start-menu-screen .container {
+        /* Background gradient resembling a game interface */
+        background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+
+        /* Positioning and layering */
+        position: relative;
+        overflow: hidden;
+
+        /* White border with rounded corners */
+        border: 3px solid #fff;
+        border-radius: 12px;
+        height: 100%;
+
+        /* Shadow for a 3D effect */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+        /* Text styling */
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+
+        /* Spacing */
+        padding: 25px;
+
+        /* Flexbox for centering content */
         display: flex;
-        /* Change display properties when needed */
         flex-direction: column;
         justify-content: center;
-        align-items: center;
-        height: 100%;
+        box-sizing: border-box;
       }
       #start-menu-screen .container #game-title {
         /* Title styles here */
+        font-size: 48px;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px #000000;
+        margin-bottom: 50px;
       }
       #start-menu-screen .container button {
         /* Button styles here */
+        /* Background gradient */
+        background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
+
+        /* White border and rounded corners */
+        border: 2px solid #fff;
+        border-radius: 8px;
+
+        /* Text styling */
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 18px;
+        text-transform: uppercase;
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+
+        /* Shadow for depth */
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+
+        /* Spacing */
+        padding: 12px 30px;
+        margin: 20px auto 0;
+        display: inline-block;
+        width: 215.15px;
+
+        /* Cursor and transitions */
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
       }
-      
+      #start-menu-screen .container button:hover {
+        /* Hover effects */
+        background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
+        transform: scale(1.05);
+      }
+      #start-menu-screen .container button:active {
+        /* Active effects */
+        transform: scale(0.95);
+      }
       #settings-screen.screen .container {
         /* Settings screen styles here */
       }
       #settings-screen.screen .container button {
         /* Button styles here */
       }
-      
-      #instructions-screen.screen .container {
+      #instructions-screen {
         /* Instructions screen styles here */
+        background: rgba(0, 0, 0, 0.7);
+      }
+      #instructions-screen .container {
+        /* Instructions screen styles here */
+        background: rgba(0, 0, 0, 0.7);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+      }
+      #instructions-screen .container h2 {
+        text-align: center;
+      }
+      #instructions-screen .container p {
+        font-size: 18px;
+        color: #333;
+        line-height: 1.6;
       }
       #instructions-screen.screen .container button {
         /* Button styles here */
       }
-      
       #game-container.screen .container {
         /* Game container styles here */
       }
       #game-container.screen .container button {
         /* Button styles here */
       }
-      
       #game-over-screen.screen .container {
         /* Game over screen styles here */
       }
       #game-over-screen.screen .container #game-over-message {
         /* Game over message styles here */
       }
-      #game-over-screen.screen .container button {
+      #game-over-screen .container button {
         /* Button styles here */
+        /* Background gradient */
+        background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
+
+        /* White border and rounded corners */
+        border: 2px solid #fff;
+        border-radius: 8px;
+
+        /* Text styling */
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 18px;
+        text-transform: uppercase;
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+
+        /* Shadow for depth */
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+
+        /* Spacing */
+        padding: 12px 30px;
+        margin: 20px auto 0;
+        display: inline-block;
+        width: 215.15px;
+
+        /* Cursor and transitions */
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
       }
-      
+      #game-over-screen button:hover {
+        /* Hover effects */
+        background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
+        transform: scale(1.05);
+      }
+      #game-over-screen button:active {
+        /* Active effects */
+        transform: scale(0.95);
+      }
+
       /* Add more styles here */
+
+      /* Responsive Styles */
+      @media only screen and (max-width: 600px) {
+        #game-title {
+          font-size: 36px;
+        }
+        button {
+          font-size: 20px;
+          padding: 10px 20px;
+        }
+        #game-container .hud {
+          font-size: 16px;
+        }
+        /* Add more styles here */
+      }
     </style>
   </head>
   <body>
@@ -89,6 +224,23 @@
     </div>
     <div class="screen" id="instructions-screen">
       <div class="container">
+        <h2>Instructions</h2>
+        <p>
+        </p>
+        <p>
+          <strong>How to Play:</strong>
+        </p>
+        <ul>
+          <li></li>
+          <li></li>
+        </ul>
+        <p>
+          <strong>Controls:</strong><br />
+        </p>
+        <ul>
+          <li></li>
+          <li></li>
+        </ul>
         <button class="main-menu-button" id="instructions-back-button">Back</button>
       </div>
     </div>
@@ -118,7 +270,7 @@
             this.gameContainer = document.getElementById('game-container');
             this.gameOverScreen = document.getElementById('game-over-screen');
           };
-      
+
           swapToScreen(screen) {
             this.startMenuScreen.classList.remove('active');
             this.settingsScreen.classList.remove('active');
@@ -127,47 +279,47 @@
             this.gameOverScreen.classList.remove('active');
             screen.classList.add('active');
           };
-      
+
           startGame() {
             const startGameSound = document.getElementById('start-game-sound');
-      
+
             this.swapToScreen(this.gameContainer);
             startGameSound.play();
-      
+
             // Your start game code here;
           }
-      
+
           endGame() {
             const endGameSound = document.getElementById('end-game-sound');
-      
+
             this.swapToScreen(this.gameOverScreen);
             endGameSound.play();
-      
+
             // Your end game code here;
           }
-      
+
           mainMenu() {
             this.swapToScreen(this.startMenuScreen);
           }
-      
+
           playAgain() {
             this.swapToScreen(this.gameContainer);
           }
-      
+
           settings() {
             this.swapToScreen(this.settingsScreen);
           }
-      
+
           instructions() {
             this.swapToScreen(this.instructionsScreen);
           }
-      
+
           addBoard(boardElement, row, col, addCellCallback) {
             boardElement.classList.add('board');
             boardElement.style.gridTemplateColumns = `repeat(${col}, 1fr)`;
             this.resetBoard(boardElement, row, col, addCellCallback);
           }
-      
+
           resetBoard(boardElement, row, col, addCellCallback) {
             boardElement.innerHTML = '';
             for (let i = 0; i < size; i++) {
@@ -179,14 +331,14 @@
           }
           // Your UI functions here;
         }
-      
+
         class GameLogic {
           constructor() {
           }
-      
+
           // Your game logic here;
         }
-      
+
         class Game {
           constructor() {
             this.ui = new GameUI();
@@ -195,20 +347,20 @@
             this.updateInterval = 1000 / 60;
             this.done = false;
           }
-      
+
           prepareGame() {
             const gameContainer = document.getElementById('game-container');
             // Prepare game container DOM elements here;
-      
+
             // To add a board in game
             // const boardElement = document.createElement('div');
             // this.ui.addBoard(boardElement, row, col, (cell) => { /* Add cell logic here */ });
             // gameContainer.firstChild.appendChild(boardElement);
-      
+
             // Connect DOM element to game logic or game ui accordingly;
             this.assignButtons();
           }
-      
+
           startGame() {
             this.ui.startGame();
             // Start game logic here;
@@ -216,50 +368,49 @@
             // this.updateInterval = /* Your desired update interval */;
             // requestAnimationFrame(this.gameLoop.bind(this));
           }
-      
+
           updateGame() {
             // Update game logic here;
           }
-      
+
           resetGame() {
             // Reset game logic here;
           }
-      
+
           gameLoop(timestamp) {
             if (this.done) return;
-      
+
             const deltaTime = timestamp - this.lastFrameTime;
-      
+
             if (deltaTime > this.updateInterval) {
               this.updateGame();
               this.lastFrameTime = timestamp;
             }
-      
+
             requestAnimationFrame(this.gameLoop.bind(this));
           }
-      
+
           assignButtons() {
             const playButton = document.getElementById('play-button');
             const settingsButton = document.getElementById('settings-button');
             const instructionsButton = document.getElementById('instructions-button');
             const playAgainButton = document.getElementById('play-again-button');
             const mainMenuButtons = document.querySelectorAll('.main-menu-button');
-      
+
             settingsButton.addEventListener('click', this.ui.settings.bind(this.ui));
             instructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
             playAgainButton.addEventListener('click', this.ui.playAgain.bind(this.ui));
             mainMenuButtons.forEach(button => button.addEventListener('click', this.ui.mainMenu.bind(this.ui)));
             playButton.addEventListener('click', this.startGame.bind(this));
-      
+
             // Your button event listeners here;
           }
         }
-      
+
         const game = new Game();
         game.prepareGame();
-      
+
       });
-      
     </script>
   </body>
 </html>
