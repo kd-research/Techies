@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=640, height=960, user-scalable=no"
+      name="viewport"/>
+    <title>Word Collapse</title>
+    <style>
+      /* CSS Styles */
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f0f4f8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .active {
+        display: block !important;
+      }
+
+      .screen {
+        display: none;
+        width: 640px;
+        height: 960px;
+        position: absolute;
+        top: calc(50% - 480px);
+        left: calc(50% - 320px);
+        border: 1px solid #ccc;
+        background-color: #ffffff;
+        overflow: hidden;
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
+      #start-menu-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #game-title {
+        font-size: 48px;
+        margin-bottom: 40px;
+        color: #333;
+      }
+
+      .menu-button {
+        width: 200px;
+        padding: 15px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        border: none;
+        background-color: #2196F3;
+        color: #fff;
+        border-radius: 5px;
+      }
+
+      .menu-button:hover {
+        background-color: #1976D2;
+      }
+
+      #settings-screen .container,
+      #instructions-screen .container,
+      #game-over-screen .container {
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .back-button {
+        display: block;
+        margin: 20px auto 0;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #757575;
+        color: #fff;
+        border-radius: 5px;
+      }
+
+      .back-button:hover {
+        background-color: #616161;
+      }
+
+      #instructions-screen {
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      #instructions-screen .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+      }
+
+      #instructions-screen h2 {
+        text-align: center;
+      }
+
+      #instructions-screen p {
+        font-size: 18px;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      #game-container .container {
+		  position: relative;
+		  background-color: #e0e0e0;
+		  height: 100%;
+		}
+
+      #game-over-message {
+        font-size: 36px;
+        text-align: center;
+        color: #d32f2f;
+        margin-top: 200px;
+      }
+
+      #game-buttons {
+		 /* position: absolute; */
+		  top: 0;
+		  left: 0;
+		  width: 100%;
+		  padding: 10px;
+		  box-sizing: border-box;
+		  display: flex;
+		  justify-content: flex-start;
+		  background-color: #f0f4f8;
+		  z-index: 2;
+		}
+
+      #game-buttons .menu-button {
+        margin-right: 10px;
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      /* HUD Styles */
+    #hud {
+      font-size: 18px;
+      color: #333;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+      #hud span {
+        display: block;
+      }
+
+      /* Game canvas styles */
+      #gameCanvas {
+		  width: 640px;
+		  height: 910px; /* Adjusted height to account for the game buttons */
+		  background-color: #fff;
+		  touch-action: none;
+		  position: absolute;
+		  /*top: 50px; /* Position the canvas below the game buttons */ */
+		}
+
+      /* Letter tile styles */
+      .tile {
+        width: 60px;
+        height: 60px;
+        background-color: #ffeb3b;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      .selected {
+        background-color: #4caf50 !important;
+        color: #fff !important;
+      }
+
+      .hint {
+        background-color: #2196F3 !important;
+        color: #fff !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="active screen" id="start-menu-screen">
+      <div class="container">
+        <h1 id="game-title">
+          Word Collapse
+        </h1>
+        <button class="menu-button" id="play-button">Play</button>
+        <button class="menu-button" id="settings-button">Settings</button>
+        <button class="menu-button" id="instructions-button">Instructions</button>
+      </div>
+    </div>
+    <div class="screen" id="settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <p>Select Game Mode:</p>
+        <button class="menu-button" id="classic-mode-button">Classic Mode</button>
+        <button class="menu-button" id="puzzle-mode-button">Puzzle Mode</button>
+        <p>Music:</p>
+        <button class="menu-button" id="music-toggle-button">Music On</button>
+        <button class="back-button" id="setting-back-button">Back</button>
+      </div>
+    </div>
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <h2>Instructions</h2>
+        <p>
+          In Word Collapse, find and eliminate words from the grid. Letters above will fall, potentially forming new words.
+        </p>
+        <p>
+          <strong>Objective:</strong><br>
+          - Form words by selecting adjacent letters.<br>
+          - Clear the grid or achieve the highest score possible.
+        </p>
+        <p>
+          <strong>Controls:</strong><br>
+          - Click or tap letters to select them.<br>
+          - Words must be at least three letters long.<br>
+          - Use power-ups for strategic advantages.
+        </p>
+        <p>
+          <strong>Power-ups:</strong><br>
+          - <strong>Shuffle Board:</strong> Rearranges all letters.<br>
+          - <strong>Freeze Time:</strong> Pauses the timer for planning.
+        </p>
+        <p>
+          <strong>Hint:</strong><br>
+          - Use the hint button to reveal possible words.
+        </p>
+        <button class="back-button" id="instructions-back-button">Back</button>
+      </div>
+    </div>
+    <div class="screen" id="game-container">
+      <div class="container">
+        <div id="game-buttons">
+          <button class="menu-button" id="game-menu-button">Menu</button>
+          <button class="menu-button" id="game-restart-button">Restart</button>
+          <button class="menu-button" id="game-instructions-button">Instructions</button>
+          <button class="menu-button" id="hint-button">Hint</button>
+          <button class="menu-button" id="shuffle-button">Shuffle</button>
+          <button class="menu-button" id="freeze-button">Freeze Time</button>
+        </div>
+        <div id="hud">
+          <span id="score-display">Score: 0</span>
+          <span id="time-display"></span>
+        </div>
+		<!-- Game Canvas -->
+        <canvas id="gameCanvas" width="640" height="960"></canvas>        
+      </div>
+    </div>
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <div id="game-over-message">Game Over!</div>
+        <button class="menu-button" id="play-again-button">Play Again</button>
+        <button class="menu-button main-menu-button" id="game-over-main-menu-button">Main Menu</button>
+      </div>
+    </div>
+    <!-- Background Music -->
+	<audio autoplay id="background-music" loop>
+	  <source src="https://www.bensound.com/bensound-music/bensound-funnysong.mp3" type="audio/mpeg" />
+	</audio>
+
+	<!-- Start Game Sound -->
+	<audio id="start-game-sound">
+	  <source src="https://www.soundjay.com/button/sounds/button-3.mp3" type="audio/mpeg" />
+	</audio>
+
+	<!-- End Game Sound -->
+	<audio id="end-game-sound">
+	  <source src="https://www.soundjay.com/button/sounds/button-10.mp3" type="audio/mpeg" />
+	</audio>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        class GameUI {
+          constructor() {
+            this.startMenuScreen = document.getElementById('start-menu-screen');
+            this.settingsScreen = document.getElementById('settings-screen');
+            this.instructionsScreen = document.getElementById('instructions-screen');
+            this.gameContainer = document.getElementById('game-container');
+            this.gameOverScreen = document.getElementById('game-over-screen');
+            this.musicToggleButton = document.getElementById('music-toggle-button');
+            this.backgroundMusic = document.getElementById('background-music');
+            this.isMusicOn = true;
+            this.gameMode = 'Classic Mode';
+            this.bindUIActions();
+          }
+
+          bindUIActions() {
+            this.musicToggleButton.addEventListener('click', () => {
+              this.toggleMusic();
+            });
+            document.getElementById('classic-mode-button').addEventListener('click', () => {
+              this.setGameMode('Classic Mode');
+            });
+            document.getElementById('puzzle-mode-button').addEventListener('click', () => {
+              this.setGameMode('Puzzle Mode');
+            });
+          }
+
+          swapToScreen(screen) {
+            this.startMenuScreen.classList.remove('active');
+            this.settingsScreen.classList.remove('active');
+            this.instructionsScreen.classList.remove('active');
+            this.gameContainer.classList.remove('active');
+            this.gameOverScreen.classList.remove('active');
+            screen.classList.add('active');
+          }
+
+          startGame() {
+            const startGameSound = document.getElementById('start-game-sound');
+            this.swapToScreen(this.gameContainer);
+            startGameSound.play();
+          }
+
+          endGame() {
+            const endGameSound = document.getElementById('end-game-sound');
+            this.swapToScreen(this.gameOverScreen);
+            endGameSound.play();
+          }
+
+          mainMenu() {
+            if (game.logic) {
+              game.logic.isGameOver = true;
+            }
+            this.swapToScreen(this.startMenuScreen);
+          }
+
+          playAgain() {
+            this.swapToScreen(this.gameContainer);
+            game.resetGame();
+          }
+
+          settings() {
+            this.swapToScreen(this.settingsScreen);
+          }
+
+          instructions() {
+            this.instructionsScreen.classList.add('active');
+            if (game.logic) {
+              game.logic.isPaused = true;
+			  this.gameContainer.classList.remove('active');
+            }
+          }
+
+          hideOverlay() {
+            this.instructionsScreen.classList.remove('active');
+            if (game.logic && game.logic.isPaused) {
+              // We are in the game screen, resume the game
+				
+				this.gameContainer.classList.add('active');
+                game.logic.isPaused = false;    
+				requestAnimationFrame(game.logic.gameLoop.bind(game.logic));				
+            } else {
+              // Otherwise, go back to the main menu
+			  
+              this.swapToScreen(this.startMenuScreen);
+            }
+          }
+
+          toggleMusic() {
+            if (this.isMusicOn) {
+              this.backgroundMusic.pause();
+              this.musicToggleButton.textContent = 'Music Off';
+            } else {
+              this.backgroundMusic.play();
+              this.musicToggleButton.textContent = 'Music On';
+            }
+            this.isMusicOn = !this.isMusicOn;
+          }
+
+          setGameMode(mode) {
+            this.gameMode = mode;
+            alert(`Game Mode set to ${mode}`);
+          }
+        }
+
+        class GameLogic {
+          constructor(ui) {
+            this.ui = ui;
+            this.canvas = document.getElementById('gameCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.isGameOver = false;
+            this.isPaused = false;
+            this.score = 0;
+            this.grid = [];
+            this.selectedTiles = [];
+            this.tileSize = 60;
+            this.rows = 12;
+            this.cols = 10;
+            this.timeLimit = 180; // 3 minutes for Classic Mode
+            this.timeLeft = this.timeLimit;
+            this.timerInterval = null;
+            this.dictionary = []; // Load a dictionary of words
+            this.hintWords = [];
+            this.freezeTime = false;
+            this.loadDictionary();
+            this.init();
+          }
+
+          async loadDictionary() {
+            // For simplicity, using a small set of words
+            // In a real game, you would load an extensive word list
+            const response = await fetch('https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt');
+            const text = await response.text();
+            this.dictionary = text.split('\n').filter(word => word.length >= 3);
+          }
+
+          init() {
+            this.bindControls();
+            this.resetGame();
+          }
+
+          bindControls() {
+            this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+            this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+            this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+            // Touch Controls
+			this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
+			this.canvas.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
+			this.canvas.addEventListener('touchend', this.onTouchEnd.bind(this), { passive: false });
+			document.getElementById('hint-button').addEventListener('click', this.showHint.bind(this));
+            document.getElementById('shuffle-button').addEventListener('click', this.shuffleBoard.bind(this));
+            document.getElementById('freeze-button').addEventListener('click', this.toggleFreezeTime.bind(this));
+
+            // Instructions button inside the game container
+            const gameInstructionsButton = document.getElementById('game-instructions-button');
+            gameInstructionsButton.addEventListener('click', () => {
+              this.ui.instructions();
+            });
+            
+          }
+
+          resetGame() {
+            clearInterval(this.timerInterval);
+            this.isGameOver = false;
+            this.isPaused = false;
+            this.score = 0;
+            this.timeLeft = this.timeLimit;
+            this.freezeTime = false;
+            document.getElementById('freeze-button').textContent = 'Freeze Time';
+            document.getElementById('score-display').textContent = 'Score: 0';
+            document.getElementById('time-display').textContent = `Time: ${this.formatTime(this.timeLeft)}`;
+            this.generateGrid();
+            this.startTimer();
+            this.gameLoop();
+          }
+
+          startTimer() {
+            if (this.ui.gameMode === 'Classic Mode') {
+              this.timerInterval = setInterval(() => {
+                if (!this.isPaused && !this.freezeTime) {
+                  this.timeLeft--;
+                  document.getElementById('time-display').textContent = `Time: ${this.formatTime(this.timeLeft)}`;
+                  if (this.timeLeft <= 0) {
+                    this.isGameOver = true;
+                    this.ui.endGame();
+                    clearInterval(this.timerInterval);
+                  }
+                }
+              }, 1000);
+            } else {
+              document.getElementById('time-display').textContent = '';
+            }
+          }
+
+          formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+          }
+
+          generateGrid() {
+            this.grid = [];
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let row = 0; row < this.rows; row++) {
+              const gridRow = [];
+              for (let col = 0; col < this.cols; col++) {
+                const letter = letters[Math.floor(Math.random() * letters.length)];
+                gridRow.push({
+                  letter: letter,
+                  x: col * this.tileSize,
+                  y: row * this.tileSize,
+                  selected: false,
+                  hint: false,
+                });
+              }
+              this.grid.push(gridRow);
+            }
+            this.findHintWords();
+          }
+
+          onMouseDown(e) {
+            if (this.isPaused) return;
+            const { row, col } = this.getTileFromEvent(e);
+            if (row !== null && col !== null) {
+              const tile = this.grid[row][col];
+              tile.selected = true;
+              this.selectedTiles.push(tile);
+            }
+          }
+
+          onMouseMove(e) {
+            if (this.isPaused) return;
+            if (this.selectedTiles.length > 0) {
+              const { row, col } = this.getTileFromEvent(e);
+              if (row !== null && col !== null) {
+                const tile = this.grid[row][col];
+                if (!tile.selected && this.isAdjacent(tile)) {
+                  tile.selected = true;
+                  this.selectedTiles.push(tile);
+                }
+              }
+            }
+          }
+
+          onMouseUp(e) {
+            if (this.isPaused) return;
+            if (this.selectedTiles.length >= 3) {
+              const word = this.selectedTiles.map(tile => tile.letter).join('');
+              if (this.isValidWord(word)) {
+                this.score += this.calculateWordScore(word);
+                document.getElementById('score-display').textContent = 'Score: ' + this.score;
+                this.removeSelectedTiles();
+                this.collapseColumns();
+                this.findHintWords(); // Update hint words after collapse
+              } else {
+                // Invalid word, deselect tiles
+                this.deselectAllTiles();
+              }
+            } else {
+              // Less than minimum word length
+              this.deselectAllTiles();
+            }
+            this.selectedTiles = [];
+          }
+		  
+		  onTouchStart(e) {
+          if (this.isPaused) return;
+          e.preventDefault();
+          const touch = e.touches[0];
+          const { row, col } = this.getTileFromTouch(touch);
+          if (row !== null && col !== null) {
+            const tile = this.grid[row][col];
+            tile.selected = true;
+            this.selectedTiles.push(tile);
+          }
+        }
+
+        onTouchMove(e) {
+          if (this.isPaused) return;
+          e.preventDefault();
+          const touch = e.touches[0];
+          if (this.selectedTiles.length > 0) {
+            const { row, col } = this.getTileFromTouch(touch);
+            if (row !== null && col !== null) {
+              const tile = this.grid[row][col];
+              if (!tile.selected && this.isAdjacent(tile)) {
+                tile.selected = true;
+                this.selectedTiles.push(tile);
+              }
+            }
+          }
+        }
+
+        onTouchEnd(e) {
+          if (this.isPaused) return;
+          e.preventDefault();
+          this.handleWordSelection();
+        }
+		
+		handleWordSelection() {
+          if (this.selectedTiles.length >= 3) {
+            const word = this.selectedTiles.map(tile => tile.letter).join('');
+            if (this.isValidWord(word)) {
+              this.score += this.calculateWordScore(word);
+              document.getElementById('score-display').textContent = 'Score: ' + this.score;
+              this.removeSelectedTiles();
+              this.collapseColumns();
+              this.findHintWords(); // Update hint words after collapse
+            } else {
+              // Invalid word, deselect tiles
+              this.deselectAllTiles();
+            }
+          } else {
+            // Less than minimum word length
+            this.deselectAllTiles();
+          }
+          this.selectedTiles = [];
+        }
+		
+		getTileFromTouch(touch) {
+          const rect = this.canvas.getBoundingClientRect();
+          const x = touch.clientX - rect.left;
+          const y = touch.clientY - rect.top;
+          const col = Math.floor(x / this.tileSize);
+          const row = Math.floor(y / this.tileSize);
+          if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+            return { row, col };
+          } else {
+            return { row: null, col: null };
+          }
+        }
+
+          getTileFromEvent(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const col = Math.floor(x / this.tileSize);
+            const row = Math.floor(y / this.tileSize);
+            if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+              return { row, col };
+            } else {
+              return { row: null, col: null };
+            }
+          }
+
+          isAdjacent(tile) {
+            const lastTile = this.selectedTiles[this.selectedTiles.length - 1];
+            const dx = Math.abs(tile.x - lastTile.x) / this.tileSize;
+            const dy = Math.abs(tile.y - lastTile.y) / this.tileSize;
+            return (dx <= 1 && dy <= 1);
+          }
+
+          isValidWord(word) {
+            return this.dictionary.includes(word.toLowerCase());
+          }
+
+          calculateWordScore(word) {
+            // Simple scoring: 1 point per letter, bonus for longer words
+            let score = word.length;
+            if (word.length >= 5) {
+              score += 5;
+            }
+            return score;
+          }
+
+          removeSelectedTiles() {
+            this.selectedTiles.forEach(tile => {
+              const row = tile.y / this.tileSize;
+              const col = tile.x / this.tileSize;
+              this.grid[row][col] = null;
+            });
+          }
+
+          deselectAllTiles() {
+            this.selectedTiles.forEach(tile => {
+              tile.selected = false;
+            });
+          }
+
+          collapseColumns() {
+            for (let col = 0; col < this.cols; col++) {
+              let emptyRows = [];
+              for (let row = this.rows - 1; row >= 0; row--) {
+                if (this.grid[row][col] === null) {
+                  emptyRows.push(row);
+                } else if (emptyRows.length > 0) {
+                  const emptyRow = emptyRows.shift();
+                  this.grid[emptyRow][col] = this.grid[row][col];
+                  this.grid[emptyRow][col].y = emptyRow * this.tileSize;
+                  this.grid[row][col] = null;
+                  emptyRows.push(row);
+                }
+              }
+              // Fill empty spaces at the top
+              for (let i = 0; i < emptyRows.length; i++) {
+                const row = emptyRows[i];
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const letter = letters[Math.floor(Math.random() * letters.length)];
+                this.grid[row][col] = {
+                  letter: letter,
+                  x: col * this.tileSize,
+                  y: row * this.tileSize,
+                  selected: false,
+                  hint: false,
+                };
+              }
+            }
+          }
+
+          draw() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.grid.forEach(row => {
+              row.forEach(tile => {
+                if (tile) {
+                  this.ctx.fillStyle = tile.selected
+                    ? '#4caf50'
+                    : tile.hint
+                    ? '#2196F3'
+                    : '#ffeb3b';
+                  this.ctx.fillRect(tile.x, tile.y, this.tileSize, this.tileSize);
+                  this.ctx.strokeStyle = '#ccc';
+                  this.ctx.strokeRect(tile.x, tile.y, this.tileSize, this.tileSize);
+                  this.ctx.fillStyle = tile.selected || tile.hint ? '#fff' : '#333';
+                  this.ctx.font = 'bold 32px Arial';
+                  this.ctx.textAlign = 'center';
+                  this.ctx.textBaseline = 'middle';
+                  this.ctx.fillText(
+                    tile.letter,
+                    tile.x + this.tileSize / 2,
+                    tile.y + this.tileSize / 2
+                  );
+                }
+              });
+            });
+          }
+
+          gameLoop() {
+            if (this.isGameOver) return;
+            if (this.isPaused) return;
+            this.draw();
+            requestAnimationFrame(this.gameLoop.bind(this));
+          }
+
+          findHintWords() {
+		  
+			return;
+			
+            // Reset hints
+            this.grid.forEach(row => {
+              row.forEach(tile => {
+                if (tile) tile.hint = false;
+              });
+            });
+            this.hintWords = [];
+            // Find words in the grid
+            const visited = new Set();
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                const tile = this.grid[row][col];
+                if (tile) {
+                  this.searchWords(tile, '', row, col, visited);
+                }
+              }
+            }
+          }
+
+          searchWords(tile, prefix, row, col, visited) {
+            const key = `${row},${col}`;
+            if (visited.has(key)) return;
+            visited.add(key);
+            const word = prefix + tile.letter;
+            if (word.length >= 3 && this.isValidWord(word)) {
+              if (!this.hintWords.includes(word)) {
+                this.hintWords.push(word);
+              }
+              tile.hint = true;
+            }
+            if (word.length >= 8) return; // Limit word length to prevent performance issues
+            const directions = [
+              [-1, -1],
+              [-1, 0],
+              [-1, 1],
+              [0, -1],
+              [0, 1],
+              [1, -1],
+              [1, 0],
+              [1, 1],
+            ];
+            for (let [dx, dy] of directions) {
+              const newRow = row + dx;
+              const newCol = col + dy;
+              if (
+                newRow >= 0 &&
+                newRow < this.rows &&
+                newCol >= 0 &&
+                newCol < this.cols &&
+                this.grid[newRow][newCol]
+              ) {
+                this.searchWords(this.grid[newRow][newCol], word, newRow, newCol, new Set(visited));
+              }
+            }
+          }
+
+          showHint() {
+            if (this.hintWords.length > 0) {
+              alert('Possible words:\n' + this.hintWords.join(', '));
+            } else {
+              alert('Think you\'ve been tricked? The real challenge lies ahead—find the words yourself, no hints this time!');
+            }
+          }
+
+          shuffleBoard() {
+            // Flatten the grid to a list of letters
+            const letters = [];
+            this.grid.forEach(row => {
+              row.forEach(tile => {
+                if (tile) {
+                  letters.push(tile.letter);
+                }
+              });
+            });
+            // Shuffle the letters
+            for (let i = letters.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [letters[i], letters[j]] = [letters[j], letters[i]];
+            }
+            // Reassign letters to tiles
+            let index = 0;
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                this.grid[row][col].letter = letters[index];
+                index++;
+              }
+            }
+            this.findHintWords();
+          }
+
+          toggleFreezeTime() {
+            this.freezeTime = !this.freezeTime;
+            document.getElementById('freeze-button').textContent = this.freezeTime ? 'Unfreeze Time' : 'Freeze Time';
+          }
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI();
+            this.logic = null;
+            this.assignButtons();
+          }
+
+          prepareGame() {
+            this.ui.swapToScreen(this.ui.startMenuScreen);
+          }
+
+          startGame() {
+            this.ui.startGame();
+            this.logic = new GameLogic(this.ui);
+          }
+
+          resetGame() {
+            if (this.logic) {
+              this.logic.resetGame();
+            }
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById('play-button');
+            const settingsButton = document.getElementById('settings-button');
+            const instructionsButton = document.getElementById('instructions-button');
+            const playAgainButton = document.getElementById('play-again-button');
+            const mainMenuButtons = document.querySelectorAll('.main-menu-button');
+            const settingBackButton = document.getElementById('setting-back-button');
+            const instructionsBackButton = document.getElementById('instructions-back-button');
+
+            const gameMenuButton = document.getElementById('game-menu-button');
+            const gameRestartButton = document.getElementById('game-restart-button');
+
+            settingsButton.addEventListener('click', this.ui.settings.bind(this.ui));
+            instructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
+            playAgainButton.addEventListener('click', this.startGame.bind(this));
+            mainMenuButtons.forEach(button =>
+              button.addEventListener('click', this.ui.mainMenu.bind(this.ui))
+            );
+            playButton.addEventListener('click', this.startGame.bind(this));
+            settingBackButton.addEventListener('click', this.ui.mainMenu.bind(this.ui));
+            instructionsBackButton.addEventListener('click', () => {
+              this.ui.hideOverlay();
+            });
+
+            gameMenuButton.addEventListener('click', () => {
+              if (this.logic) {
+                this.logic.isGameOver = true;
+                clearInterval(this.logic.timerInterval);
+              }
+			  this.logic = null;
+              this.ui.mainMenu();
+            });
+            gameRestartButton.addEventListener('click', () => {
+              if (this.logic) {
+                this.logic.isGameOver = true;
+                clearInterval(this.logic.timerInterval);
+              }
+              this.resetGame();
+            });
+          }
+        }
+
+        const game = new Game();
+        game.prepareGame();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Equation Explorer</title>
+    <style>
+      /* General Styles */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: "Arial", sans-serif;
+        overflow: hidden;
+        background-color: #282c34;
+        color: #fff;
+        width: 100%;
+        height: 100%;
+      }
+      #game-container {
+        width: 100%;
+        height: 100%;
+      }
+      /* Main Menu */
+      #main-menu {
+        width: 100%;
+        height: 100%;
+        background-image: url("https://images.unsplash.com/photo-1547555999-14a9ca482977?auto=format&fit=crop&w=1350&q=80");
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      #main-menu h1 {
+        font-size: 64px;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 4px #000;
+      }
+      #main-menu button {
+        background-color: #61dafb;
+        border: none;
+        padding: 20px 40px;
+        font-size: 24px;
+        cursor: pointer;
+        border-radius: 10px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #main-menu button:hover {
+        background-color: #21a1f1;
+      }
+      /* Game Screen */
+      #game-screen {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+      }
+      /* Header */
+      #game-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(32, 35, 42, 0.9);
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+      }
+      #game-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      #game-header button {
+        background-color: #61dafb;
+        border: none;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-left: 10px;
+      }
+      /* Equation Display */
+      #equation-container {
+        position: relative;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 600px;
+        width: 80%;
+      }
+      #equation-display h2 {
+        margin-bottom: 10px;
+        font-size: 32px;
+      }
+      #equation-display p {
+        margin: 0;
+        font-size: 24px;
+      }
+      /* Input and Buttons */
+      #input-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      #input-area input {
+        padding: 10px;
+        font-size: 20px;
+        border: none;
+        border-radius: 5px;
+        margin: 10px;
+        width: 200px;
+        text-align: center;
+      }
+      #input-area button {
+        background-color: #61dafb;
+        border: none;
+        padding: 15px 30px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #input-area button:hover {
+        background-color: #21a1f1;
+      }
+      /* Feedback Message */
+      #feedback {
+        position: absolute;
+        bottom: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        padding: 20px;
+        background-color: rgba(0, 128, 0, 0.8);
+        border-radius: 10px;
+        display: none;
+      }
+      /* Modal Styles */
+      #modal,
+      #game-mode-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+      }
+      #modal-content,
+      #game-mode-content {
+        background-color: #20232a;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+        color: #fff;
+        max-height: 80%;
+        overflow-y: auto;
+      }
+      #modal-content h2,
+      #game-mode-content h2 {
+        margin-top: 0;
+        font-size: 32px;
+      }
+      #modal-content button,
+      #game-mode-content button {
+        background-color: #61dafb;
+        border: none;
+        padding: 15px 30px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #modal-content button:hover,
+      #game-mode-content button:hover {
+        background-color: #21a1f1;
+      }
+      /* Settings Menu */
+      #settings-menu {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        position: fixed;
+        top: 15%;
+        right: 5%;
+        background-color: rgba(32, 35, 42, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 15;
+      }
+      #settings-menu label {
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+      #settings-menu input[type="range"] {
+        width: 200px;
+        margin-bottom: 15px;
+      }
+      #settings-menu button {
+        background-color: #61dafb;
+        border: none;
+        padding: 10px 20px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      /* Collectibles */
+      #collectibles {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        z-index: 10;
+      }
+      #collectibles img {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+      }
+      /* Companion */
+      #companion {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10;
+      }
+      #companion img {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 5px;
+      }
+      #companion button {
+        background-color: #61dafb;
+        border: none;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      /* Skill Tree */
+      #skill-tree {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        position: fixed;
+        top: 15%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(32, 35, 42, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 15;
+        max-width: 80%;
+      }
+      #skill-tree h2 {
+        margin-top: 0;
+        font-size: 32px;
+      }
+      #skill-tree button {
+        background-color: #61dafb;
+        border: none;
+        padding: 15px 30px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #skill-tree button:hover {
+        background-color: #21a1f1;
+      }
+      /* Timer */
+      #timer {
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        background-color: rgba(32, 35, 42, 0.9);
+        padding: 10px 20px;
+        border-radius: 10px;
+        z-index: 10;
+        display: none;
+      }
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        #main-menu h1 {
+          font-size: 48px;
+        }
+        #main-menu button {
+          font-size: 20px;
+          padding: 15px 30px;
+        }
+        #equation-display h2 {
+          font-size: 28px;
+        }
+        #equation-display p {
+          font-size: 20px;
+        }
+        #input-area input {
+          width: 80%;
+        }
+        #game-header h1 {
+          font-size: 20px;
+        }
+        #game-header button {
+          font-size: 14px;
+          padding: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <!-- Main Menu -->
+      <div id="main-menu">
+        <h1>Equation Explorer</h1>
+        <button id="start-game-button">Start Game</button>
+        <button id="instructions-button">Instructions</button>
+        <button id="settings-button">Settings</button>
+      </div>
+      <!-- Game Screen -->
+      <div id="game-screen">
+        <!-- Header -->
+        <div id="game-header">
+          <h1 id="realm-title">Equation Explorer</h1>
+          <div>
+            <button id="skill-tree-button">Skill Tree</button>
+            <button id="practice-button">Practice Mode</button>
+            <button id="volume-button">Settings</button>
+            <button id="main-menu-button">Main Menu</button>
+          </div>
+        </div>
+        <!-- Timer -->
+        <div id="timer"></div>
+        <!-- Equation Container -->
+        <div id="equation-container">
+          <!-- Equation Display -->
+          <div id="equation-display">
+            <!-- Content will be injected here -->
+          </div>
+          <!-- Input Area -->
+          <div id="input-area">
+            <!-- Content will be injected here -->
+          </div>
+        </div>
+        <!-- Feedback -->
+        <div id="feedback"></div>
+        <!-- Collectibles -->
+        <div id="collectibles"></div>
+        <!-- Companion -->
+        <div id="companion">
+          <img
+            src="https://images.unsplash.com/photo-1528441010831-d6f93edc9c84?auto=format&fit=crop&w=600&q=80"
+            alt="Companion"
+          />
+          <button id="companion-hint-button">Get Hint</button>
+        </div>
+        <!-- Settings Menu -->
+        <div id="settings-menu">
+          <label for="music-volume">Music Volume</label>
+          <input
+            type="range"
+            id="music-volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.5"
+          />
+          <label for="sfx-volume">SFX Volume</label>
+          <input
+            type="range"
+            id="sfx-volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.5"
+          />
+          <button id="close-settings-button">Close</button>
+        </div>
+        <!-- Skill Tree -->
+        <div id="skill-tree">
+          <h2>Skill Tree</h2>
+          <button id="unlock-companion-button">Unlock Companion</button>
+          <button id="close-skill-tree-button">Close</button>
+        </div>
+      </div>
+      <!-- Modals -->
+      <div id="modal">
+        <div id="modal-content">
+          <!-- Content will be injected here -->
+        </div>
+      </div>
+      <!-- Game Mode Modal -->
+      <div id="game-mode-modal">
+        <div id="game-mode-content">
+          <h2>Select Game Mode</h2>
+          <button id="timed-mode-button">Timed Mode</button>
+          <button id="normal-mode-button">Normal Mode</button>
+        </div>
+      </div>
+    </div>
+    <!-- Background Music -->
+    <audio id="background-music" loop>
+      <source
+        src="https://www.bensound.com/bensound-music/bensound-epic.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <!-- Sound Effects -->
+    <audio id="correct-sound">
+      <source
+        src="https://freesound.org/data/previews/170/170624_2437358-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="incorrect-sound">
+      <source
+        src="https://freesound.org/data/previews/170/170625_2437358-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Game Data and Variables
+        let realms = [];
+        let currentRealmIndex = 0;
+        let currentEquation = null;
+        let companionUnlocked = false;
+        let collectibles = [];
+        let timerInterval = null;
+        let timeLeft = 0;
+        let skills = {
+          companionUnlocked: false,
+        };
+        let settings = {
+          timedMode: true,
+        };
+        // Elements
+        const mainMenu = document.getElementById("main-menu");
+        const startGameButton = document.getElementById("start-game-button");
+        const instructionsButton = document.getElementById(
+          "instructions-button"
+        );
+        const settingsButton = document.getElementById("settings-button");
+        const gameScreen = document.getElementById("game-screen");
+        const gameHeader = document.getElementById("game-header");
+        const realmTitle = document.getElementById("realm-title");
+        const equationContainer = document.getElementById("equation-container");
+        const equationDisplay = document.getElementById("equation-display");
+        const inputArea = document.getElementById("input-area");
+        const feedback = document.getElementById("feedback");
+        const companionDiv = document.getElementById("companion");
+        const companionHintButton = document.getElementById(
+          "companion-hint-button"
+        );
+        const timerDiv = document.getElementById("timer");
+        const collectiblesDiv = document.getElementById("collectibles");
+        const modal = document.getElementById("modal");
+        const modalContent = document.getElementById("modal-content");
+        const settingsMenu = document.getElementById("settings-menu");
+        const musicVolumeSlider = document.getElementById("music-volume");
+        const sfxVolumeSlider = document.getElementById("sfx-volume");
+        const backgroundMusic = document.getElementById("background-music");
+        const correctSound = document.getElementById("correct-sound");
+        const incorrectSound = document.getElementById("incorrect-sound");
+        const skillTree = document.getElementById("skill-tree");
+        const gameModeModal = document.getElementById("game-mode-modal");
+        const gameModeContent = document.getElementById("game-mode-content");
+        // Buttons
+        const skillTreeButton = document.getElementById("skill-tree-button");
+        const practiceButton = document.getElementById("practice-button");
+        const volumeButton = document.getElementById("volume-button");
+        const mainMenuButton = document.getElementById("main-menu-button");
+        const closeSettingsButton = document.getElementById(
+          "close-settings-button"
+        );
+        const unlockCompanionButton = document.getElementById(
+          "unlock-companion-button"
+        );
+        const closeSkillTreeButton = document.getElementById(
+          "close-skill-tree-button"
+        );
+        const timedModeButton = document.getElementById("timed-mode-button");
+        const normalModeButton = document.getElementById("normal-mode-button");
+        // Initialize Game
+        function initGame() {
+          backgroundMusic.volume = musicVolumeSlider.value;
+          backgroundMusic.play().catch(() => {});
+          mainMenu.style.display = "none";
+          gameModeModal.style.display = "flex";
+        }
+        // Start Game with Selected Mode
+        function startGame(timed) {
+          settings.timedMode = timed;
+          gameModeModal.style.display = "none";
+          gameScreen.style.display = "block";
+          initRealms();
+          loadRealm(currentRealmIndex);
+        }
+        // Initialize Realms
+        function initRealms() {
+          realms = [
+            {
+              title: "Realm of Lines",
+              background:
+                "https://images.unsplash.com/photo-1503996772000-cd8597d68e92?auto=format&fit=crop&w=1350&q=80",
+              equations: generateEquations("linear", 5),
+              collectible:
+                "https://images.unsplash.com/photo-1586281380396-236a6ff37e0e?auto=format&fit=crop&w=1350&q=80",
+              tutorial:
+                "Welcome to the Realm of Lines! Solve linear equations to progress.",
+              timed: settings.timedMode,
+              timeLimit: 60,
+            },
+            {
+              title: "Quadratic Forest",
+              background:
+                "https://images.unsplash.com/photo-1535123289871-6e8e446adf57?auto=format&fit=crop&w=1350&q=80",
+              equations: generateEquations("quadratic", 5),
+              collectible:
+                "https://images.unsplash.com/photo-1522030539031-1ab3c854b509?auto=format&fit=crop&w=1350&q=80",
+              tutorial:
+                "Welcome to the Quadratic Forest! Solve quadratic equations to find your way.",
+              timed: settings.timedMode,
+              timeLimit: 90,
+            },
+            // More realms can be added here
+          ];
+        }
+        // Generate Equations
+        function generateEquations(type, count) {
+          let equations = [];
+          for (let i = 0; i < count; i++) {
+            if (type === "linear") {
+              equations.push(generateLinearEquation());
+            } else if (type === "quadratic") {
+              equations.push(generateQuadraticEquation());
+            }
+          }
+          return equations;
+        }
+        // Generate Linear Equation
+        function generateLinearEquation() {
+          let a = Math.floor(Math.random() * 10) + 1;
+          let b = Math.floor(Math.random() * 20) - 10;
+          let x = Math.floor(Math.random() * 20) - 10;
+          let c = a * x + b;
+          return {
+            equation: `${a}x + ${b} = ${c}`,
+            solution: x,
+            hint: "Isolate x by moving constants and dividing.",
+          };
+        }
+        // Generate Quadratic Equation
+        function generateQuadraticEquation() {
+          let x1 = Math.floor(Math.random() * 10) - 5;
+          let x2 = Math.floor(Math.random() * 10) - 5;
+          let a = 1;
+          let b = -(x1 + x2);
+          let c = x1 * x2;
+          return {
+            equation: `x^2 ${b >= 0 ? "+" : ""}${b}x ${
+              c >= 0 ? "+" : ""
+            }${c} = 0`,
+            solution: [x1, x2],
+            hint: "Factor the quadratic equation.",
+          };
+        }
+        // Load Realm
+        function loadRealm(index) {
+          if (index >= realms.length) {
+            showFeedback(
+              "Congratulations! You have completed all realms.",
+              "green"
+            );
+            gameScreen.innerHTML = "<h2>Game Completed!</h2>";
+            backgroundMusic.pause();
+            return;
+          }
+          let realm = realms[index];
+          realmTitle.textContent = realm.title;
+          gameScreen.style.backgroundImage = `url('${realm.background}')`;
+          currentEquation = realm.equations.shift();
+          if (realm.tutorial) {
+            showModal("Tutorial", realm.tutorial, () => {
+              loadEquation();
+            });
+            realm.tutorial = null;
+          } else {
+            loadEquation();
+          }
+          if (realm.timed) {
+            startTimer(realm.timeLimit);
+          } else {
+            timerDiv.style.display = "none";
+          }
+        }
+        // Load Equation
+        function loadEquation() {
+          if (!currentEquation) {
+            showFeedback(
+              `Realm Completed! You collected a new artifact.`,
+              "green"
+            );
+            collectibles.push(realms[currentRealmIndex].collectible);
+            displayCollectibles();
+            currentRealmIndex++;
+            setTimeout(() => {
+              loadRealm(currentRealmIndex);
+            }, 2000);
+            return;
+          }
+          equationDisplay.innerHTML = `
+          <h2>${realms[currentRealmIndex].title}</h2>
+          <p>${currentEquation.equation}</p>
+        `;
+          inputArea.innerHTML = `
+          <input type="text" id="answer-input" placeholder="Enter value(s) of x">
+          <button id="submit-button">Submit</button>
+        `;
+          document
+            .getElementById("submit-button")
+            .addEventListener("click", checkAnswer);
+          if (skills.companionUnlocked) {
+            companionDiv.style.display = "flex";
+          }
+        }
+        // Check Answer
+        function checkAnswer() {
+          let userAnswer = document.getElementById("answer-input").value.trim();
+          let solutions = Array.isArray(currentEquation.solution)
+            ? currentEquation.solution.map(String)
+            : [String(currentEquation.solution)];
+          let userAnswers = userAnswer.split(",").map((ans) => ans.trim());
+          let isCorrect =
+            userAnswers.length === solutions.length &&
+            userAnswers.every((ans) => solutions.includes(ans));
+          if (isCorrect) {
+            correctSound.volume = sfxVolumeSlider.value;
+            correctSound.play();
+            showFeedback("Correct!", "green");
+            currentEquation = realms[currentRealmIndex].equations.shift();
+            setTimeout(() => {
+              loadEquation();
+            }, 1000);
+          } else {
+            incorrectSound.volume = sfxVolumeSlider.value;
+            incorrectSound.play();
+            showFeedback("Incorrect. Try again.", "red");
+          }
+        }
+        // Show Feedback
+        function showFeedback(message, color) {
+          feedback.textContent = message;
+          feedback.style.backgroundColor =
+            color === "green" ? "rgba(0, 128, 0, 0.8)" : "rgba(255, 0, 0, 0.8)";
+          feedback.style.display = "block";
+          setTimeout(() => {
+            feedback.style.display = "none";
+          }, 2000);
+        }
+        // Display Collectibles
+        function displayCollectibles() {
+          collectiblesDiv.innerHTML = "";
+          collectibles.forEach((url) => {
+            let img = document.createElement("img");
+            img.src = url;
+            collectiblesDiv.appendChild(img);
+          });
+        }
+        // Start Timer
+        function startTimer(seconds) {
+          timeLeft = seconds;
+          timerDiv.style.display = "block";
+          updateTimer();
+          timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimer();
+            if (timeLeft <= 0) {
+              clearInterval(timerInterval);
+              showFeedback("Time's up! You failed the timed trial.", "red");
+              setTimeout(() => {
+                loadRealm(currentRealmIndex);
+              }, 2000);
+            }
+          }, 1000);
+        }
+        // Update Timer
+        function updateTimer() {
+          timerDiv.textContent = `Time Left: ${timeLeft}s`;
+        }
+        // Companion Hint
+        function getCompanionHint() {
+          alert("Companion Hint: " + currentEquation.hint);
+        }
+        // Skill Tree
+        function showSkillTree() {
+          skillTree.style.display = "flex";
+        }
+        function unlockCompanion() {
+          skills.companionUnlocked = true;
+          companionDiv.style.display = "flex";
+          alert("Companion unlocked! They will now assist you in puzzles.");
+        }
+        // Practice Mode
+        function startPracticeMode() {
+          showModal(
+            "Practice Mode",
+            `
+          <p>Enter an equation to solve for x:</p>
+          <input type="text" id="practice-equation" placeholder="e.g., 2x + 3 = 7">
+          <button id="solve-practice-button">Solve</button>
+          <div id="practice-solution"></div>
+        `,
+            () => {},
+            true
+          );
+          document
+            .getElementById("solve-practice-button")
+            .addEventListener("click", solvePracticeEquation);
+        }
+        function solvePracticeEquation() {
+          let equation = document
+            .getElementById("practice-equation")
+            .value.trim();
+          let solutionDiv = document.getElementById("practice-solution");
+          try {
+            let leftRight = equation.split("=");
+            if (leftRight.length !== 2) throw "Invalid equation.";
+            let left = leftRight[0];
+            let right = leftRight[1];
+            let regex = /([+-]?\d*\.?\d*)x\s*([+-]\s*\d*\.?\d*)?/;
+            let match = left.match(regex);
+            if (!match) throw "Unsupported equation format.";
+            let a = parseFloat(match[1] || "1");
+            let b = parseFloat(
+              (match[2] || "0").replace(/\s+/g, "").replace("+", "")
+            );
+            let c = parseFloat(right);
+            let x = (c - b) / a;
+            if (isNaN(x)) throw "Unable to solve.";
+            solutionDiv.textContent = "Solution: x = " + x;
+          } catch (e) {
+            solutionDiv.textContent =
+              "Unable to solve. Please enter a simple linear equation.";
+          }
+        }
+        // Show Modal
+        function showModal(title, content, onClose, isHTML = false) {
+          modalContent.innerHTML = `<h2>${title}</h2>${
+            isHTML ? content : `<p>${content}</p>`
+          }
+          <button id="close-modal-button">Close</button>`;
+          modal.style.display = "flex";
+          document
+            .getElementById("close-modal-button")
+            .addEventListener("click", () => {
+              modal.style.display = "none";
+              onClose();
+            });
+        }
+        // Event Listeners
+        startGameButton.addEventListener("click", initGame);
+        timedModeButton.addEventListener("click", () => {
+          startGame(true);
+        });
+        normalModeButton.addEventListener("click", () => {
+          startGame(false);
+        });
+        instructionsButton.addEventListener("click", () => {
+          showModal(
+            "Instructions",
+            `
+          Welcome to Equation Explorer! Embark on a journey through mathematical realms where solving
+          equations alters the environment.
+          <br><br>
+          <strong>Gameplay:</strong>
+          <ul>
+            <li>Solve equations to progress through realms.</li>
+            <li>Use the Skill Tree to unlock abilities.</li>
+            <li>Collect artifacts by completing realms.</li>
+            <li>Unlock companions to assist you.</li>
+            <li>Access Practice Mode to experiment with equations.</li>
+            <li>Select game mode (Timed or Normal) when starting a new game.</li>
+          </ul>
+        `
+          );
+        });
+        settingsButton.addEventListener("click", () => {
+          settingsMenu.style.display = "flex";
+        });
+        volumeButton.addEventListener("click", () => {
+          settingsMenu.style.display = "flex";
+        });
+        closeSettingsButton.addEventListener("click", () => {
+          settingsMenu.style.display = "none";
+        });
+        musicVolumeSlider.addEventListener("input", () => {
+          backgroundMusic.volume = musicVolumeSlider.value;
+        });
+        sfxVolumeSlider.addEventListener("input", () => {
+          correctSound.volume = sfxVolumeSlider.value;
+          incorrectSound.volume = sfxVolumeSlider.value;
+        });
+        skillTreeButton.addEventListener("click", showSkillTree);
+        unlockCompanionButton.addEventListener("click", unlockCompanion);
+        closeSkillTreeButton.addEventListener("click", () => {
+          skillTree.style.display = "none";
+        });
+        practiceButton.addEventListener("click", startPracticeMode);
+        mainMenuButton.addEventListener("click", () => {
+          location.reload();
+        });
+        companionHintButton.addEventListener("click", getCompanionHint);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <!-- Updated viewport meta tag for mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Numeric Towers</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .active {
+      display: block !important;
+    }
+
+    .screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%; /* Made responsive */
+      height: 100%; /* Made responsive */
+      background-color: #ffffff;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Start Menu Screen */
+    #start-menu-screen .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #game-title {
+      font-size: 48px;
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    .menu-button {
+      width: 200px;
+      padding: 15px;
+      margin: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      background-color: #2196F3;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .menu-button:hover {
+      background-color: #1976D2;
+    }
+
+    /* Settings and Instructions Screen */
+    #settings-screen .container,
+    #instructions-screen .container,
+    #game-over-screen .container {
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .back-button {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #757575;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .back-button:hover {
+      background-color: #616161;
+    }
+
+    /* Instructions Screen Overlay */
+    #instructions-screen {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    #instructions-screen .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-height: 80%;
+      overflow-y: auto;
+      background: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      border-radius: 10px;
+    }
+
+    #instructions-screen h2 {
+      text-align: center;
+    }
+
+    #instructions-screen p {
+      font-size: 18px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Game Screen */
+    #game-container .container {
+      position: relative;
+      background-color: #e0e0e0;
+    }
+
+    /* Game Buttons */
+    #game-buttons {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: flex-start;
+      background-color: #f0f4f8;
+    }
+
+    #game-buttons .menu-button {
+      margin-right: 10px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    /* HUD Styles */
+    #hud {
+      font-size: 18px;
+      color: #333;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+    /* Game Canvas Styles */
+    #gameCanvas {
+      display: block;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      width: 90%; /* Made responsive */
+      max-width: 600px;
+      aspect-ratio: 3 / 4; /* Adjusted aspect ratio */
+    }
+
+    /* Game Over Screen */
+    #game-over-screen .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #game-over-message {
+      font-size: 36px;
+      text-align: center;
+      color: #d32f2f;
+      margin-bottom: 40px;
+    }
+
+    /* Responsive Adjustments */
+    @media only screen and (max-width: 600px) {
+      #game-title {
+        font-size: 32px;
+      }
+
+      .menu-button {
+        width: 150px;
+        padding: 10px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Start Menu Screen -->
+  <div class="active screen" id="start-menu-screen">
+    <div class="container">
+      <h1 id="game-title">Numeric Towers</h1>
+      <button class="menu-button" id="play-button">Play</button>
+      <button class="menu-button" id="settings-button">Settings</button>
+      <button class="menu-button" id="instructions-button">Instructions</button>
+    </div>
+  </div>
+
+  <!-- Settings Screen -->
+  <div class="screen" id="settings-screen">
+    <div class="container">
+      <h2>Settings</h2>
+      <p>Game Mode:</p>
+      <button class="menu-button" id="endless-mode-button">Endless Mode</button>
+      <button class="menu-button" id="challenge-mode-button">Challenge Mode</button>
+      <p>Stacking Mode:</p>
+      <button class="menu-button" id="ascending-mode-button">Ascending</button>
+      <button class="menu-button" id="descending-mode-button">Descending</button>
+      <p>Select Difficulty Level:</p>
+      <button class="menu-button" id="easy-button">Easy</button>
+      <button class="menu-button" id="medium-button">Medium</button>
+      <button class="menu-button" id="hard-button">Hard</button>
+      <p>Music:</p>
+      <button class="menu-button" id="music-toggle-button">Music On</button>
+      <button class="back-button" id="setting-back-button">Back</button>
+    </div>
+  </div>
+
+  <!-- Instructions Screen -->
+  <div class="screen" id="instructions-screen">
+    <div class="container">
+      <h2>Instructions</h2>
+      <p>
+        Numeric Towers is a strategic stacking game where you build towers using numbered blocks from 1 to 100.
+      </p>
+      <p>
+        <strong>Objective:</strong><br>
+        - In <strong>Endless Mode</strong>, stack as high as possible without collapsing.<br>
+        - In <strong>Challenge Mode</strong>, reach a random target height displayed in the HUD.
+      </p>
+      <p>
+        <strong>Stacking Mode:</strong><br>
+        - <strong>Ascending:</strong> Stack blocks in increasing numerical order.<br>
+        - <strong>Descending:</strong> Stack blocks in decreasing numerical order.
+      </p>
+      <p>
+        <strong>Controls:</strong><br>
+        - <strong>Tap Left Side:</strong> Move block left<br>
+        - <strong>Tap Right Side:</strong> Move block right<br>
+        - <strong>Tap Below Block:</strong> Drop block faster<br>
+        - <strong>Spacebar:</strong> Drop block immediately
+      </p>
+      <p>
+        <strong>Obstacles:</strong><br>
+        - <strong>Wind Gusts:</strong> Occasional winds that sway the tower.<br>
+        - <strong>Earthquakes:</strong> Random shakes that challenge stability.
+      </p>
+      <p>
+        <strong>Power-ups:</strong><br>
+        - <strong>Glue Blocks:</strong> Secure a block in place.<br>
+        - <strong>Reinforcement Bars:</strong> Add stability to a section.
+      </p>
+      <button class="back-button" id="instructions-back-button">Back</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div class="screen" id="game-container">
+    <div id="game-buttons">
+      <button class="menu-button" id="game-menu-button">Menu</button>
+      <button class="menu-button" id="game-restart-button">Restart</button>
+      <button class="menu-button" id="game-instructions-button">Instructions</button>
+    </div>
+    <div id="hud">
+      <span id="score-display">Score: 0</span>
+      <span id="height-display">Height: 0</span>
+      <span id="target-height-display"></span>
+    </div>
+    <div class="container">
+      <!-- Game Canvas -->
+      <canvas id="gameCanvas" width="640" height="800"></canvas>
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div class="screen" id="game-over-screen">
+    <div class="container">
+      <div id="game-over-message">Game Over!</div>
+      <button class="menu-button" id="play-again-button">Play Again</button>
+      <button class="menu-button main-menu-button" id="game-over-main-menu-button">Main Menu</button>
+    </div>
+  </div>
+
+  <!-- Audio Elements -->
+  <audio id="background-music" loop>
+    <source
+      src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="start-game-sound">
+    <source
+      src="https://www.soundjay.com/button/sounds/button-3.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="end-game-sound">
+    <source
+      src="https://www.soundjay.com/button/sounds/button-10.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="win-game-sound">
+    <source
+      src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="block-placed-sound">
+    <source
+      src="https://www.soundjay.com/button/sounds/button-4.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      class GameUI {
+        constructor() {
+          // Screen elements
+          this.startMenuScreen = document.getElementById('start-menu-screen');
+          this.settingsScreen = document.getElementById('settings-screen');
+          this.instructionsScreen = document.getElementById('instructions-screen');
+          this.gameContainer = document.getElementById('game-container');
+          this.gameOverScreen = document.getElementById('game-over-screen');
+          this.musicToggleButton = document.getElementById('music-toggle-button');
+          this.backgroundMusic = document.getElementById('background-music');
+          this.startGameSound = document.getElementById('start-game-sound');
+          this.endGameSound = document.getElementById('end-game-sound');
+          this.winGameSound = document.getElementById('win-game-sound');
+          this.blockPlacedSound = document.getElementById('block-placed-sound');
+          this.isMusicOn = true;
+          this.gameMode = 'Endless Mode';
+          this.stackingMode = 'Ascending';
+          this.difficulty = 'Medium';
+          this.bindUIActions();
+        }
+
+        bindUIActions() {
+          this.musicToggleButton.addEventListener('click', () => {
+            this.toggleMusic();
+          });
+          document.getElementById('easy-button').addEventListener('click', () => {
+            this.setDifficulty('Easy');
+          });
+          document.getElementById('medium-button').addEventListener('click', () => {
+            this.setDifficulty('Medium');
+          });
+          document.getElementById('hard-button').addEventListener('click', () => {
+            this.setDifficulty('Hard');
+          });
+          document.getElementById('endless-mode-button').addEventListener('click', () => {
+            this.setGameMode('Endless Mode');
+          });
+          document.getElementById('challenge-mode-button').addEventListener('click', () => {
+            this.setGameMode('Challenge Mode');
+          });
+          document.getElementById('ascending-mode-button').addEventListener('click', () => {
+            this.setStackingMode('Ascending');
+          });
+          document.getElementById('descending-mode-button').addEventListener('click', () => {
+            this.setStackingMode('Descending');
+          });
+        }
+
+        swapToScreen(screen) {
+          this.startMenuScreen.classList.remove('active');
+          this.settingsScreen.classList.remove('active');
+          this.instructionsScreen.classList.remove('active');
+          this.gameContainer.classList.remove('active');
+          this.gameOverScreen.classList.remove('active');
+          screen.classList.add('active');
+        }
+
+        startGame() {
+          this.swapToScreen(this.gameContainer);
+          this.startGameSound.currentTime = 0;
+          this.startGameSound.play();
+          this.playBackgroundMusic();
+        }
+
+        endGame() {
+          this.swapToScreen(this.gameOverScreen);
+          document.getElementById('game-over-message').textContent = 'Game Over!';
+          this.endGameSound.currentTime = 0;
+          this.endGameSound.play();
+          this.stopBackgroundMusic();
+        }
+
+        winGame() {
+          this.swapToScreen(this.gameOverScreen);
+          document.getElementById('game-over-message').textContent = 'You Win!';
+          this.winGameSound.currentTime = 0;
+          this.winGameSound.play();
+          this.stopBackgroundMusic();
+        }
+
+        mainMenu() {
+          if (game.logic) {
+            game.logic.isGameOver = true;
+          }
+          this.swapToScreen(this.startMenuScreen);
+        }
+
+        playAgain() {
+          this.swapToScreen(this.gameContainer);
+          game.resetGame();
+        }
+
+        settings() {
+          this.swapToScreen(this.settingsScreen);
+        }
+
+        instructions() {
+          this.instructionsScreen.classList.add('active');
+          if (game.logic) {
+            game.logic.isPaused = true;
+            this.gameContainer.classList.remove('active');
+          }
+        }
+
+        hideOverlay() {
+          this.instructionsScreen.classList.remove('active');
+          if (game.logic && game.logic.isPaused) {
+            // Resume the game
+            this.gameContainer.classList.add('active');
+            game.logic.isPaused = false;
+            requestAnimationFrame(game.logic.gameLoop.bind(game.logic));
+          } else {
+            // Go back to the main menu
+            this.swapToScreen(this.startMenuScreen);
+          }
+        }
+
+        toggleMusic() {
+          if (this.isMusicOn) {
+            this.backgroundMusic.pause();
+            this.musicToggleButton.textContent = 'Music Off';
+          } else {
+            this.backgroundMusic.play();
+            this.musicToggleButton.textContent = 'Music On';
+          }
+          this.isMusicOn = !this.isMusicOn;
+        }
+
+        setDifficulty(level) {
+          this.difficulty = level;
+          alert(`Difficulty set to ${level}`);
+        }
+
+        setGameMode(mode) {
+          this.gameMode = mode;
+          alert(`Game Mode set to ${mode}`);
+        }
+
+        setStackingMode(mode) {
+          this.stackingMode = mode;
+          alert(`Stacking Mode set to ${mode}`);
+        }
+
+        playBlockPlacedSound() {
+          this.blockPlacedSound.currentTime = 0;
+          this.blockPlacedSound.play();
+        }
+
+        playBackgroundMusic() {
+          this.backgroundMusic.currentTime = 0;
+          if (this.isMusicOn) {
+            this.backgroundMusic.play();
+          }
+        }
+
+        stopBackgroundMusic() {
+          this.backgroundMusic.pause();
+        }
+      }
+
+      class GameLogic {
+        constructor(ui) {
+          this.ui = ui;
+          this.canvas = document.getElementById('gameCanvas');
+          this.ctx = this.canvas.getContext('2d');
+          this.blocks = [];
+          this.currentBlock = null;
+          this.score = 0;
+          this.towerHeight = 0;
+          this.isGameOver = false;
+          this.isPaused = false;
+          this.gravity = 0.05; // Adjusted gravity for slower falling
+          this.windForce = 0;
+          this.windTimer = 0;
+          this.earthquakeTimer = 0;
+          this.difficultySettings = {
+            'Easy': { windFrequency: 0.001, earthquakeFrequency: 0.0005 },
+            'Medium': { windFrequency: 0.002, earthquakeFrequency: 0.001 },
+            'Hard': { windFrequency: 0.003, earthquakeFrequency: 0.002 }
+          };
+          this.blockLimit = 10; // For Challenge Mode
+          this.targetHeight = 0; // For Challenge Mode
+          this.generateTargetHeight();
+          this.bindControls();
+          this.spawnBlock();
+          requestAnimationFrame(this.gameLoop.bind(this));
+        }
+
+        generateTargetHeight() {
+          if (this.ui.gameMode === 'Challenge Mode') {
+            this.targetHeight = Math.floor(Math.random() * 300) + 400; // Random height between 400 and 700
+            document.getElementById('target-height-display').textContent = 'Target Height: ' + this.targetHeight;
+          } else {
+            this.targetHeight = 0;
+            document.getElementById('target-height-display').textContent = '';
+          }
+        }
+
+        bindControls() {
+          // Keyboard Controls
+          document.addEventListener('keydown', (e) => {
+            if (!this.currentBlock) return;
+            if (this.isPaused) return;
+            switch (e.key) {
+              case 'ArrowLeft':
+              case 'a':
+              case 'A':
+                this.currentBlock.vx = -5;
+                break;
+              case 'ArrowRight':
+              case 'd':
+              case 'D':
+                this.currentBlock.vx = 5;
+                break;
+              case 'ArrowDown':
+              case 's':
+              case 'S':
+                this.currentBlock.vy = 5;
+                break;
+              case ' ':
+                this.currentBlock.vy = 10;
+                break;
+            }
+          });
+          document.addEventListener('keyup', (e) => {
+            if (!this.currentBlock) return;
+            if (this.isPaused) return;
+            if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
+              this.currentBlock.vx = 0;
+            }
+            if (['ArrowDown', 's', 'S'].includes(e.key)) {
+              this.currentBlock.vy = 2;
+            }
+          });
+
+          // Touch Controls
+          this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+        }
+
+        handleTouchStart(e) {
+          e.preventDefault();
+          if (!this.currentBlock) return;
+          if (this.isPaused) return;
+
+          const touch = e.touches[0];
+          const touchX = touch.clientX;
+          const touchY = touch.clientY;
+
+          // Get the position of the canvas
+          const canvasRect = this.canvas.getBoundingClientRect();
+
+          // Check if touch is within the canvas
+          if (
+            touchX < canvasRect.left ||
+            touchX > canvasRect.right ||
+            touchY < canvasRect.top ||
+            touchY > canvasRect.bottom
+          ) {
+            return;
+          }
+
+          // Get the position of the current block
+          const blockX = canvasRect.left + (this.currentBlock.x / this.canvas.width) * canvasRect.width;
+          const blockY = canvasRect.top + (this.currentBlock.y / this.canvas.height) * canvasRect.height;
+
+          if (touchX < blockX - 20) {
+            // Touch is on the left side of the current block
+            this.currentBlock.vx = -5;
+          } else if (touchX > blockX + 20) {
+            // Touch is on the right side of the current block
+            this.currentBlock.vx = 5;
+          } else if (touchY > blockY + 20) {
+            // Touch is below the current block
+            this.currentBlock.vy = 5;
+          }
+
+          // Stop movement after touch ends
+          this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+        }
+
+        handleTouchEnd(e) {
+          e.preventDefault();
+          if (!this.currentBlock) return;
+          this.currentBlock.vx = 0;
+          this.currentBlock.vy = 2;
+        }
+
+        spawnBlock() {
+          const number = Math.floor(Math.random() * 100) + 1;
+          // Generate a random color
+          const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+          const size = 50 + (number / 2);
+          const block = {
+            x: this.canvas.width / 2,
+            y: 0,
+            width: size,
+            height: size / 2,
+            vx: 0,
+            vy: 2,
+            number: number,
+            color: randomColor,
+            isPlaced: false
+          };
+          this.currentBlock = block;
+          this.blocks.push(block);
+          // Play new block sound if needed
+        }
+
+        applyPhysics(block) {
+          block.vy += this.gravity;
+          block.x += block.vx + this.windForce;
+          block.y += block.vy;
+
+          // Boundary conditions
+          if (block.x - block.width / 2 < 0) {
+            block.x = block.width / 2;
+            block.vx = 0;
+          }
+          if (block.x + block.width / 2 > this.canvas.width) {
+            block.x = this.canvas.width - block.width / 2;
+            block.vx = 0;
+          }
+        }
+
+        checkCollisions() {
+          if (!this.currentBlock) return;
+
+          if (this.currentBlock.y + this.currentBlock.height / 2 >= this.canvas.height) {
+            // Block has reached the bottom, place it
+            this.currentBlock.y = this.canvas.height - this.currentBlock.height / 2;
+            this.currentBlock.isPlaced = true;
+            this.placeBlock();
+            return;
+          }
+
+          for (let i = 0; i < this.blocks.length - 1; i++) {
+            const block = this.blocks[i];
+            if (this.isColliding(this.currentBlock, block)) {
+              if (this.isPlacementValid(block)) {
+                this.currentBlock.y = block.y - block.height / 2 - this.currentBlock.height / 2;
+                this.currentBlock.isPlaced = true;
+                this.placeBlock();
+              } else {
+                // Invalid placement due to stacking mode
+                this.isGameOver = true;
+                this.ui.endGame();
+              }
+              return;
+            }
+          }
+        }
+
+        isColliding(a, b) {
+          return (
+            a.x + a.width / 2 > b.x - b.width / 2 &&
+            a.x - a.width / 2 < b.x + b.width / 2 &&
+            a.y + a.height / 2 > b.y - b.height / 2 &&
+            a.y - a.height / 2 < b.y + b.height / 2
+          );
+        }
+
+        isPlacementValid(belowBlock) {
+          if (this.ui.stackingMode === 'Ascending') {
+            return this.currentBlock.number > belowBlock.number;
+          } else {
+            return this.currentBlock.number < belowBlock.number;
+          }
+        }
+
+        placeBlock() {
+          this.ui.playBlockPlacedSound();
+          this.score += 10;
+          this.towerHeight = this.calculateMaxTowerHeight();
+          document.getElementById('score-display').textContent = 'Score: ' + this.score;
+          document.getElementById('height-display').textContent = 'Height: ' + Math.round(this.towerHeight);
+
+          // Check for win condition
+          if (this.towerHeight >= this.canvas.height) {
+            this.isGameOver = true;
+            this.ui.winGame();
+            return;
+          }
+
+          if (this.ui.gameMode === 'Challenge Mode') {
+            if (this.towerHeight >= this.targetHeight) {
+              this.isGameOver = true;
+              this.ui.winGame();
+              return;
+            }
+            if (this.blocks.filter(b => b.isPlaced).length >= this.blockLimit) {
+              // No more blocks left
+              this.isGameOver = true;
+              this.ui.endGame();
+              return;
+            }
+          }
+
+          this.spawnBlock();
+        }
+
+        calculateMaxTowerHeight() {
+          let maxHeight = 0;
+          const towers = {};
+
+          // Organize blocks into towers based on x-position
+          this.blocks.forEach(block => {
+            if (block.isPlaced) {
+              const xKey = Math.floor(block.x / 50); // Adjust as needed for precision
+              if (!towers[xKey]) {
+                towers[xKey] = [];
+              }
+              towers[xKey].push(block);
+            }
+          });
+
+          // Calculate the height of each tower
+          for (let key in towers) {
+            const towerHeight = towers[key].reduce((acc, block) => acc + block.height, 0);
+            if (towerHeight > maxHeight) {
+              maxHeight = towerHeight;
+            }
+          }
+
+          return maxHeight;
+        }
+
+        applyWind() {
+          const difficulty = this.difficultySettings[this.ui.difficulty];
+          if (Math.random() < difficulty.windFrequency) {
+            this.windForce = (Math.random() - 0.5) * 2; // Random wind force between -1 and 1
+            this.windTimer = 200; // Wind lasts for 200 frames
+          }
+          if (this.windTimer > 0) {
+            this.windTimer--;
+          } else {
+            this.windForce = 0;
+          }
+        }
+
+        applyEarthquake() {
+          const difficulty = this.difficultySettings[this.ui.difficulty];
+          if (Math.random() < difficulty.earthquakeFrequency) {
+            this.earthquakeTimer = 100; // Earthquake lasts for 100 frames
+          }
+          if (this.earthquakeTimer > 0) {
+            this.earthquakeTimer--;
+            this.blocks.forEach(block => {
+              block.x += (Math.random() - 0.5) * 5; // Shake blocks
+            });
+          }
+        }
+
+        update() {
+          if (this.isGameOver) return;
+          if (this.isPaused) return;
+          this.applyWind();
+          this.applyEarthquake();
+          if (this.currentBlock && !this.currentBlock.isPlaced) {
+            this.applyPhysics(this.currentBlock);
+            this.checkCollisions();
+          }
+        }
+
+        draw() {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          this.blocks.forEach(block => {
+            this.ctx.fillStyle = block.color;
+            this.ctx.fillRect(
+              block.x - block.width / 2,
+              block.y - block.height / 2,
+              block.width,
+              block.height
+            );
+            // Draw the block number
+            this.ctx.fillStyle = '#000';
+            this.ctx.font = 'bold 20px Arial';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(
+              block.number,
+              block.x,
+              block.y + 7
+            );
+          });
+        }
+
+        gameLoop() {
+          if (this.isGameOver) return;
+          if (this.isPaused) return;
+          this.update();
+          this.draw();
+          requestAnimationFrame(this.gameLoop.bind(this));
+        }
+
+        resetGame() {
+          this.blocks = [];
+          this.currentBlock = null;
+          this.isGameOver = false;
+          this.isPaused = false;
+          this.score = 0;
+          this.towerHeight = 0;
+          this.gravity = 0.05;
+          document.getElementById('score-display').textContent = 'Score: 0';
+          document.getElementById('height-display').textContent = 'Height: 0';
+          this.generateTargetHeight();
+          this.spawnBlock();
+          requestAnimationFrame(this.gameLoop.bind(this));
+        }
+      }
+
+      class Game {
+        constructor() {
+          this.ui = new GameUI();
+          this.logic = null;
+          this.assignButtons();
+        }
+
+        prepareGame() {
+          this.ui.swapToScreen(this.ui.startMenuScreen);
+        }
+
+        startGame() {
+          this.ui.startGame();
+          this.logic = new GameLogic(this.ui);
+        }
+
+        resetGame() {
+          if (this.logic) {
+            this.logic.resetGame();
+          }
+        }
+
+        assignButtons() {
+          const playButton = document.getElementById('play-button');
+          const settingsButton = document.getElementById('settings-button');
+          const instructionsButton = document.getElementById('instructions-button');
+          const playAgainButton = document.getElementById('play-again-button');
+          const mainMenuButtons = document.querySelectorAll('.main-menu-button');
+          const settingBackButton = document.getElementById('setting-back-button');
+          const instructionsBackButton = document.getElementById('instructions-back-button');
+
+          const gameMenuButton = document.getElementById('game-menu-button');
+          const gameRestartButton = document.getElementById('game-restart-button');
+          const gameInstructionsButton = document.getElementById('game-instructions-button');
+
+          settingsButton.addEventListener('click', this.ui.settings.bind(this.ui));
+          instructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
+          playAgainButton.addEventListener('click', this.startGame.bind(this));
+          mainMenuButtons.forEach(button => button.addEventListener('click', this.ui.mainMenu.bind(this.ui)));
+          playButton.addEventListener('click', this.startGame.bind(this));
+          settingBackButton.addEventListener('click', this.ui.mainMenu.bind(this.ui));
+          gameInstructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
+
+          instructionsBackButton.addEventListener('click', () => {
+            this.ui.hideOverlay();
+          });
+
+          gameMenuButton.addEventListener('click', () => {
+            if (this.logic) {
+              this.logic.isGameOver = true;
+            }
+            this.logic = null;
+            this.ui.mainMenu();
+          });
+          gameRestartButton.addEventListener('click', () => {
+            if (this.logic) {
+              this.logic.isGameOver = true;
+            }
+            this.resetGame();
+          });
+        }
+      }
+
+      const game = new Game();
+      game.prepareGame();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=640, height=960, user-scalable=no" name="viewport" />
+    <title>Word Minesweeper</title>
+     <style>
+      /* CSS Styles */
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f0f4f8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .active {
+        display: block !important;
+      }
+
+      .screen {
+        display: none;
+        width: 640px;
+        height: 960px;
+        position: absolute;
+        top: calc(50% - 480px);
+        left: calc(50% - 320px);
+        border: 1px solid #ccc;
+        background-color: #ffffff;
+        overflow: hidden;
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
+      #start-menu-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #game-title {
+        font-size: 48px;
+        margin-bottom: 40px;
+        color: #333;
+      }
+
+      .menu-button {
+        width: 200px;
+        padding: 15px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        border: none;
+        background-color: #2196F3;
+        color: #fff;
+        border-radius: 5px;
+      }
+
+      .menu-button:hover {
+        background-color: #1976D2;
+      }
+
+      #settings-screen .container,
+      #instructions-screen .container,
+      #game-over-screen .container {
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .back-button {
+        display: block;
+        margin: 20px auto 0;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #757575;
+        color: #fff;
+        border-radius: 5px;
+      }
+
+      .back-button:hover {
+        background-color: #616161;
+      }
+
+      #instructions-screen {
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      #instructions-screen .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+      }
+
+      #instructions-screen h2 {
+        text-align: center;
+      }
+
+      #instructions-screen p {
+        font-size: 18px;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      #game-container .container {
+        position: relative;
+        background-color: #e0e0e0;
+        height: 100%;
+      }
+
+      #game-over-message {
+        font-size: 36px;
+        text-align: center;
+        color: #d32f2f;
+        margin-top: 200px;
+      }
+
+      /* Updated game-buttons */
+      #game-buttons {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: flex-start;
+        background-color: #f0f4f8;
+        z-index: 2;
+      }
+
+      #game-buttons .menu-button {
+        margin-right: 10px;
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      #hud {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 18px;
+        color: #333;
+        text-align: right;
+        z-index: 2;
+      }
+
+      #hud span {
+        display: block;
+      }
+
+      /* Updated gameCanvas */
+      #gameCanvas {
+        width: 640px;
+        height: 910px;
+        background-color: #fff;
+        touch-action: none;
+        position: absolute;
+        top: 80px;
+      }
+
+      /* Tile styles */
+      .tile {
+        width: 40px;
+        height: 40px;
+        background-color: #bdbdbd;
+        border: 1px solid #9e9e9e;
+        position: absolute;
+        text-align: center;
+        line-height: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      .tile.revealed {
+        background-color: #e0e0e0;
+        cursor: default;
+      }
+
+      .tile.flagged {
+        background-color: #ffeb3b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="active screen" id="start-menu-screen">
+      <div class="container">
+        <h1 id="game-title">
+          Word Minesweeper
+        </h1>
+        <button class="menu-button" id="play-button">Play</button>
+        <button class="menu-button" id="settings-button">Settings</button>
+        <button class="menu-button" id="instructions-button">Instructions</button>
+      </div>
+    </div>
+    <div class="screen" id="settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <p>Select Difficulty Level:</p>
+        <button class="menu-button" id="beginner-button">Beginner</button>
+        <button class="menu-button" id="expert-button">Expert</button>
+        <p>Music:</p>
+        <button class="menu-button" id="music-toggle-button">Music On</button>
+        <button class="back-button" id="setting-back-button">Back</button>
+      </div>
+    </div>
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <h2>Instructions</h2>
+        <p>
+          Word Minesweeper blends logical deduction with word-guessing challenges.
+        </p>
+        <p>
+          <strong>Objective:</strong><br>
+          - Uncover tiles to reveal letters and numbers.<br>
+          - Identify hidden words without triggering mines.<br>
+		  - Win Condition: Successfully reveal all non-mine tiles.
+        </p>
+        <p>
+          <strong>Controls:</strong><br>
+          - Left-click to uncover a tile.<br>
+          - Right-click to flag a suspected mine tile.<br>
+          - Use hints to reveal a safe tile or a letter.
+        </p>
+        <p>
+          <strong>Gameplay Mechanics:</strong><br>
+          - Numbers indicate how many letters are adjacent.<br>
+		  - Letters: Revealing letters adds to your score.<br>
+		  - Mines: Uncovering a mine ends the game.
+        </p>
+		<p>
+          <strong>Scoring:</strong><br>
+          - Revealed Letters: Each letter you reveal grants you 10 points.<br>
+		  - Hints: Using a hint deducts 5 points from your score.
+        </p>
+        <button class="back-button" id="instructions-back-button">Back</button>
+      </div>
+    </div>
+    <div class="screen" id="game-container">
+      <div class="container">
+        <div id="game-buttons">
+          <button class="menu-button" id="game-menu-button">Menu</button>
+          <button class="menu-button" id="game-restart-button">Restart</button>
+          <button class="menu-button" id="game-instructions-button">Instructions</button>
+          <button class="menu-button" id="hint-button">Hint</button>
+        </div>
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas" width="640" height="910"></canvas>
+        <div id="hud">
+          <span id="score-display">Score: 0</span>
+          <span id="time-display"></span>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <div id="game-over-message">Game Over!</div>
+        <button class="menu-button" id="play-again-button">Play Again</button>
+        <button class="menu-button main-menu-button" id="game-over-main-menu-button">Main Menu</button>
+      </div>
+    </div>
+    <audio autoplay id="background-music" loop>
+      <source src="background-music.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="start-game-sound">
+      <source src="start-game-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="end-game-sound">
+      <source src="end-game-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        		
+		class GameUI {
+          constructor() {
+            this.startMenuScreen = document.getElementById('start-menu-screen');
+            this.settingsScreen = document.getElementById('settings-screen');
+            this.instructionsScreen = document.getElementById('instructions-screen');
+            this.gameContainer = document.getElementById('game-container');
+            this.gameOverScreen = document.getElementById('game-over-screen');
+            this.musicToggleButton = document.getElementById('music-toggle-button');
+            this.backgroundMusic = document.getElementById('background-music');
+            this.isMusicOn = true;
+            this.difficulty = 'Beginner';
+            this.bindUIActions();
+          }
+
+          bindUIActions() {
+            this.musicToggleButton.addEventListener('click', () => {
+              this.toggleMusic();
+            });
+            document.getElementById('beginner-button').addEventListener('click', () => {
+              this.setDifficulty('Beginner');
+            });
+            document.getElementById('expert-button').addEventListener('click', () => {
+              this.setDifficulty('Expert');
+            });
+          }
+
+          swapToScreen(screen) {
+            this.startMenuScreen.classList.remove('active');
+            this.settingsScreen.classList.remove('active');
+            this.instructionsScreen.classList.remove('active');
+            this.gameContainer.classList.remove('active');
+            this.gameOverScreen.classList.remove('active');
+            screen.classList.add('active');
+          }
+
+          startGame() {
+            const startGameSound = document.getElementById('start-game-sound');
+            this.swapToScreen(this.gameContainer);
+            startGameSound.play();
+          }
+
+          endGame() {
+            const endGameSound = document.getElementById('end-game-sound');
+            this.swapToScreen(this.gameOverScreen);
+            endGameSound.play();
+          }
+
+          mainMenu() {
+            if (game.logic) {
+              game.logic.isGameOver = true;
+            }
+            this.swapToScreen(this.startMenuScreen);
+          }
+
+          playAgain() {
+            this.swapToScreen(this.gameContainer);
+            game.resetGame();
+          }
+
+          settings() {
+            this.swapToScreen(this.settingsScreen);
+          }
+
+          instructions() {
+            this.instructionsScreen.classList.add('active');
+            if (game.logic) {
+              game.logic.isPaused = true;
+              this.gameContainer.classList.remove('active');
+            }
+          }
+
+          hideOverlay() {
+            this.instructionsScreen.classList.remove('active');
+            if (game.logic && game.logic.isPaused) {
+              // Resume the game
+              this.gameContainer.classList.add('active');
+              game.logic.isPaused = false;
+              requestAnimationFrame(game.logic.gameLoop.bind(game.logic));
+            } else {
+              // Go back to the main menu
+              this.swapToScreen(this.startMenuScreen);
+            }
+          }
+
+          toggleMusic() {
+            if (this.isMusicOn) {
+              this.backgroundMusic.pause();
+              this.musicToggleButton.textContent = 'Music Off';
+            } else {
+              this.backgroundMusic.play();
+              this.musicToggleButton.textContent = 'Music On';
+            }
+            this.isMusicOn = !this.isMusicOn;
+          }
+
+          setDifficulty(level) {
+            this.difficulty = level;
+            alert(`Difficulty set to ${level}`);
+          }
+        }
+
+        class GameLogic {
+          constructor(ui) {
+            this.ui = ui;
+            this.canvas = document.getElementById('gameCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.isGameOver = false;
+            this.isPaused = false;
+            this.score = 0;
+            this.grid = [];
+            this.tileSize = 40;
+            this.rows = ui.difficulty === 'Beginner' ? 9 : 16;
+            this.cols = ui.difficulty === 'Beginner' ? 9 : 16;
+            this.minesCount = ui.difficulty === 'Beginner' ? 10 : 40;
+            this.timeElapsed = 0;
+            this.timerInterval = null;
+            this.dictionary = [];
+            this.loadDictionary().then(() => {
+              this.init();
+            });
+          }
+
+          loadDictionary() {
+            return fetch(
+              'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt'
+            )
+              .then(response => response.text())
+              .then(text => {
+                this.dictionary = text
+                  .split('\n')
+                  .filter(word => word.length >= 3);
+              })
+              .catch(error => {
+                console.error('Error loading dictionary:', error);
+              });
+          }
+
+          init() {
+            this.bindControls();
+            this.resetGame();
+          }
+
+          bindControls() {
+            this.canvas.addEventListener('click', this.onLeftClick.bind(this));
+            this.canvas.addEventListener('contextmenu', this.onRightClick.bind(this));
+            document.getElementById('hint-button').addEventListener('click', this.useHint.bind(this));
+
+            // Instructions button inside the game container
+            const gameInstructionsButton = document.getElementById('game-instructions-button');
+            gameInstructionsButton.addEventListener('click', () => {
+              this.ui.instructions();
+            });            
+          }
+
+          resetGame() {
+            clearInterval(this.timerInterval);
+            this.isGameOver = false;
+            this.isPaused = false;
+            this.score = 0;
+            this.timeElapsed = 0;
+            document.getElementById('score-display').textContent = 'Score: 0';
+            document.getElementById('time-display').textContent = `Time: 0s`;
+            this.generateGrid();
+            this.placeMines();
+            this.calculateAdjacentNumbers();
+            this.startTimer();
+            this.draw();
+          }
+
+          startTimer() {
+            this.timerInterval = setInterval(() => {
+              if (!this.isPaused) {
+                this.timeElapsed++;
+                document.getElementById('time-display').textContent = `Time: ${this.timeElapsed}s`;
+              }
+            }, 1000);
+          }
+
+          generateGrid() {
+            this.grid = [];
+            for (let row = 0; row < this.rows; row++) {
+              const gridRow = [];
+              for (let col = 0; col < this.cols; col++) {
+                gridRow.push({
+                  x: col * this.tileSize,
+                  y: row * this.tileSize,
+                  revealed: false,
+                  flagged: false,
+                  mine: false,
+                  adjacentMines: 0,
+                  letter: '',
+                });
+              }
+              this.grid.push(gridRow);
+            }
+            // Place letters randomly for words in rows and columns
+            this.placeLetters();
+          }
+
+          placeMines() {
+            let minesPlaced = 0;
+            while (minesPlaced < this.minesCount) {
+              const row = Math.floor(Math.random() * this.rows);
+              const col = Math.floor(Math.random() * this.cols);
+              if (!this.grid[row][col].mine && !this.grid[row][col].letter) {
+                this.grid[row][col].mine = true;
+                minesPlaced++;
+              }
+            }
+          }
+
+          placeLetters() {
+            // For simplicity, we'll place words horizontally
+            for (let row = 0; row < this.rows; row++) {
+              if (Math.random() < 0.5) {
+                // 50% chance to place a word in this row
+                const word = this.getRandomWord();
+                if (!word) {
+                  // No word available, skip
+                  continue;
+                }
+                const maxStartCol = this.cols - word.length;
+                if (maxStartCol < 0) {
+                  // Word is too long for this grid, skip
+                  continue;
+                }
+                const startCol = Math.floor(
+                  Math.random() * (maxStartCol + 1)
+                );
+                for (let i = 0; i < word.length; i++) {
+                  const cell = this.grid[row][startCol + i];
+                  if (!cell.mine) {
+                    cell.letter = word[i].toUpperCase();
+                  }
+                }
+              }
+            }
+          }
+
+          getRandomWord() {
+            const words = this.dictionary.filter(
+              word =>
+                word.length >= 3 &&
+                word.length <= Math.min(this.cols, 8) // Limit word length to fit in the grid
+            );
+            if (words.length === 0) {
+              return null;
+            }
+            const word = words[Math.floor(Math.random() * words.length)];
+            return word;
+          }
+
+          calculateAdjacentNumbers() {
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                let count = 0;
+                for (let i = -1; i <= 1; i++) {
+                  for (let j = -1; j <= 1; j++) {
+                    if (i === 0 && j === 0) continue;
+                    const newRow = row + i;
+                    const newCol = col + j;
+                    if (
+                      newRow >= 0 &&
+                      newRow < this.rows &&
+                      newCol >= 0 &&
+                      newCol < this.cols &&
+                      (this.grid[newRow][newCol].letter || this.grid[newRow][newCol].mine)
+                    ) {
+                      count++;
+                    }
+                  }
+                }
+                this.grid[row][col].adjacentMines = count;
+              }
+            }
+          }
+
+          onLeftClick(e) {
+            if (this.isPaused || this.isGameOver) return;
+            const { row, col } = this.getCellFromEvent(e);
+            if (row !== null && col !== null) {
+              const cell = this.grid[row][col];
+              if (!cell.revealed && !cell.flagged) {
+                this.revealCell(row, col);
+                this.checkWinCondition();
+              }
+            }
+            this.draw();
+          }
+
+          onRightClick(e) {
+            e.preventDefault();
+            if (this.isPaused || this.isGameOver) return;
+            const { row, col } = this.getCellFromEvent(e);
+            if (row !== null && col !== null) {
+              const cell = this.grid[row][col];
+              if (!cell.revealed) {
+                cell.flagged = !cell.flagged;
+                this.draw();
+              }
+            }
+          }
+
+          getCellFromEvent(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const col = Math.floor(x / this.tileSize);
+            const row = Math.floor(y / this.tileSize);
+            if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+              return { row, col };
+            } else {
+              return { row: null, col: null };
+            }
+          }
+
+          revealCell(row, col) {
+            const cell = this.grid[row][col];
+            if (cell.revealed || cell.flagged) return;
+            cell.revealed = true;
+            if (cell.mine) {
+              this.isGameOver = true;
+              this.revealMines();
+              this.draw();
+              setTimeout(() => {
+                this.ui.endGame();
+              }, 2000); // Delay to allow player to see the mines
+              clearInterval(this.timerInterval);
+              return;
+            }
+            if (cell.letter) {
+              this.score += 10;
+              document.getElementById('score-display').textContent =
+                'Score: ' + this.score;
+            } else if (cell.adjacentMines === 0) {
+              // Reveal adjacent cells recursively
+              for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                  if (i === 0 && j === 0) continue;
+                  const newRow = row + i;
+                  const newCol = col + j;
+                  if (
+                    newRow >= 0 &&
+                    newRow < this.rows &&
+                    newCol >= 0 &&
+                    newCol < this.cols
+                  ) {
+                    this.revealCell(newRow, newCol);
+                  }
+                }
+              }
+            }
+          }
+
+          revealMines() {
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                const cell = this.grid[row][col];
+                if (cell.mine) {
+                  cell.revealed = true;
+                }
+              }
+            }
+          }          
+
+          checkWinCondition() {
+            let allCellsRevealed = true;
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                const cell = this.grid[row][col];
+                if (!cell.mine && !cell.revealed) {
+                  allCellsRevealed = false;
+                  break;
+                }
+              }
+            }
+            if (allCellsRevealed) {
+              this.isGameOver = true;
+              clearInterval(this.timerInterval);
+              this.highlightLetters();
+              this.animateLetters();
+            }
+          }
+
+          highlightLetters() {
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                const cell = this.grid[row][col];
+                if (cell.letter) {
+                  cell.highlight = true;
+                }
+              }
+            }
+            this.draw();
+          }
+
+          animateLetters() {
+            let animationTime = 1000; // Duration of the shake animation in milliseconds
+            let startTime = null;
+
+            const shakeAnimation = timestamp => {
+              if (!startTime) startTime = timestamp;
+              const elapsed = timestamp - startTime;
+
+              // Clear the canvas
+              this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+              // Draw the grid with shaking letters
+              for (let row = 0; row < this.rows; row++) {
+                for (let col = 0; col < this.cols; col++) {
+                  const cell = this.grid[row][col];
+                  const x = cell.x;
+                  const y = cell.y;
+
+                  if (cell.revealed || cell.highlight) {
+                    this.ctx.fillStyle = cell.highlight ? '#8BC34A' : '#e0e0e0';
+                  } else if (cell.flagged) {
+                    this.ctx.fillStyle = '#ffeb3b';
+                  } else {
+                    this.ctx.fillStyle = '#bdbdbd';
+                  }
+
+                  let offsetX = 0;
+                  let offsetY = 0;
+                  if (cell.highlight) {
+                    // Apply shaking effect
+                    offsetX = Math.random() * 4 - 2; // Random offset between -2 and 2
+                    offsetY = Math.random() * 4 - 2;
+                  }
+
+                  this.ctx.fillRect(x + offsetX, y + offsetY, this.tileSize, this.tileSize);
+                  this.ctx.strokeStyle = '#9e9e9e';
+                  this.ctx.strokeRect(x + offsetX, y + offsetY, this.tileSize, this.tileSize);
+
+                  if (cell.revealed || cell.highlight) {
+                    if (cell.letter) {
+                      // Draw letter
+                      this.ctx.fillStyle = '#000';
+                      this.ctx.font = 'bold 24px Arial';
+                      this.ctx.textAlign = 'center';
+                      this.ctx.textBaseline = 'middle';
+                      this.ctx.fillText(
+                        cell.letter,
+                        x + this.tileSize / 2 + offsetX,
+                        y + this.tileSize / 2 + offsetY
+                      );
+                    } else if (cell.adjacentMines > 0) {
+                      // Draw number
+                      this.ctx.fillStyle = '#000';
+                      this.ctx.font = 'bold 18px Arial';
+                      this.ctx.textAlign = 'center';
+                      this.ctx.textBaseline = 'middle';
+                      this.ctx.fillText(
+                        cell.adjacentMines,
+                        x + this.tileSize / 2 + offsetX,
+                        y + this.tileSize / 2 + offsetY
+                      );
+                    }
+                  }
+                }
+              }
+
+              if (elapsed < animationTime) {
+                requestAnimationFrame(shakeAnimation);
+              } else {
+                // After animation ends, show the win screen
+                setTimeout(() => {
+                  this.ui.endGame();
+                  alert('Congratulations! You won!');
+                }, 500); // Delay before showing the win screen
+              }
+            };
+
+            requestAnimationFrame(shakeAnimation);
+          }
+
+          draw() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                const cell = this.grid[row][col];
+                const x = cell.x;
+                const y = cell.y;
+
+                if (cell.revealed) {
+                  if (cell.mine) {
+                    this.ctx.fillStyle = '#d32f2f'; // Red background for mines
+                  } else {
+                    this.ctx.fillStyle = '#e0e0e0'; // Regular revealed tile
+                  }
+                } else if (cell.flagged) {
+                  this.ctx.fillStyle = '#ffeb3b';
+                } else {
+                  this.ctx.fillStyle = '#bdbdbd';
+                }
+
+                if (cell.highlight) {
+                  this.ctx.fillStyle = '#8BC34A'; // Green highlight for letters
+                }
+
+                this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
+                this.ctx.strokeStyle = '#9e9e9e';
+                this.ctx.strokeRect(x, y, this.tileSize, this.tileSize);
+
+                if (cell.revealed || cell.highlight) {
+                  if (cell.mine) {
+                    // Draw bomb icon
+                    this.ctx.fillStyle = '#000'; // Black bomb
+                    this.ctx.beginPath();
+                    this.ctx.arc(
+                      x + this.tileSize / 2,
+                      y + this.tileSize / 2,
+                      this.tileSize / 4,
+                      0,
+                      2 * Math.PI
+                    );
+                    this.ctx.fill();
+                  } else if (cell.letter) {
+                    // Draw letter
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.font = 'bold 24px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(
+                      cell.letter,
+                      x + this.tileSize / 2,
+                      y + this.tileSize / 2
+                    );
+                  } else if (cell.adjacentMines > 0) {
+                    // Draw number
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.font = 'bold 18px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(
+                      cell.adjacentMines,
+                      x + this.tileSize / 2,
+                      y + this.tileSize / 2
+                    );
+                  }
+                }
+              }
+            }
+          }
+
+          useHint() {
+            if (this.isGameOver || this.isPaused) return;
+            // Reveal a random safe cell
+            const safeCells = [];
+            for (let row = 0; row < this.rows; row++) {
+              for (let col = 0; col < this.cols; col++) {
+                const cell = this.grid[row][col];
+                if (!cell.revealed && !cell.mine && !cell.flagged) {
+                  safeCells.push({ row, col });
+                }
+              }
+            }
+            if (safeCells.length > 0) {
+              const index = Math.floor(Math.random() * safeCells.length);
+              const { row, col } = safeCells[index];
+              this.revealCell(row, col);
+              this.score -= 5; // Penalty for using a hint
+              if (this.score < 0) this.score = 0;
+              document.getElementById('score-display').textContent = 'Score: ' + this.score;
+              this.draw();
+            } else {
+              alert('No safe cells to reveal.');
+            }
+          }
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI();
+            this.logic = null;
+            this.assignButtons();
+          }
+
+          prepareGame() {
+            this.ui.swapToScreen(this.ui.startMenuScreen);
+          }
+
+          startGame() {
+            this.ui.startGame();
+            this.logic = new GameLogic(this.ui);
+          }
+
+          resetGame() {
+            if (this.logic) {
+              this.logic.resetGame();
+            }
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById('play-button');
+            const settingsButton = document.getElementById('settings-button');
+            const instructionsButton = document.getElementById(
+              'instructions-button'
+            );
+            const playAgainButton = document.getElementById('play-again-button');
+            const mainMenuButtons = document.querySelectorAll(
+              '.main-menu-button'
+            );
+            const settingBackButton = document.getElementById(
+              'setting-back-button'
+            );
+            const instructionsBackButton = document.getElementById(
+              'instructions-back-button'
+            );
+
+            const gameMenuButton = document.getElementById('game-menu-button');
+            const gameRestartButton = document.getElementById(
+              'game-restart-button'
+            );
+
+            settingsButton.addEventListener(
+              'click',
+              this.ui.settings.bind(this.ui)
+            );
+            instructionsButton.addEventListener(
+              'click',
+              this.ui.instructions.bind(this.ui)
+            );
+            playAgainButton.addEventListener('click', this.startGame.bind(this));
+            mainMenuButtons.forEach(button =>
+              button.addEventListener('click', () => {
+                if (this.logic) {
+                  this.logic.isGameOver = true;
+                  clearInterval(this.logic.timerInterval);
+                }
+                this.logic = null;
+                this.ui.mainMenu();
+              })
+            );
+            playButton.addEventListener('click', this.startGame.bind(this));
+            settingBackButton.addEventListener(
+              'click',
+              this.ui.mainMenu.bind(this.ui)
+            );
+            instructionsBackButton.addEventListener('click', () => {
+              this.ui.hideOverlay();
+            });
+
+            gameMenuButton.addEventListener('click', () => {
+              if (this.logic) {
+                this.logic.isGameOver = true;
+                clearInterval(this.logic.timerInterval);
+              }
+              this.logic = null;
+              this.ui.mainMenu();
+            });
+            gameRestartButton.addEventListener('click', () => {
+              if (this.logic) {
+                this.logic.isGameOver = true;
+                clearInterval(this.logic.timerInterval);
+              }
+              this.resetGame();
+            });
+          }
+        }
+
+        const game = new Game();
+        game.prepareGame();
+      });
+    </script>
+  </body>
+</html>

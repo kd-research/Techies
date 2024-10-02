@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      name="viewport"
+    />
+    <title>Alphabet Zoo</title>
+    <style>
+      /* General Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background-color: #e0f7fa;
+      }
+
+      .active {
+        display: block !important;
+      }
+
+      .screen {
+        display: none;
+        width: 100%;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      /* Start Menu Screen */
+      #start-menu-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background-image: url("https://upload.wikimedia.org/wikipedia/commons/8/82/Elephant_and_lion_in_Serengeti.jpg");
+        background-size: cover;
+      }
+      #start-menu-screen .container #game-title {
+        font-size: 48px;
+        margin-bottom: 40px;
+        color: #fff;
+        text-shadow: 2px 2px #000;
+      }
+      #start-menu-screen .container button {
+        background-color: #ffca28;
+        color: #000;
+        border: none;
+        padding: 15px 30px;
+        font-size: 24px;
+        cursor: pointer;
+        border-radius: 10px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #start-menu-screen .container button:hover {
+        background-color: #ffeb3b;
+      }
+
+      /* Settings, Instructions, and Other Screens */
+      #settings-screen .container,
+      #instructions-screen .container,
+      #game-over-screen .container,
+      #options-screen .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+      #settings-screen .container button,
+      #instructions-screen .container button,
+      #game-over-screen .container button,
+      #options-screen .container button {
+        background-color: #ffca28;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      #settings-screen .container button:hover,
+      #instructions-screen .container button:hover,
+      #game-over-screen .container button:hover,
+      #options-screen .container button:hover {
+        background-color: #ffeb3b;
+      }
+
+      /* Game Container */
+      #game-container .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        background-image: url("https://upload.wikimedia.org/wikipedia/commons/e/e6/Giraffe_at_London_Zoo.jpg");
+        background-size: cover;
+      }
+
+      /* Game Elements */
+      #game-container .game-area {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 50%;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+      }
+      #game-container .game-area h2 {
+        margin: 0;
+        padding: 0;
+        color: #000;
+      }
+      #game-container .game-area .word-challenge {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+      }
+      #game-container .game-area .word-challenge input {
+        font-size: 24px;
+        padding: 5px;
+        margin-left: 10px;
+        width: 200px;
+      }
+      #game-container .game-area button {
+        background-color: #ffca28;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      #game-container .game-area button:hover {
+        background-color: #ffeb3b;
+      }
+
+      /* Options Button */
+      #options-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #ffca28;
+        color: #000;
+        border: none;
+        padding: 10px 15px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 5px;
+        z-index: 1000;
+      }
+      #options-button:hover {
+        background-color: #ffeb3b;
+      }
+
+      /* Avatar Customization */
+      #avatar-customization-screen .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: #fce4ec;
+        color: #000;
+        padding: 20px;
+        text-align: center;
+      }
+      #avatar-customization-screen .avatar-options {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #avatar-customization-screen .avatar-options img {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        border-radius: 10px;
+      }
+      #avatar-customization-screen .avatar-options img.selected {
+        border-color: #ff4081;
+      }
+      #avatar-customization-screen .container button {
+        background-color: #ff4081;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      #avatar-customization-screen .container button:hover {
+        background-color: #f50057;
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        #start-menu-screen .container #game-title {
+          font-size: 36px;
+        }
+        #start-menu-screen .container button {
+          font-size: 20px;
+          padding: 12px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Start Menu Screen -->
+    <div class="active screen" id="start-menu-screen">
+      <div class="container">
+        <h1 id="game-title">Alphabet Zoo</h1>
+        <button id="play-button">Play</button>
+        <button id="settings-button">Settings</button>
+        <button id="instructions-button">Instructions</button>
+      </div>
+    </div>
+    <!-- Settings Screen -->
+    <div class="screen" id="settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <!-- Volume Control -->
+        <label for="volume-control">Volume:</label>
+        <input
+          type="range"
+          id="volume-control"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.3"
+        />
+        <!-- Additional Settings -->
+        <!-- Add other settings here -->
+        <button class="main-menu-button" id="settings-back-button">Back</button>
+      </div>
+    </div>
+    <!-- Instructions Screen -->
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <h2>Instructions</h2>
+        <p>
+          Welcome to Alphabet Zoo! Help manage your very own zoo by caring for
+          animals and learning new words. Complete fun word challenges to feed,
+          clean, and entertain your animals. Unlock new animals and expand your
+          zoo as you improve your vocabulary skills. Have fun!
+        </p>
+        <button class="main-menu-button" id="instructions-back-button">
+          Back
+        </button>
+      </div>
+    </div>
+    <!-- Avatar Customization Screen -->
+    <div class="screen" id="avatar-customization-screen">
+      <div class="container">
+        <h2>Create Your Zookeeper</h2>
+        <div class="avatar-options">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/3/34/Henry_VIII_of_England_cropped.jpg"
+            alt="Avatar 1"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Mona_Lisa_detail_face.jpg"
+            alt="Avatar 2"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%282391%29.jpg"
+            alt="Avatar 3"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg"
+            alt="Avatar 4"
+          />
+        </div>
+        <button id="avatar-confirm-button">Confirm</button>
+      </div>
+    </div>
+    <!-- Game Screen -->
+    <div class="screen" id="game-container">
+      <button id="options-button">Options</button>
+      <div class="container">
+        <!-- Game Content -->
+        <div class="game-area">
+          <h2 id="challenge-title">Spell the Word:</h2>
+          <div class="word-challenge">
+            <img id="challenge-image" src="" alt="Animal Image" width="150" />
+            <input type="text" id="player-input" placeholder="Type here..." />
+          </div>
+          <button id="submit-button">Submit</button>
+        </div>
+      </div>
+    </div>
+    <!-- Options Screen -->
+    <div class="screen" id="options-screen">
+      <div class="container">
+        <h2>Options</h2>
+        <!-- Volume Control -->
+        <label for="in-game-volume-control">Volume:</label>
+        <input
+          type="range"
+          id="in-game-volume-control"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.3"
+        />
+        <button id="resume-game-button">Back to Game</button>
+        <button class="main-menu-button" id="options-main-menu-button">
+          Back to Main Menu
+        </button>
+      </div>
+    </div>
+    <!-- Game Over Screen -->
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <div id="game-over-message">Great Job!</div>
+        <button id="play-again-button">Continue</button>
+        <button class="main-menu-button" id="game-over-main-menu-button">
+          Main Menu
+        </button>
+      </div>
+    </div>
+    <!-- Audio Elements -->
+    <audio id="background-music" loop>
+      <source
+        src="https://www.bensound.com/bensound-music/bensound-funnysong.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="correct-sound">
+      <source
+        src="https://www.fesliyanstudios.com/play-mp3/387"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="incorrect-sound">
+      <source
+        src="https://www.fesliyanstudios.com/play-mp3/6734"
+        type="audio/mpeg"
+      />
+    </audio>
+    <!-- Additional audio elements for sound effects -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        class GameUI {
+          constructor() {
+            this.startMenuScreen = document.getElementById("start-menu-screen");
+            this.settingsScreen = document.getElementById("settings-screen");
+            this.instructionsScreen = document.getElementById(
+              "instructions-screen"
+            );
+            this.avatarCustomizationScreen = document.getElementById(
+              "avatar-customization-screen"
+            );
+            this.gameContainer = document.getElementById("game-container");
+            this.gameOverScreen = document.getElementById("game-over-screen");
+            this.optionsScreen = document.getElementById("options-screen");
+            this.backgroundMusic = document.getElementById("background-music");
+            this.volumeControl = document.getElementById("volume-control");
+            this.inGameVolumeControl = document.getElementById(
+              "in-game-volume-control"
+            );
+            this.initVolumeControl();
+          }
+
+          initVolumeControl() {
+            this.backgroundMusic.volume = this.volumeControl.value;
+            this.volumeControl.addEventListener("input", () => {
+              this.backgroundMusic.volume = this.volumeControl.value;
+              this.inGameVolumeControl.value = this.volumeControl.value;
+            });
+            this.inGameVolumeControl.value = this.volumeControl.value;
+            this.inGameVolumeControl.addEventListener("input", () => {
+              this.backgroundMusic.volume = this.inGameVolumeControl.value;
+              this.volumeControl.value = this.inGameVolumeControl.value;
+            });
+          }
+
+          swapToScreen(screen) {
+            const screens = document.querySelectorAll(".screen");
+            screens.forEach((scr) => scr.classList.remove("active"));
+            screen.classList.add("active");
+          }
+
+          startGame() {
+            this.swapToScreen(this.avatarCustomizationScreen);
+          }
+
+          proceedToGame() {
+            this.swapToScreen(this.gameContainer);
+            this.backgroundMusic.play();
+          }
+
+          endGame() {
+            this.swapToScreen(this.gameOverScreen);
+          }
+
+          mainMenu() {
+            this.swapToScreen(this.startMenuScreen);
+            this.backgroundMusic.pause();
+            this.backgroundMusic.currentTime = 0;
+          }
+
+          playAgain() {
+            this.swapToScreen(this.gameContainer);
+          }
+
+          settings() {
+            this.swapToScreen(this.settingsScreen);
+          }
+
+          instructions() {
+            this.swapToScreen(this.instructionsScreen);
+          }
+
+          options() {
+            this.inGameVolumeControl.value = this.backgroundMusic.volume;
+            this.swapToScreen(this.optionsScreen);
+          }
+
+          resumeGame() {
+            this.swapToScreen(this.gameContainer);
+          }
+
+          // Additional UI functions
+        }
+
+        class GameLogic {
+          constructor(ui) {
+            this.ui = ui;
+            this.currentChallenge = null;
+            this.animals = [
+              {
+                name: "Lion",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg",
+              },
+              {
+                name: "Elephant",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/6/63/African_elephant_warning_raised_trunk.jpg",
+              },
+              {
+                name: "Zebra",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/0/0b/Plains_Zebra_Equus_quagga.jpg",
+              },
+              {
+                name: "Giraffe",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/9/9f/Giraffe_standing.jpg",
+              },
+              {
+                name: "Tiger",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg",
+              },
+              {
+                name: "Monkey",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/4/41/Macaca_fascicularis_in_Bali_01.jpg",
+              },
+              {
+                name: "Panda",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG",
+              },
+              {
+                name: "Kangaroo",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/5/5d/Kangaroo_Australia_01.jpg",
+              },
+              {
+                name: "Penguin",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/6/68/Aptenodytes_patagonicus_%28South_Georgia%29.jpg",
+              },
+              {
+                name: "Bear",
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/5/5c/Brown_bear_in_Spring.jpg",
+              },
+              // Add more animals as needed
+            ];
+            this.unlockedAnimals = [];
+          }
+
+          startChallenge() {
+            this.currentChallenge =
+              this.animals[Math.floor(Math.random() * this.animals.length)];
+            document.getElementById("challenge-image").src =
+              this.currentChallenge.image;
+            document.getElementById("player-input").value = "";
+          }
+
+          checkAnswer() {
+            const playerInput = document
+              .getElementById("player-input")
+              .value.trim()
+              .toLowerCase();
+            const correctAnswer = this.currentChallenge.name.toLowerCase();
+            const correctSound = document.getElementById("correct-sound");
+            const incorrectSound = document.getElementById("incorrect-sound");
+
+            if (playerInput === correctAnswer) {
+              correctSound.volume = this.ui.volumeControl.value;
+              correctSound.play();
+              this.unlockedAnimals.push(this.currentChallenge);
+              this.ui.endGame();
+            } else {
+              incorrectSound.volume = this.ui.volumeControl.value;
+              incorrectSound.play();
+              alert("Try again!");
+            }
+          }
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI();
+            this.logic = new GameLogic(this.ui);
+            this.assignButtons();
+          }
+
+          prepareGame() {
+            // Prepare game container DOM elements here
+            // Assign event listeners and initialize game state
+          }
+
+          startGame() {
+            this.ui.startGame();
+          }
+
+          proceedToGame() {
+            this.ui.proceedToGame();
+            this.logic.startChallenge();
+          }
+
+          resetGame() {
+            this.logic.unlockedAnimals = [];
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById("play-button");
+            const settingsButton = document.getElementById("settings-button");
+            const instructionsButton = document.getElementById(
+              "instructions-button"
+            );
+            const playAgainButton =
+              document.getElementById("play-again-button");
+            const mainMenuButtons =
+              document.querySelectorAll(".main-menu-button");
+            const submitButton = document.getElementById("submit-button");
+            const avatarConfirmButton = document.getElementById(
+              "avatar-confirm-button"
+            );
+            const avatarOptions = document.querySelectorAll(
+              "#avatar-customization-screen .avatar-options img"
+            );
+            const optionsButton = document.getElementById("options-button");
+            const resumeGameButton =
+              document.getElementById("resume-game-button");
+            const optionsMainMenuButton = document.getElementById(
+              "options-main-menu-button"
+            );
+
+            settingsButton.addEventListener("click", () => {
+              this.ui.settings();
+            });
+            instructionsButton.addEventListener("click", () => {
+              this.ui.instructions();
+            });
+            playAgainButton.addEventListener("click", () => {
+              this.ui.playAgain();
+              this.logic.startChallenge();
+            });
+            mainMenuButtons.forEach((button) =>
+              button.addEventListener("click", () => {
+                this.ui.mainMenu();
+                this.resetGame();
+              })
+            );
+            playButton.addEventListener("click", () => {
+              this.startGame();
+            });
+            submitButton.addEventListener("click", () => {
+              this.logic.checkAnswer();
+            });
+            avatarConfirmButton.addEventListener("click", () => {
+              this.proceedToGame();
+            });
+            avatarOptions.forEach((img) => {
+              img.addEventListener("click", (e) => {
+                avatarOptions.forEach((img) =>
+                  img.classList.remove("selected")
+                );
+                e.target.classList.add("selected");
+                // Save selected avatar if needed
+              });
+            });
+            optionsButton.addEventListener("click", () => {
+              this.ui.options();
+            });
+            resumeGameButton.addEventListener("click", () => {
+              this.ui.resumeGame();
+            });
+            optionsMainMenuButton.addEventListener("click", () => {
+              this.ui.mainMenu();
+              this.resetGame();
+            });
+
+            // Ensure all buttons work as intended
+          }
+        }
+
+        const game = new Game();
+        game.prepareGame();
+      });
+    </script>
+  </body>
+</html>

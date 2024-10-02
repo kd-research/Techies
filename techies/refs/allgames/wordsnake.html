@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+      name="viewport"
+    />
+    <title>Letter Snake</title>
+    <style>
+      /* General Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        /* overflow: hidden; */
+        background-color: #88c057;
+      }
+
+      /* Start Menu Screen */
+      #start-menu-screen {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #88c057;
+        position: relative;
+        z-index: 1;
+      }
+      #game-title {
+        font-size: 3rem;
+        margin-bottom: 40px;
+        color: #fff;
+        text-shadow: 2px 2px #000;
+        text-align: center;
+        max-width: 90%;
+      }
+      #start-menu-screen button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        border-radius: 10px;
+        margin: 10px;
+        transition: background-color 0.3s;
+        max-width: 300px;
+        width: 80%;
+      }
+      #start-menu-screen button:hover {
+        background-color: #218838;
+      }
+
+      /* Overlay Screens */
+      .overlay-screen {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        z-index: 3;
+      }
+      .overlay-screen button {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+        max-width: 200px;
+        width: 80%;
+      }
+      .overlay-screen button:hover {
+        background-color: #666;
+      }
+      .overlay-screen h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+      .overlay-screen p {
+        font-size: 1rem;
+        line-height: 1.5;
+        max-width: 800px;
+        margin-bottom: 20px;
+      }
+      .overlay-screen label,
+      .overlay-screen select,
+      .overlay-screen input[type="range"] {
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      /* Game Container */
+      #game-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+      #game-header,
+      #game-footer {
+        width: 100%;
+        padding: 1.3rem; /* Increased padding */
+        background-color: #006400;
+        color: #fff;
+        text-align: center;
+        position: relative;
+        box-sizing: border-box;
+      }
+      /* Removed position: absolute from #game-footer */
+      #game-footer {
+        /* position: absolute; */
+        /* bottom: 0; */
+      }
+      #game-content {
+        position: relative;
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+        /* Added margin-bottom to prevent content overlapping the footer */
+        margin-bottom: 10px;
+      }
+      #game-canvas {
+        background-color: #aad751;
+        display: block;
+        position: relative;
+        z-index: 1;
+        max-width: 100%;
+        max-height: 100%;
+        box-sizing: border-box;
+      }
+      #score-board,
+      #word-count-display,
+      #target-word-display {
+        color: #fff;
+        font-size: 1.2rem;
+        text-shadow: 1px 1px #000;
+        z-index: 2;
+      }
+
+      /* Adjusted positioning and padding of header elements */
+      #score-board {
+        position: absolute;
+        top: 1rem;
+        left: 20px; /* Increased horizontal padding */
+      }
+      #word-count-display {
+        position: absolute;
+        top: 1rem;
+        right: 20px; /* Increased horizontal padding */
+      }
+      #target-word-display {
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 90%;
+        word-wrap: break-word;
+        /* padding: 0 20px;  */
+        /* Added horizontal padding */
+      }
+      #pause-button {
+        display: block;
+        margin: 10px auto;
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 5px;
+        max-width: 150px;
+        width: 80%;
+      }
+      #pause-button:hover {
+        background-color: #c82333;
+      }
+
+      /* Power-Up Icons */
+      .power-up-icon {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        vertical-align: middle;
+        border: 1px solid #000;
+      }
+      .power-up-shrink {
+        background-color: #00ffff; /* Cyan */
+      }
+      .power-up-speed {
+        background-color: #ffff00; /* Yellow */
+      }
+      .power-up-invincibility {
+        background-color: #ff00ff; /* Magenta */
+      }
+      #game-footer h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+      #game-footer p {
+        font-size: 1rem;
+        margin: 5px 0;
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        #game-title {
+          font-size: 2rem;
+          margin-bottom: 20px;
+        }
+        #start-menu-screen button {
+          font-size: 1.2rem;
+          padding: 10px 20px;
+          max-width: 250px;
+        }
+        .overlay-screen button {
+          font-size: 1rem;
+          padding: 8px 16px;
+          max-width: 180px;
+        }
+        .overlay-screen h2 {
+          font-size: 1.5rem;
+        }
+        .overlay-screen p {
+          font-size: 0.9rem;
+        }
+        #score-board,
+        #word-count-display,
+        #target-word-display {
+          font-size: 1rem;
+        }
+        #pause-button {
+          font-size: 0.9rem;
+          padding: 8px 12px;
+          max-width: 120px;
+        }
+        #game-footer h3 {
+          font-size: 1.2rem;
+        }
+        #game-footer p {
+          font-size: 0.9rem;
+        }
+      }
+      @media screen and (max-width: 480px) {
+        #game-title {
+          font-size: 1.5rem;
+        }
+        #start-menu-screen button {
+          font-size: 1rem;
+          padding: 8px 16px;
+          max-width: 200px;
+        }
+        .overlay-screen button {
+          font-size: 0.9rem;
+          padding: 6px 12px;
+          max-width: 150px;
+        }
+        .overlay-screen h2 {
+          font-size: 1.2rem;
+        }
+        .overlay-screen p {
+          font-size: 0.8rem;
+        }
+        #score-board,
+        #word-count-display,
+        #target-word-display {
+          font-size: 0.9rem;
+        }
+        #pause-button {
+          font-size: 0.8rem;
+          padding: 6px 10px;
+          max-width: 100px;
+        }
+        #game-footer h3 {
+          font-size: 1rem;
+        }
+        #game-footer p {
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Start Menu Screen -->
+    <div id="start-menu-screen">
+      <h1 id="game-title">Letter Snake</h1>
+      <button id="play-button">Play</button>
+      <button id="settings-button">Settings</button>
+      <button id="instructions-button">Instructions</button>
+    </div>
+    <!-- Settings Screen -->
+    <div class="overlay-screen" id="settings-screen">
+      <h2>Settings</h2>
+      <!-- Volume Control -->
+      <label for="volume-control">Volume:</label>
+      <input
+        type="range"
+        id="volume-control"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.5"
+      />
+      <!-- Difficulty Level -->
+      <label for="difficulty-select">Difficulty:</label>
+      <select id="difficulty-select">
+        <option value="easy">Easy</option>
+        <option value="normal" selected>Normal</option>
+        <option value="hard">Hard</option>
+      </select>
+      <button class="back-button" id="settings-back-button">Back</button>
+    </div>
+    <!-- Instructions Screen -->
+    <div class="overlay-screen" id="instructions-screen">
+      <h2>Instructions</h2>
+      <p>
+        Control the snake to collect letters in the correct order to spell out
+        the target words displayed. Avoid obstacles and enemies. Use power-ups
+        to gain advantages. Use arrow keys or swipe to move the snake.
+      </p>
+      <button class="back-button" id="instructions-back-button">Back</button>
+    </div>
+    <!-- Pause Screen -->
+    <div class="overlay-screen" id="pause-screen">
+      <h2>Game Paused</h2>
+      <button id="resume-button">Resume</button>
+      <button class="back-button" id="pause-main-menu-button">Main Menu</button>
+    </div>
+    <!-- Game Over Screen -->
+    <div class="overlay-screen" id="game-over-screen">
+      <h2 id="game-over-message">Game Over!</h2>
+      <div id="final-score">Your Score: 0</div>
+      <button id="play-again-button">Play Again</button>
+      <button class="back-button" id="game-over-main-menu-button">
+        Main Menu
+      </button>
+    </div>
+    <!-- Game Container -->
+    <div id="game-container">
+      <div id="game-header">
+        <span id="score-board">Score: 0</span>
+        <span id="word-count-display">Words Completed: 0</span>
+        <span id="target-word-display">Target Word: </span>
+      </div>
+      <!-- Pause Button -->
+      <button id="pause-button">Pause</button>
+
+      <div id="game-content">
+        <canvas id="game-canvas"></canvas>
+      </div>
+      <div id="game-footer">
+        <h3>Power-Ups</h3>
+        <p>
+          <span class="power-up-icon power-up-shrink"></span>
+          <strong>Shrink Potion:</strong> Reduces the snake's length
+          permanently.
+        </p>
+        <p>
+          <span class="power-up-icon power-up-speed"></span>
+          <strong>Speed Boost:</strong> Increases movement speed for a short
+          time.
+        </p>
+        <p>
+          <span class="power-up-icon power-up-invincibility"></span>
+          <strong>Invincibility:</strong> Pass through obstacles unharmed
+          briefly.
+        </p>
+      </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="background-music" loop>
+      <source
+        src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="collect-letter-sound">
+      <source
+        src="https://freesound.org/data/previews/341/341695_6240436-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="game-over-sound">
+      <source
+        src="https://freesound.org/data/previews/220/220173_4109073-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <!-- Additional audio elements for power-ups -->
+    <audio id="power-up-sound">
+      <source
+        src="https://freesound.org/data/previews/169/169320_2437358-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        class GameUI {
+          constructor() {
+            this.startMenuScreen = document.getElementById("start-menu-screen");
+            this.settingsScreen = document.getElementById("settings-screen");
+            this.instructionsScreen = document.getElementById(
+              "instructions-screen"
+            );
+            this.gameContainer = document.getElementById("game-container");
+            this.gameOverScreen = document.getElementById("game-over-screen");
+            this.pauseScreen = document.getElementById("pause-screen");
+            this.backgroundMusic = document.getElementById("background-music");
+            this.volumeControl = document.getElementById("volume-control");
+            this.difficultySelect =
+              document.getElementById("difficulty-select");
+            this.scoreBoard = document.getElementById("score-board");
+            this.finalScore = document.getElementById("final-score");
+            this.targetWordDisplay = document.getElementById(
+              "target-word-display"
+            );
+            this.wordCountDisplay =
+              document.getElementById("word-count-display");
+            this.pauseButton = document.getElementById("pause-button");
+            this.canvas = document.getElementById("game-canvas");
+            this.isTouchDevice =
+              "ontouchstart" in window || navigator.maxTouchPoints > 0;
+            this.gameHeader = document.getElementById("game-header");
+            this.gameFooter = document.getElementById("game-footer");
+            this.initVolumeControl();
+          }
+
+          initVolumeControl() {
+            this.backgroundMusic.volume = this.volumeControl.value;
+            this.volumeControl.addEventListener("input", () => {
+              this.backgroundMusic.volume = this.volumeControl.value;
+              const collectLetterSound = document.getElementById(
+                "collect-letter-sound"
+              );
+              const gameOverSound = document.getElementById("game-over-sound");
+              const powerUpSound = document.getElementById("power-up-sound");
+              collectLetterSound.volume = this.volumeControl.value;
+              gameOverSound.volume = this.volumeControl.value;
+              powerUpSound.volume = this.volumeControl.value;
+            });
+          }
+
+          showScreen(screen) {
+            this.startMenuScreen.style.display = "none";
+            this.settingsScreen.style.display = "none";
+            this.instructionsScreen.style.display = "none";
+            this.gameContainer.style.display = "none";
+            this.gameOverScreen.style.display = "none";
+            this.pauseScreen.style.display = "none";
+
+            screen.style.display = "flex";
+          }
+
+          startGame() {
+            this.showScreen(this.gameContainer);
+            this.backgroundMusic.play();
+            this.pauseButton.style.display = "block";
+          }
+
+          pauseGame() {
+            this.pauseScreen.style.display = "flex";
+            this.backgroundMusic.pause();
+          }
+
+          resumeGame() {
+            this.pauseScreen.style.display = "none";
+            this.backgroundMusic.play();
+          }
+
+          endGame(score) {
+            this.showScreen(this.gameOverScreen);
+            this.finalScore.textContent = "Your Score: " + score;
+            this.backgroundMusic.pause();
+            this.backgroundMusic.currentTime = 0;
+            this.pauseButton.style.display = "none";
+          }
+
+          mainMenu() {
+            this.showScreen(this.startMenuScreen);
+            this.backgroundMusic.pause();
+            this.backgroundMusic.currentTime = 0;
+            this.pauseButton.style.display = "none";
+          }
+
+          playAgain() {
+            this.showScreen(this.gameContainer);
+            this.backgroundMusic.play();
+            this.pauseButton.style.display = "block";
+          }
+
+          settings() {
+            this.settingsScreen.style.display = "flex";
+          }
+
+          instructions() {
+            this.instructionsScreen.style.display = "flex";
+          }
+
+          updateScore(score) {
+            this.scoreBoard.textContent = "Score: " + score;
+          }
+
+          updateTargetWord(word) {
+            this.targetWordDisplay.textContent = "Target Word: " + word;
+          }
+
+          updateWordCount(count) {
+            this.wordCountDisplay.textContent = "Words Completed: " + count;
+          }
+
+          getDifficulty() {
+            return this.difficultySelect.value;
+          }
+        }
+
+        class GameLogic {
+          constructor(ui) {
+            this.ui = ui;
+            this.canvas = ui.canvas;
+            this.ctx = this.canvas.getContext("2d");
+            this.gridSize = 20;
+            this.tileCount = 30; // Adjusted for better scaling
+            this.snake = [];
+            this.snakeLength = 1; // Start with length 1
+            this.currentDirection = "right"; // Initialize currentDirection
+            this.nextDirection = "right"; // Initialize nextDirection
+            this.letters = [];
+            this.currentWord = "";
+            this.wordList = [];
+            this.targetWord = "";
+            this.score = 0;
+            this.gameOver = false;
+            this.gamePaused = false;
+            this.obstacles = [];
+            this.enemies = [];
+            this.powerUps = [];
+            this.collectLetterSound = document.getElementById(
+              "collect-letter-sound"
+            );
+            this.gameOverSound = document.getElementById("game-over-sound");
+            this.powerUpSound = document.getElementById("power-up-sound");
+            this.powerUpActive = null;
+            this.powerUpTimer = 0;
+            this.powerUpSpawnTimer = 0; // Timer for spawning power-ups
+            this.wordCompletionCount = 0; // Track completed words
+            this.wordCount = 0; // New variable for word count
+            this.tickInterval = 20; // Game updates every 50ms
+
+            // **Adjusted the base snake speed to make the game start slower**
+            this.baseSnakeSpeed = 600; // Increased starting speed (slower movement)
+            this.snakeSpeed = this.baseSnakeSpeed;
+            this.enemySpeed = 500; // Enemies move every 300ms
+            this.snakeMoveTimer = this.snakeSpeed;
+            this.enemyMoveTimer = this.enemySpeed;
+            this.currentLetterScore = 10; // Starting score for letters
+
+            window.addEventListener("resize", () => this.resizeCanvas());
+
+            this.loadWordList();
+          }
+
+          resizeCanvas() {
+            // Adjust canvas size based on window size
+            const containerHeight =
+              this.ui.gameContainer.clientHeight -
+              this.ui.gameHeader.clientHeight -
+              this.ui.gameFooter.clientHeight -
+              40; // Adjusted padding
+            const containerWidth = this.ui.gameContainer.clientWidth - 40; // Adjusted padding
+            const minDimension = Math.min(containerWidth, containerHeight);
+            this.canvas.width = minDimension;
+            this.canvas.height = minDimension;
+            this.gridSize = this.canvas.width / this.tileCount;
+          }
+
+          loadWordList() {
+            fetch(
+              "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt"
+            )
+              .then((response) => response.text())
+              .then((data) => {
+                this.wordList = data
+                  .split("\n")
+                  .filter((word) => word.length >= 3 && word.length <= 6);
+                this.init();
+                this.resizeCanvas(); // Move resizeCanvas here
+                this.updateGame();
+              });
+          }
+
+          setNewTargetWord() {
+            const randomIndex = Math.floor(
+              Math.random() * this.wordList.length
+            );
+            this.targetWord = this.wordList[randomIndex].toUpperCase();
+            this.ui.updateTargetWord(this.targetWord);
+            this.placeLetters();
+          }
+
+          init() {
+            this.snake = [{ x: 10, y: 10 }];
+            this.snakeLength = 1;
+            this.currentDirection = "right";
+            this.nextDirection = "right";
+            this.score = 0;
+            this.gameOver = false;
+            this.gamePaused = false;
+            this.currentWord = "";
+            this.obstacles = [];
+            this.enemies = [];
+            this.powerUps = [];
+            this.powerUpActive = null;
+            this.powerUpTimer = 0;
+            this.powerUpSpawnTimer = 0;
+            this.wordCompletionCount = 0;
+            this.wordCount = 0; // Reset word count
+            this.currentLetterScore = 10; // Reset letter score
+
+            // **Reset snake speed to the base speed**
+            this.baseSnakeSpeed = 600; // Slower starting speed
+            this.snakeSpeed = this.baseSnakeSpeed;
+            this.enemySpeed = 500;
+            this.snakeMoveTimer = this.snakeSpeed;
+            this.enemyMoveTimer = this.enemySpeed;
+
+            this.placeObstacles();
+            this.placeEnemies();
+            this.setNewTargetWord();
+            this.ui.updateScore(this.score);
+            this.ui.updateWordCount(this.wordCount); // Update word count display
+            this.changeDirectionHandler = this.changeDirection.bind(this);
+            this.touchStartHandler = this.touchStart.bind(this);
+            this.touchMoveHandler = this.touchMove.bind(this);
+            this.touchEndHandler = this.touchEnd.bind(this);
+            document.addEventListener("keydown", this.changeDirectionHandler);
+            this.ui.canvas.addEventListener(
+              "touchstart",
+              this.touchStartHandler,
+              { passive: false }
+            );
+            this.ui.canvas.addEventListener(
+              "touchmove",
+              this.touchMoveHandler,
+              { passive: false }
+            );
+            this.ui.canvas.addEventListener("touchend", this.touchEndHandler, {
+              passive: false,
+            });
+            this.touchStartX = 0;
+            this.touchStartY = 0;
+            this.touchEndX = 0;
+            this.touchEndY = 0;
+          }
+
+          isPositionOccupied(position, list) {
+            return list.some(
+              (item) => item.x === position.x && item.y === position.y
+            );
+          }
+
+          isObstacle(position) {
+            return this.obstacles.some(
+              (obs) => obs.x === position.x && obs.y === position.y
+            );
+          }
+
+          isEnemy(position) {
+            return this.enemies.some(
+              (enemy) => enemy.x === position.x && enemy.y === position.y
+            );
+          }
+
+          placeLetters() {
+            this.letters = [];
+            const positions = [];
+            const nextLetter = this.targetWord[this.currentWord.length];
+            const letterPositions = [];
+
+            // Place multiple instances of the next required letter
+            const instances = 2;
+
+            for (let i = 0; i < instances; i++) {
+              let position;
+              do {
+                position = {
+                  x: Math.floor(Math.random() * this.tileCount),
+                  y: Math.floor(Math.random() * this.tileCount),
+                };
+              } while (
+                this.isPositionOccupied(position, positions) ||
+                this.isPositionOccupied(position, this.snake) ||
+                this.isObstacle(position) ||
+                this.isEnemy(position)
+              );
+              positions.push(position);
+              letterPositions.push(position);
+            }
+
+            for (let position of letterPositions) {
+              this.letters.push({
+                x: position.x,
+                y: position.y,
+                letter: nextLetter,
+                order: this.currentWord.length,
+              });
+            }
+          }
+
+          placeObstacles() {
+            const obstacleCount = 10;
+            for (let i = 0; i < obstacleCount; i++) {
+              let position;
+              do {
+                position = {
+                  x: Math.floor(Math.random() * this.tileCount),
+                  y: Math.floor(Math.random() * this.tileCount),
+                };
+              } while (
+                this.isPositionOccupied(position, this.obstacles) ||
+                this.isPositionOccupied(position, this.snake) ||
+                this.isEnemy(position)
+              );
+              this.obstacles.push(position);
+            }
+          }
+
+          placeEnemies() {
+            const enemyCount = 3;
+            for (let i = 0; i < enemyCount; i++) {
+              let position;
+              do {
+                position = {
+                  x: Math.floor(Math.random() * this.tileCount),
+                  y: Math.floor(Math.random() * this.tileCount),
+                };
+              } while (
+                this.isPositionOccupied(position, this.enemies) ||
+                this.isPositionOccupied(position, this.snake) ||
+                this.isObstacle(position)
+              );
+              this.enemies.push(position);
+            }
+          }
+
+          spawnPowerUp() {
+            const powerUpTypes = ["shrink", "speed", "invincibility"];
+            let position;
+            do {
+              position = {
+                x: Math.floor(Math.random() * this.tileCount),
+                y: Math.floor(Math.random() * this.tileCount),
+              };
+            } while (
+              this.isPositionOccupied(position, this.powerUps) ||
+              this.isObstacle(position) ||
+              this.isEnemy(position) ||
+              this.isPositionOccupied(position, this.snake)
+            );
+            const type =
+              powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+            this.powerUps.push({
+              x: position.x,
+              y: position.y,
+              type: type,
+            });
+          }
+
+          changeDirection(event) {
+            const keyPressed = event.keyCode;
+            let newDirection = this.nextDirection;
+
+            if (keyPressed === 37 && this.currentDirection !== "right") {
+              newDirection = "left";
+            } else if (keyPressed === 38 && this.currentDirection !== "down") {
+              newDirection = "up";
+            } else if (keyPressed === 39 && this.currentDirection !== "left") {
+              newDirection = "right";
+            } else if (keyPressed === 40 && this.currentDirection !== "up") {
+              newDirection = "down";
+            }
+
+            // Prevent reversing into itself by checking the next position
+            const head = { ...this.snake[0] };
+            let nextX = head.x;
+            let nextY = head.y;
+
+            if (newDirection === "left") nextX--;
+            else if (newDirection === "right") nextX++;
+            else if (newDirection === "up") nextY--;
+            else if (newDirection === "down") nextY++;
+
+            // If the next position is the same as the second segment, ignore the input
+            if (
+              this.snake.length > 1 &&
+              nextX === this.snake[1].x &&
+              nextY === this.snake[1].y
+            ) {
+              // Invalid move; ignore the direction change
+              return;
+            } else {
+              this.nextDirection = newDirection;
+            }
+          }
+
+          touchStart(event) {
+            event.preventDefault();
+            const touch = event.touches[0];
+            this.touchStartX = touch.clientX;
+            this.touchStartY = touch.clientY;
+          }
+
+          touchMove(event) {
+            event.preventDefault();
+            const touch = event.touches[0];
+            this.touchEndX = touch.clientX;
+            this.touchEndY = touch.clientY;
+          }
+
+          touchEnd(event) {
+            const deltaX = this.touchEndX - this.touchStartX;
+            const deltaY = this.touchEndY - this.touchStartY;
+
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+              if (deltaX > 30 && this.currentDirection !== "left") {
+                this.nextDirection = "right";
+              } else if (deltaX < -30 && this.currentDirection !== "right") {
+                this.nextDirection = "left";
+              }
+            } else {
+              if (deltaY > 30 && this.currentDirection !== "up") {
+                this.nextDirection = "down";
+              } else if (deltaY < -30 && this.currentDirection !== "down") {
+                this.nextDirection = "up";
+              }
+            }
+          }
+
+          updateGame() {
+            if (this.gameOver || this.gamePaused) return;
+
+            // Update power-up timers
+            if (this.powerUpActive) {
+              this.powerUpTimer -= this.tickInterval;
+              if (this.powerUpTimer <= 0) {
+                this.deactivatePowerUp();
+              }
+            }
+
+            // Update power-up spawn timer
+            this.powerUpSpawnTimer -= this.tickInterval;
+            if (this.powerUpSpawnTimer <= 0) {
+              this.spawnPowerUp();
+              // Reset timer to a random value between 15 and 30 seconds
+              this.powerUpSpawnTimer =
+                Math.floor(Math.random() * 15000) + 15000;
+            }
+
+            // Move snake
+            this.snakeMoveTimer -= this.tickInterval;
+            if (this.snakeMoveTimer <= 0) {
+              this.moveSnake();
+              this.snakeMoveTimer += this.snakeSpeed;
+            }
+
+            // Move enemies
+            this.enemyMoveTimer -= this.tickInterval;
+            if (this.enemyMoveTimer <= 0) {
+              this.moveEnemies();
+              this.enemyMoveTimer += this.enemySpeed;
+            }
+
+            // Draw everything
+            this.drawGame();
+
+            requestAnimationFrame(() => this.updateGame());
+          }
+
+          moveSnake() {
+            this.currentDirection = this.nextDirection; // Update current direction
+            const head = { ...this.snake[0] };
+            let nextX = head.x;
+            let nextY = head.y;
+
+            if (this.currentDirection === "left") nextX--;
+            else if (this.currentDirection === "right") nextX++;
+            else if (this.currentDirection === "up") nextY--;
+            else if (this.currentDirection === "down") nextY++;
+
+            // Check for wall collision
+            if (
+              nextX < 0 ||
+              nextX >= this.tileCount ||
+              nextY < 0 ||
+              nextY >= this.tileCount
+            ) {
+              if (this.powerUpActive === "invincibility") {
+                // Stop moving until the player changes direction or invincibility wears off
+                return;
+              } else {
+                this.gameOver = true;
+                this.ui.endGame(this.score);
+                this.gameOverSound.play();
+                return;
+              }
+            }
+
+            head.x = nextX;
+            head.y = nextY;
+
+            // Check for self-collision
+            for (let i = 1; i < this.snake.length; i++) {
+              if (head.x === this.snake[i].x && head.y === this.snake[i].y) {
+                if (this.powerUpActive !== "invincibility") {
+                  this.gameOver = true;
+                  this.ui.endGame(this.score);
+                  this.gameOverSound.play();
+                  return;
+                }
+              }
+            }
+
+            // Check for obstacle collision
+            if (this.isObstacle(head)) {
+              if (this.powerUpActive !== "invincibility") {
+                this.gameOver = true;
+                this.ui.endGame(this.score);
+                this.gameOverSound.play();
+                return;
+              }
+            }
+
+            // Check for enemy collision with snake
+            if (this.powerUpActive !== "invincibility") {
+              for (let enemy of this.enemies) {
+                if (enemy.x === head.x && enemy.y === head.y) {
+                  this.gameOver = true;
+                  this.ui.endGame(this.score);
+                  this.gameOverSound.play();
+                  return;
+                }
+              }
+            }
+
+            this.snake.unshift(head);
+
+            // Check for letter collection
+            const nextLetter = this.targetWord[this.currentWord.length];
+            const letterIndices = this.letters.reduce(
+              (indices, letter, index) => {
+                if (
+                  letter.x === head.x &&
+                  letter.y === head.y &&
+                  letter.letter === nextLetter
+                ) {
+                  indices.push(index);
+                }
+                return indices;
+              },
+              []
+            );
+
+            if (letterIndices.length > 0) {
+              this.currentWord += nextLetter;
+              this.collectLetterSound.play();
+              this.score += this.currentLetterScore; // Use currentLetterScore
+              this.snakeLength++;
+              this.ui.updateScore(this.score);
+              // Remove collected letters
+              for (let i = letterIndices.length - 1; i >= 0; i--) {
+                this.letters.splice(letterIndices[i], 1);
+              }
+              if (this.currentWord.length < this.targetWord.length) {
+                // Place next letters
+                this.placeLetters();
+              } else {
+                // Word completed
+                this.score += 50; // Bonus for completing the word
+                this.ui.updateScore(this.score);
+                this.currentWord = "";
+                this.wordCount++; // Increment word count
+                this.ui.updateWordCount(this.wordCount); // Update display
+                this.setNewTargetWord();
+                this.wordCompletionCount++;
+
+                // **Adjust the speed increment to slow down the rate at which the game speeds up**
+                this.baseSnakeSpeed = Math.max(300, this.baseSnakeSpeed - 50);
+                this.snakeSpeed = this.baseSnakeSpeed;
+
+                // Increase letter score by 5 when speed increases
+                this.currentLetterScore += 5;
+              }
+            } else {
+              // Check for power-up collection
+              const powerUpIndex = this.powerUps.findIndex(
+                (powerUp) => powerUp.x === head.x && powerUp.y === head.y
+              );
+              if (powerUpIndex !== -1) {
+                const powerUp = this.powerUps[powerUpIndex];
+                this.activatePowerUp(powerUp.type);
+                this.powerUps.splice(powerUpIndex, 1);
+              } else {
+                // Remove tail segment
+                while (this.snake.length > this.snakeLength) {
+                  this.snake.pop();
+                }
+              }
+            }
+          }
+
+          moveEnemies() {
+            for (let enemy of this.enemies) {
+              const direction = Math.floor(Math.random() * 4);
+              let newX = enemy.x;
+              let newY = enemy.y;
+
+              if (direction === 0 && enemy.x > 0) newX--;
+              else if (direction === 1 && enemy.x < this.tileCount - 1) newX++;
+              else if (direction === 2 && enemy.y > 0) newY--;
+              else if (direction === 3 && enemy.y < this.tileCount - 1) newY++;
+
+              if (
+                !this.isPositionOccupied(
+                  { x: newX, y: newY },
+                  this.obstacles
+                ) &&
+                !this.isPositionOccupied({ x: newX, y: newY }, this.enemies)
+              ) {
+                enemy.x = newX;
+                enemy.y = newY;
+              }
+
+              // Check for collision with snake
+              if (this.powerUpActive !== "invincibility") {
+                for (let segment of this.snake) {
+                  if (enemy.x === segment.x && enemy.y === segment.y) {
+                    this.gameOver = true;
+                    this.ui.endGame(this.score);
+                    this.gameOverSound.play();
+                    return;
+                  }
+                }
+              }
+            }
+          }
+
+          activatePowerUp(type) {
+            this.powerUpSound.play();
+            if (type === "shrink") {
+              this.snakeLength = Math.max(1, this.snakeLength - 2);
+              // No timer for shrink potion since the effect is permanent
+            } else {
+              this.powerUpActive = type;
+              this.powerUpTimer = 6000;
+              if (type === "speed") {
+                this.snakeSpeed = Math.max(100, this.snakeSpeed - 100);
+              }
+            }
+          }
+
+          deactivatePowerUp() {
+            if (this.powerUpActive === "speed") {
+              this.snakeSpeed = this.baseSnakeSpeed;
+            }
+            this.powerUpActive = null;
+          }
+
+          drawGame() {
+            // Clear canvas
+            this.ctx.fillStyle = "#aad751";
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Draw snake
+            let snakeColor = "#006400"; // Default snake color
+            if (this.powerUpActive === "invincibility") {
+              snakeColor = "#ff00ff"; // Magenta
+              if (this.powerUpTimer <= 1500) {
+                // Last 1.5 seconds, start flashing
+                const flashFrequency = 200 - (this.powerUpTimer / 1500) * 150;
+                if (Math.floor(Date.now() / flashFrequency) % 2 === 0) {
+                  snakeColor = "#006400";
+                }
+              }
+            } else if (this.powerUpActive === "speed") {
+              snakeColor = "#ffff00"; // Yellow
+              if (this.powerUpTimer <= 1500) {
+                // Last 1.5 seconds, start flashing
+                const flashFrequency = 200 - (this.powerUpTimer / 1500) * 150;
+                if (Math.floor(Date.now() / flashFrequency) % 2 === 0) {
+                  snakeColor = "#006400";
+                }
+              }
+            }
+            this.ctx.fillStyle = snakeColor;
+
+            for (let i = 0; i < this.snake.length; i++) {
+              const segment = this.snake[i];
+              if (i === 0) {
+                // Draw head as triangle pointing in the direction
+                this.ctx.beginPath();
+                const x = segment.x * this.gridSize;
+                const y = segment.y * this.gridSize;
+                if (this.currentDirection === "left") {
+                  this.ctx.moveTo(x + this.gridSize, y);
+                  this.ctx.lineTo(x + this.gridSize, y + this.gridSize);
+                  this.ctx.lineTo(x, y + this.gridSize / 2);
+                } else if (this.currentDirection === "right") {
+                  this.ctx.moveTo(x, y);
+                  this.ctx.lineTo(x, y + this.gridSize);
+                  this.ctx.lineTo(x + this.gridSize, y + this.gridSize / 2);
+                } else if (this.currentDirection === "up") {
+                  this.ctx.moveTo(x, y + this.gridSize);
+                  this.ctx.lineTo(x + this.gridSize, y + this.gridSize);
+                  this.ctx.lineTo(x + this.gridSize / 2, y);
+                } else if (this.currentDirection === "down") {
+                  this.ctx.moveTo(x, y);
+                  this.ctx.lineTo(x + this.gridSize, y);
+                  this.ctx.lineTo(x + this.gridSize / 2, y + this.gridSize);
+                }
+                this.ctx.closePath();
+                this.ctx.fill();
+              } else {
+                this.ctx.fillRect(
+                  segment.x * this.gridSize,
+                  segment.y * this.gridSize,
+                  this.gridSize - 2,
+                  this.gridSize - 2
+                );
+              }
+            }
+
+            // Draw letters
+            for (let letter of this.letters) {
+              this.ctx.fillStyle = "#ffffff";
+              this.ctx.fillRect(
+                letter.x * this.gridSize,
+                letter.y * this.gridSize,
+                this.gridSize - 2,
+                this.gridSize - 2
+              );
+              this.ctx.fillStyle = "#000";
+              this.ctx.font = `${this.gridSize * 0.8}px Arial`;
+              this.ctx.fillText(
+                letter.letter,
+                letter.x * this.gridSize + this.gridSize * 0.2,
+                letter.y * this.gridSize + this.gridSize * 0.8
+              );
+            }
+
+            // Draw obstacles
+            this.ctx.fillStyle = "#8b4513";
+            for (let obs of this.obstacles) {
+              this.ctx.fillRect(
+                obs.x * this.gridSize,
+                obs.y * this.gridSize,
+                this.gridSize - 2,
+                this.gridSize - 2
+              );
+            }
+
+            // Draw enemies
+            this.ctx.fillStyle = "#ff0000";
+            for (let enemy of this.enemies) {
+              this.ctx.fillRect(
+                enemy.x * this.gridSize,
+                enemy.y * this.gridSize,
+                this.gridSize - 2,
+                this.gridSize - 2
+              );
+            }
+
+            // Draw power-ups
+            for (let powerUp of this.powerUps) {
+              if (powerUp.type === "shrink") this.ctx.fillStyle = "#00ffff";
+              else if (powerUp.type === "speed") this.ctx.fillStyle = "#ffff00";
+              else if (powerUp.type === "invincibility")
+                this.ctx.fillStyle = "#ff00ff";
+              this.ctx.fillRect(
+                powerUp.x * this.gridSize,
+                powerUp.y * this.gridSize,
+                this.gridSize - 2,
+                this.gridSize - 2
+              );
+            }
+          }
+
+          resetGame() {
+            document.removeEventListener(
+              "keydown",
+              this.changeDirectionHandler
+            );
+            this.ui.canvas.removeEventListener(
+              "touchstart",
+              this.touchStartHandler
+            );
+            this.ui.canvas.removeEventListener(
+              "touchmove",
+              this.touchMoveHandler
+            );
+            this.ui.canvas.removeEventListener(
+              "touchend",
+              this.touchEndHandler
+            );
+            this.init();
+            this.updateGame();
+          }
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI();
+            this.assignButtons();
+          }
+
+          startGame() {
+            this.ui.startGame();
+            this.logic = new GameLogic(this.ui);
+          }
+
+          resetGame() {
+            this.logic.resetGame();
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById("play-button");
+            const settingsButton = document.getElementById("settings-button");
+            const instructionsButton = document.getElementById(
+              "instructions-button"
+            );
+            const playAgainButton =
+              document.getElementById("play-again-button");
+            const backButtons = document.querySelectorAll(".back-button");
+            const pauseButton = document.getElementById("pause-button");
+            const resumeButton = document.getElementById("resume-button");
+            const pauseMainMenuButton = document.getElementById(
+              "pause-main-menu-button"
+            );
+            const gameOverMainMenuButton = document.getElementById(
+              "game-over-main-menu-button"
+            );
+
+            playButton.addEventListener("click", () => {
+              this.startGame();
+            });
+
+            settingsButton.addEventListener("click", () => {
+              this.ui.settings();
+            });
+
+            instructionsButton.addEventListener("click", () => {
+              this.ui.instructions();
+            });
+
+            playAgainButton.addEventListener("click", () => {
+              this.resetGame();
+              this.ui.playAgain();
+            });
+
+            backButtons.forEach((button) =>
+              button.addEventListener("click", () => {
+                this.ui.mainMenu();
+                if (this.logic) {
+                  this.logic.gameOver = true;
+                }
+              })
+            );
+
+            pauseButton.addEventListener("click", () => {
+              this.ui.pauseGame();
+              if (this.logic) {
+                this.logic.gamePaused = true;
+              }
+            });
+
+            resumeButton.addEventListener("click", () => {
+              this.ui.resumeGame();
+              if (this.logic) {
+                this.logic.gamePaused = false;
+                this.logic.updateGame();
+              }
+            });
+
+            pauseMainMenuButton.addEventListener("click", () => {
+              this.ui.mainMenu();
+              if (this.logic) {
+                this.logic.gameOver = true;
+              }
+            });
+
+            gameOverMainMenuButton.addEventListener("click", () => {
+              this.ui.mainMenu();
+              if (this.logic) {
+                this.logic.gameOver = true;
+              }
+            });
+          }
+        }
+
+        const game = new Game();
+      });
+    </script>
+  </body>
+</html>

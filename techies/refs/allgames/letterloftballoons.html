@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      name="viewport"
+    />
+	<!-- Include the Google Font -->
+	<link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+
+	
+    <title>Letter Loft</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+
+      .active {
+        display: block !important;
+      }
+
+      .screen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      /* Start Menu Screen Styles */
+      #start-menu-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background: linear-gradient(to bottom, #87ceeb, #f0f8ff);
+      }
+
+      #start-menu-screen.game-title {
+        font-size: 48px;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px #000000;
+        margin-bottom: 50px;
+      }
+
+      #game-over-screen button,
+	  #start-menu-screen button {
+		/* Background gradient */
+		background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
+		
+		/* White border and rounded corners */
+		border: 2px solid #fff;
+		border-radius: 8px;
+		
+		/* Text styling */
+		color: #fff;
+		font-family: 'Orbitron', sans-serif;
+		font-size: 18px;
+		text-transform: uppercase;
+		text-align: center;
+		text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+		
+		/* Shadow for depth */
+		box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+		
+		/* Spacing */
+		padding: 12px 30px;
+		margin: 20px auto 0;
+		display: inline-block;
+		width: 215.15px;
+		
+		/* Cursor and transitions */
+		cursor: pointer;
+		transition: background 0.3s ease, transform 0.2s ease;
+	  }
+
+	  #game-over-screen button:hover,
+	  #start-menu-screen button:hover {
+		/* Hover effects */
+		background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
+		transform: scale(1.05);
+	  }
+
+	  #game-over-screen button:active,
+	  #start-menu-screen button:active {
+		/* Active effects */
+		transform: scale(0.95);
+	  }
+	
+	  #game-over-screen .container,
+	  #start-menu-screen .container {
+			/* Background gradient resembling a game interface */
+			background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+			
+			/* Positioning and layering */
+			position: relative;
+			overflow: hidden;
+
+			/* White border with rounded corners */
+			border: 3px solid #fff;
+			border-radius: 12px;
+			height: 100%;
+			
+			/* Shadow for a 3D effect */
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+			
+			/* Text styling */
+			color: #fff;
+			font-family: 'Orbitron', sans-serif;
+			text-align: center;
+			text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+			
+			/* Spacing */
+			padding: 25px;
+			
+			/* Flexbox for centering content */
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			box-sizing: border-box;
+		}		
+				
+      /* Settings and Instructions Screen Styles */
+      #settings-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        color: #ffffff;
+        text-align: center;
+        padding: 20px;
+		box-sizing: border-box;
+      }
+	  
+	  #instructions-screen {
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      #instructions-screen .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+      }
+
+      #instructions-screen h2 {
+        text-align: center;
+      }
+
+      #instructions-screen p {
+        font-size: 18px;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .main-menu-button {
+        margin-top: 20px;
+      }
+
+      /* Game Screen Styles */
+      #game-container .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, #87ceeb, #f0f8ff);
+        overflow: hidden;
+      }
+
+      /* Ceiling Bar Styles */
+      #ceiling-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(to bottom, #00ff00, #ff0000);
+        background-size: 100% 200%;
+        background-position: top;
+        z-index: 10;
+        transition: height 0.5s, background-position 0.5s;
+      }
+
+      #ceiling-bar::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 10px;
+        background: radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+        background-repeat: repeat-x;
+        background-size: 20px 20px;
+      }
+
+      /* HUD Styles */
+      #game-container .hud {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: #ffffff;
+        font-size: 20px;
+        text-shadow: 1px 1px 2px #000000;
+        z-index: 20;
+      }
+
+      #game-container .hud div {
+        margin-bottom: 5px;
+      }
+
+      /* Word Prompt Styles */
+      #game-container .word-prompt {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #ffffff;
+        font-size: 32px;
+        text-shadow: 2px 2px 4px #000000;
+        z-index: 20;
+      }
+
+      /* Celebration Message Styles */
+      #celebration-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        color: #fff;
+        text-shadow: 2px 2px 4px #000;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 30;
+		text-align: center;
+      }
+
+      @keyframes celebrate {
+        0% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(2);
+        }
+      }
+
+      /* Score Highlight Animation */
+      #score-display.updated {
+        animation: score-update 1s;
+      }
+
+      @keyframes score-update {
+        0% {
+          color: #ffffff;
+        }
+        50% {
+          color: #ffd700; /* Gold color */
+        }
+        100% {
+          color: #ffffff;
+        }
+      }
+
+      /* Balloon Styles */
+      .balloon {
+        position: absolute;
+        bottom: 0;
+        width: 60px;
+        height: 80px;
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        text-align: center;
+        color: #ffffff;
+        font-size: 32px;
+        line-height: 80px;
+        cursor: pointer;
+        user-select: none;
+        box-shadow: inset -2px -4px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, opacity 0.3s;
+      }
+
+      .balloon.correct {
+        animation: pop 0.3s forwards;
+      }
+
+      .balloon.incorrect {
+        animation: shake 0.3s forwards;
+      }
+
+      @keyframes pop {
+        to {
+          transform: scale(1.5);
+          opacity: 0;
+        }
+      }
+
+      @keyframes shake {
+        0% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        50% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
+        100% {
+          transform: translateX(0);
+          opacity: 0;
+        }
+      }
+
+      .balloon::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        width: 2px;
+        height: 20px;
+        background-color: #555;
+        transform: translateX(-50%);
+      }
+
+      /* Star Balloon Styles */
+      .balloon.star {
+        background: radial-gradient(circle at 50% 35%, #ffdd00, #ffaa00);
+        background-size: cover;
+        background-position: center;
+      }
+
+      .balloon.star::before {
+        content: '★';
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 36px;
+        color: #fff;
+      }
+
+      /* Letter Animation Styles */
+      .letter-animation {
+        position: absolute;
+        color: #ffffff;
+        font-size: 32px;
+        z-index: 20;
+        pointer-events: none;
+        transition: transform 0.5s, opacity 0.5s;
+      }
+
+      /* Responsive Styles */
+      @media only screen and (max-width: 600px) {
+        #game-title {
+          font-size: 36px;
+        }
+
+        button {
+          font-size: 20px;
+          padding: 10px 20px;
+        }
+
+        #game-container .hud {
+          font-size: 16px;
+        }
+
+        #game-container .word-prompt {
+          font-size: 28px;
+        }
+
+        .balloon {
+          width: 50px;
+          height: 70px;
+          font-size: 24px;
+          line-height: 70px;
+        }
+
+        .letter-animation {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Start Menu Screen -->
+    <div class="active screen" id="start-menu-screen">
+      <div class="container">
+        <h1 id="game-title">
+          Letter Loft
+        </h1>
+        <button id="play-button">Play</button>
+        <button id="settings-button">Settings</button>
+        <button id="instructions-button">Instructions</button>
+      </div>
+    </div>
+    <!-- Settings Screen -->
+    <div class="screen" id="settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <label>
+          Background Music:
+          <input type="checkbox" id="music-toggle" checked />
+        </label>
+        <label>
+          Sound Effects:
+          <input type="checkbox" id="sound-toggle" checked />
+        </label>
+        <button class="main-menu-button" id="settings-back-button">Back</button>
+      </div>
+    </div>
+    <!-- Instructions Screen -->
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <h2>Instructions</h2>
+        <p>
+          Welcome to <strong>Letter Loft</strong>! Your goal is to complete the missing letters in the words shown at the bottom of the screen by popping the correct balloons.
+        </p>
+        <p>
+          <strong>How to Play:</strong>
+        </p>
+        <ol>
+          <li>
+            A word with missing letters will appear at the bottom.
+          </li>
+          <li>
+            Pop the balloons with letters that complete the word.
+          </li>
+          <li>
+            Complete the word before the time runs out.
+          </li>
+          <li>
+            Each correct word raises the ceiling; failing to complete it lowers the ceiling.
+          </li>
+          <li>
+            If the ceiling reaches the ground, it's game over!
+          </li>
+          <li>
+            Pop star balloons for bonuses!
+          </li>
+        </ol>
+        <p>
+          <strong>Controls:</strong><br />
+          Mouse: Click on balloons to pop them.<br />
+          Touch: Tap on balloons to pop them.
+        </p>
+        <button class="main-menu-button" id="instructions-back-button">Back</button>
+      </div>
+    </div>
+    <!-- Game Screen -->
+    <div class="screen" id="game-container">
+      <div class="container">
+        <div id="ceiling-bar"></div>
+        <div class="hud">
+          <div id="score-display">Score: 0</div>
+          <div id="time-display">Time: 0</div>
+          <div id="ceiling-display">Ceiling: 100%</div>
+        </div>
+        <div class="word-prompt" id="word-prompt"></div>
+        <div id="celebration-message"></div>
+      </div>
+    </div>
+    <!-- Game Over Screen -->
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <h1 id="game-over-message">Game Over!</h1>
+        <div id="final-score">Your Score: 0</div>
+        <button id="play-again-button">Play Again</button>
+        <button class="main-menu-button" id="game-over-main-menu-button">Main Menu</button>
+      </div>
+    </div>
+    <!-- Audio Elements -->
+    <audio id="background-music" loop>
+      <source src="background-music.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="pop-sound">
+      <source src="pop-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="incorrect-sound">
+      <source src="incorrect-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="powerup-sound">
+      <source src="powerup-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="start-game-sound">
+      <source src="start-game-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="end-game-sound">
+      <source src="end-game-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <!-- JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        class GameUI {
+          constructor(game) {
+            this.game = game;
+            this.startMenuScreen = document.getElementById('start-menu-screen');
+            this.settingsScreen = document.getElementById('settings-screen');
+            this.instructionsScreen = document.getElementById('instructions-screen');
+            this.gameContainer = document.getElementById('game-container');
+            this.gameOverScreen = document.getElementById('game-over-screen');
+            this.scoreDisplay = document.getElementById('score-display');
+            this.timeDisplay = document.getElementById('time-display');
+            this.ceilingDisplay = document.getElementById('ceiling-display');
+            this.wordPrompt = document.getElementById('word-prompt');
+            this.finalScore = document.getElementById('final-score');
+            this.celebrationMessage = document.getElementById('celebration-message');
+
+            this.musicToggle = document.getElementById('music-toggle');
+            this.soundToggle = document.getElementById('sound-toggle');
+            this.backgroundMusic = document.getElementById('background-music');
+            this.popSound = document.getElementById('pop-sound');
+            this.incorrectSound = document.getElementById('incorrect-sound');
+            this.powerupSound = document.getElementById('powerup-sound');
+            this.startGameSound = document.getElementById('start-game-sound');
+            this.endGameSound = document.getElementById('end-game-sound');
+            this.ceilingBar = document.getElementById('ceiling-bar');
+          }
+
+          swapToScreen(screen) {
+            this.startMenuScreen.classList.remove('active');
+            this.settingsScreen.classList.remove('active');
+            this.instructionsScreen.classList.remove('active');
+            this.gameContainer.classList.remove('active');
+            this.gameOverScreen.classList.remove('active');
+            screen.classList.add('active');
+          }
+
+          startGame() {
+            this.swapToScreen(this.gameContainer);
+            if (this.soundToggle.checked) {
+              this.startGameSound.play();
+            }
+            if (this.musicToggle.checked) {
+              this.backgroundMusic.play();
+            } else {
+              this.backgroundMusic.pause();
+            }
+            this.updateHUD();
+          }
+
+          endGame() {
+            this.swapToScreen(this.gameOverScreen);
+            if (this.soundToggle.checked) {
+              this.endGameSound.play();
+            }
+            this.finalScore.textContent = 'Your Score: ' + this.game.score;
+            this.backgroundMusic.pause();
+          }
+
+          mainMenu() {
+            this.swapToScreen(this.startMenuScreen);
+          }
+
+          playAgain() {
+            this.swapToScreen(this.gameContainer);
+            this.game.resetGame();
+            this.startGame();
+          }
+
+          settings() {
+            this.swapToScreen(this.settingsScreen);
+          }
+
+          instructions() {
+            this.swapToScreen(this.instructionsScreen);
+          }
+
+          updateHUD() {
+            this.scoreDisplay.textContent = 'Score: ' + this.game.score;
+            this.timeDisplay.textContent = 'Time: ' + Math.ceil(this.game.timeRemaining);
+            this.ceilingDisplay.textContent = 'Ceiling: ' + Math.ceil(this.game.ceilingHeight) + '%';
+            this.wordPrompt.innerHTML = '';
+
+            // Display the word with missing letters
+            for (let i = 0; i < this.game.currentWordDisplay.length; i++) {
+              const letterSpan = document.createElement('span');
+              letterSpan.textContent = this.game.currentWordDisplay[i];
+              if (this.game.currentWordDisplay[i] === '_') {
+                letterSpan.style.borderBottom = '2px solid #fff';
+                letterSpan.style.width = '20px';
+                letterSpan.style.display = 'inline-block';
+                letterSpan.style.textAlign = 'center';
+              }
+              this.wordPrompt.appendChild(letterSpan);
+            }
+          }
+
+          toggleMusic() {
+            if (this.musicToggle.checked) {
+              this.backgroundMusic.play();
+            } else {
+              this.backgroundMusic.pause();
+            }
+          }
+
+          toggleSound() {
+            // Sound effects are controlled during playback
+          }
+
+          playPopSound() {
+            if (this.soundToggle.checked) {
+              this.popSound.currentTime = 0;
+              this.popSound.play();
+            }
+          }
+
+          playIncorrectSound() {
+            if (this.soundToggle.checked) {
+              this.incorrectSound.currentTime = 0;
+              this.incorrectSound.play();
+            }
+          }
+
+          playPowerupSound() {
+            if (this.soundToggle.checked) {
+              this.powerupSound.currentTime = 0;
+              this.powerupSound.play();
+            }
+          }
+
+          clearBalloons() {
+            const container = this.gameContainer.querySelector('.container');
+            const balloons = container.querySelectorAll('.balloon');
+            balloons.forEach(balloon => balloon.remove());
+          }
+
+          addBalloon(letter, x, y, color, type = 'normal') {
+            const container = this.gameContainer.querySelector('.container');
+            const balloon = document.createElement('div');
+            balloon.classList.add('balloon');
+            if (type === 'star') {
+              balloon.classList.add('star');
+            } else {
+              balloon.style.background = color;
+            }
+            balloon.style.left = x + 'px';
+            balloon.style.bottom = y + 'px';
+            balloon.textContent = letter;
+            container.appendChild(balloon);
+
+            balloon.addEventListener('click', () => {
+              this.game.popBalloon(letter, balloon, type);
+            });
+          }
+
+          updateBalloons() {
+            const container = this.gameContainer.querySelector('.container');
+            const balloons = container.querySelectorAll('.balloon');
+            balloons.forEach(balloon => {
+              const bottom = parseFloat(balloon.style.bottom);
+              balloon.style.bottom = bottom - this.game.balloonSpeed + 'px';
+              if (bottom - this.game.balloonSpeed < 0) {
+                balloon.remove();
+              }
+            });
+          }
+
+          updateCeiling() {
+            this.ceilingBar.style.height = (100 - this.game.ceilingHeight) + '%';
+            // Change ceiling color based on height
+            const position = (100 - this.game.ceilingHeight) + '%';
+            this.ceilingBar.style.backgroundPosition = `0 ${position}`;
+          }
+
+          animateLetter(letter, startX, startY, targetIndex) {
+            const letterElem = document.createElement('div');
+            letterElem.classList.add('letter-animation');
+            letterElem.textContent = letter;
+            letterElem.style.left = startX + 'px';
+            letterElem.style.top = startY + 'px';
+
+            const wordPromptRect = this.wordPrompt.getBoundingClientRect();
+            const targetSpan = this.wordPrompt.children[targetIndex];
+            const targetRect = targetSpan.getBoundingClientRect();
+
+            const deltaX = targetRect.left + targetRect.width / 2 - startX;
+            const deltaY = targetRect.top + targetRect.height / 2 - startY;
+
+            document.body.appendChild(letterElem);
+
+            requestAnimationFrame(() => {
+              letterElem.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+              letterElem.style.opacity = '0';
+            });
+
+            setTimeout(() => {
+              letterElem.remove();
+            }, 500);
+          }
+
+          showCelebration() {
+            this.celebrationMessage.textContent = 'Well Done!';
+            this.celebrationMessage.style.animation = 'celebrate 2s forwards';
+
+            // Reset the animation after it's done
+            setTimeout(() => {
+              this.celebrationMessage.style.animation = '';
+            }, 2000);
+
+            // Highlight the score
+            this.scoreDisplay.classList.add('updated');
+            setTimeout(() => {
+              this.scoreDisplay.classList.remove('updated');
+            }, 1000);
+          }
+        }
+
+        class GameLogic {
+          constructor(game) {
+            this.game = game;
+            this.words = [
+              'APPLE',
+              'BANANA',
+              'ORANGE',
+              'ELEPHANT',
+              'GUITAR',
+              'HOUSE',
+              'KANGAROO',
+              'LAPTOP',
+              'MOUNTAIN',
+              'NOTEBOOK',
+              'PENCIL',
+              'PYTHON',
+              'UMBRELLA',
+              'VIOLIN',
+              'ZEBRA'
+            ];
+          }
+
+          getRandomWord() {
+            const index = Math.floor(Math.random() * this.words.length);
+            return this.words[index];
+          }
+
+          getWordWithMissingLetters(word) {
+            const numMissing = Math.ceil(word.length / 2);
+            let missingIndices = [];
+            while (missingIndices.length < numMissing) {
+              const index = Math.floor(Math.random() * word.length);
+              if (!missingIndices.includes(index)) {
+                missingIndices.push(index);
+              }
+            }
+            let displayWord = '';
+            for (let i = 0; i < word.length; i++) {
+              if (missingIndices.includes(i)) {
+                displayWord += '_';
+              } else {
+                displayWord += word[i];
+              }
+            }
+            return { displayWord, missingIndices };
+          }
+
+          getMissingLetters(wordDisplay, word) {
+            let missingLetters = [];
+            for (let i = 0; i < wordDisplay.length; i++) {
+              if (wordDisplay[i] === '_') {
+                missingLetters.push(word[i]);
+              }
+            }
+            return missingLetters;
+          }
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI(this);
+            this.logic = new GameLogic(this);
+            this.score = 0;
+            this.timeRemaining = 30; // Time limit per word
+            this.ceilingHeight = 100; // Percentage
+            this.balloonSpeed = 1; // Speed at which balloons descend
+            this.balloonSpawnInterval = 1000; // In milliseconds
+            this.lastBalloonSpawn = 0;
+            this.lastFrameTime = 0;
+            this.updateInterval = 1000 / 60;
+            this.done = false;
+            this.currentWord = '';
+            this.currentWordDisplay = '';
+            this.missingLetters = [];
+            this.poppedLetters = [];
+            this.missingIndices = [];
+            this.lettersQueue = []; // Queue for missing letters
+            this.difficultyIncreaseInterval = 15000; // Every 15 seconds
+            this.lastDifficultyIncrease = 0;
+          }
+
+          prepareGame() {
+            this.assignButtons();
+          }
+
+          startGame() {
+            this.resetGame();
+            this.ui.startGame();
+            this.done = false;
+            this.lastDifficultyIncrease = Date.now();
+            requestAnimationFrame(this.gameLoop.bind(this));
+          }
+
+          resetGame() {
+            this.score = 0;
+            this.ceilingHeight = 100;
+            this.balloonSpeed = 1;
+            this.timeRemaining = 30;
+            this.ui.clearBalloons();
+            this.currentWord = this.logic.getRandomWord();
+            const wordData = this.logic.getWordWithMissingLetters(this.currentWord);
+            this.currentWordDisplay = wordData.displayWord;
+            this.missingIndices = wordData.missingIndices;
+            this.missingLetters = this.logic.getMissingLetters(this.currentWordDisplay, this.currentWord);
+            this.poppedLetters = [];
+            this.lettersQueue = [...this.missingLetters];
+            this.ui.updateHUD();
+            this.ui.updateCeiling();
+          }
+
+          updateGame(deltaTime) {
+            this.timeRemaining -= deltaTime / 1000;
+            if (this.timeRemaining <= 0) {
+              this.failWord();
+            }
+            if (Date.now() - this.lastBalloonSpawn > this.balloonSpawnInterval) {
+              this.spawnBalloon();
+              this.lastBalloonSpawn = Date.now();
+            }
+            if (Date.now() - this.lastDifficultyIncrease > this.difficultyIncreaseInterval) {
+              this.increaseDifficulty();
+              this.lastDifficultyIncrease = Date.now();
+            }
+            this.ui.updateBalloons();
+            this.ui.updateHUD();
+          }
+
+          gameLoop(timestamp) {
+            if (this.done) return;
+
+            const deltaTime = timestamp - this.lastFrameTime;
+            if (deltaTime > this.updateInterval) {
+              this.updateGame(deltaTime);
+              this.lastFrameTime = timestamp;
+            }
+
+            if (this.ceilingHeight <= 0) {
+              this.endGame();
+            } else {
+              requestAnimationFrame(this.gameLoop.bind(this));
+            }
+          }
+
+          spawnBalloon() {
+            let letter;
+            let type = 'normal';
+
+            // Ensure missing letters appear
+            if (this.lettersQueue.length > 0 && Math.random() < 0.7) {
+              letter = this.lettersQueue.shift();
+            } else {
+              const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+              letter = letters[Math.floor(Math.random() * letters.length)];
+            }
+
+            // Occasionally spawn a star balloon
+            if (Math.random() < 0.05) {
+              type = 'star';
+            }
+
+            const x = Math.random() * (window.innerWidth - 60);
+            const y = window.innerHeight;
+
+            // Assign a random bright color to the balloon
+            const colors = ['#FF4500', '#FF8C00', '#FFD700', '#ADFF2F', '#32CD32', '#1E90FF', '#DA70D6', '#FF1493'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            this.ui.addBalloon(letter, x, y, color, type);
+          }
+
+          popBalloon(letter, balloonElement, type) {
+            if (type === 'star') {
+              this.ui.playPowerupSound();
+              balloonElement.classList.add('correct');
+              setTimeout(() => {
+                balloonElement.remove();
+              }, 300);
+              this.ceilingHeight += 5;
+              if (this.ceilingHeight > 100) this.ceilingHeight = 100;
+              this.timeRemaining += 5;
+              this.ui.updateCeiling();
+              return;
+            }
+
+            if (this.missingLetters.includes(letter)) {
+              this.poppedLetters.push(letter);
+
+              // Add 'correct' class to trigger animation
+              balloonElement.classList.add('correct');
+
+              // Animate letter moving to the word prompt
+              const rect = balloonElement.getBoundingClientRect();
+              const targetIndex = this.getMissingLetterIndex(letter);
+              this.ui.animateLetter(letter, rect.left + rect.width / 2, rect.top + rect.height / 2, targetIndex);
+
+              setTimeout(() => {
+                balloonElement.remove();
+              }, 300);
+
+              this.updateWordDisplay(letter);
+              if (this.poppedLetters.length === this.missingLetters.length) {
+                this.completeWord();
+              }
+            } else {
+              // Penalty for incorrect letter
+              this.ceilingHeight -= 5;
+              if (this.ceilingHeight < 0) this.ceilingHeight = 0;
+              this.ui.updateCeiling();
+
+              // Add 'incorrect' animation
+              balloonElement.classList.add('incorrect');
+              if (this.soundToggle.checked) {
+                this.ui.playIncorrectSound();
+              }
+              setTimeout(() => {
+                balloonElement.remove();
+              }, 300);
+            }
+          }
+
+          getMissingLetterIndex(letter) {
+            for (let i = 0; i < this.missingLetters.length; i++) {
+              if (this.missingLetters[i] === letter && !this.poppedLetters.includes(letter, i + 1)) {
+                return this.missingIndices[i];
+              }
+            }
+            return -1;
+          }
+
+          updateWordDisplay(letter) {
+            let newDisplay = '';
+            for (let i = 0; i < this.currentWord.length; i++) {
+              if (this.currentWordDisplay[i] !== '_') {
+                newDisplay += this.currentWordDisplay[i];
+              } else {
+                if (this.poppedLetters.includes(this.currentWord[i])) {
+                  newDisplay += this.currentWord[i];
+                } else {
+                  newDisplay += '_';
+                }
+              }
+            }
+            this.currentWordDisplay = newDisplay;
+            this.ui.updateHUD();
+          }
+
+          completeWord() {
+            this.score += 10;
+            this.ceilingHeight += 10;
+            if (this.ceilingHeight > 100) this.ceilingHeight = 100;
+            this.ui.updateCeiling();
+
+            // Show celebration
+            this.ui.showCelebration();
+
+            this.nextWord();
+          }
+
+          failWord() {
+            this.ceilingHeight -= 10;
+            if (this.ceilingHeight < 0) this.ceilingHeight = 0;
+            this.ui.updateCeiling();
+            this.nextWord();
+          }
+
+          nextWord() {
+            this.timeRemaining = 30;
+            this.ui.clearBalloons();
+            this.currentWord = this.logic.getRandomWord();
+            const wordData = this.logic.getWordWithMissingLetters(this.currentWord);
+            this.currentWordDisplay = wordData.displayWord;
+            this.missingIndices = wordData.missingIndices;
+            this.missingLetters = this.logic.getMissingLetters(this.currentWordDisplay, this.currentWord);
+            this.poppedLetters = [];
+            this.lettersQueue = [...this.missingLetters];
+            this.ui.updateHUD();
+          }
+
+          increaseDifficulty() {
+            if (this.balloonSpeed < 3) {
+              this.balloonSpeed += 0.2;
+            }
+            if (this.balloonSpawnInterval > 500) {
+              this.balloonSpawnInterval -= 50;
+            }
+            if (this.timeRemaining > 10) {
+              this.timeRemaining -= 2;
+            }
+          }
+
+          endGame() {
+            this.done = true;
+            this.ui.endGame();
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById('play-button');
+            const settingsButton = document.getElementById('settings-button');
+            const instructionsButton = document.getElementById('instructions-button');
+            const playAgainButton = document.getElementById('play-again-button');
+            const mainMenuButtons = document.querySelectorAll('.main-menu-button');
+            const musicToggle = document.getElementById('music-toggle');
+            const soundToggle = document.getElementById('sound-toggle');
+            const settingsBackButton = document.getElementById('settings-back-button');
+            const instructionsBackButton = document.getElementById('instructions-back-button');
+            const gameOverMainMenuButton = document.getElementById('game-over-main-menu-button');
+
+            playButton.addEventListener('click', this.startGame.bind(this));
+            settingsButton.addEventListener('click', this.ui.settings.bind(this.ui));
+            instructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
+            playAgainButton.addEventListener('click', this.playAgain.bind(this));
+            mainMenuButtons.forEach(button => button.addEventListener('click', this.ui.mainMenu.bind(this.ui)));
+            musicToggle.addEventListener('change', this.ui.toggleMusic.bind(this.ui));
+            soundToggle.addEventListener('change', this.ui.toggleSound.bind(this.ui));
+            settingsBackButton.addEventListener('click', this.ui.mainMenu.bind(this.ui));
+            instructionsBackButton.addEventListener('click', this.ui.mainMenu.bind(this.ui));
+            gameOverMainMenuButton.addEventListener('click', this.ui.mainMenu.bind(this.ui));
+
+            this.soundToggle = soundToggle;
+          }
+
+          playAgain() {
+            this.resetGame();
+            this.startGame();
+          }
+        }
+
+        const game = new Game();
+        game.prepareGame();
+      });
+    </script>
+  </body>
+</html>

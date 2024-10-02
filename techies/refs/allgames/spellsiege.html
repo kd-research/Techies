@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      name="viewport"
+    />
+    <title>Spell Siege</title>
+    <style>
+      /* General Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Verdana", sans-serif;
+        background-color: #1a1a1a;
+        color: #fff;
+      }
+
+      .active {
+        display: block !important;
+      }
+
+      .screen {
+        display: none;
+        width: 100%;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      /* Start Menu Screen */
+      #start-menu-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background-image: url("https://i.imgur.com/8YQqg5G.jpg");
+        background-size: cover;
+        background-position: center;
+      }
+      #start-menu-screen .container #game-title {
+        font-size: 64px;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px #000;
+      }
+      #start-menu-screen .container button {
+        background-color: #5c2d91;
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        font-size: 24px;
+        cursor: pointer;
+        border-radius: 10px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #start-menu-screen .container button:hover {
+        background-color: #7e3dc7;
+      }
+
+      /* Settings, Instructions, and Other Screens */
+      #settings-screen .container,
+      #instructions-screen .container,
+      #game-over-screen .container,
+      #in-game-settings-screen .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+      #settings-screen .container button,
+      #instructions-screen .container button,
+      #game-over-screen .container button,
+      #in-game-settings-screen .container button {
+        background-color: #5c2d91;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      #settings-screen .container button:hover,
+      #instructions-screen .container button:hover,
+      #game-over-screen .container button:hover,
+      #in-game-settings-screen .container button:hover {
+        background-color: #7e3dc7;
+      }
+
+      /* Game Container */
+      #game-container .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        background-image: url("https://i.imgur.com/4Xj0eZf.jpg");
+        background-size: cover;
+        background-position: center;
+      }
+
+      /* Game UI Elements */
+      #letter-pool {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .letter-tile {
+        width: 50px;
+        height: 50px;
+        background-color: #333;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        user-select: none;
+      }
+      #selected-word {
+        position: absolute;
+        bottom: 140px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 32px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .selected-letter {
+        width: 50px;
+        height: 50px;
+        background-color: #555;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        user-select: none;
+      }
+      #submit-button {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #5c2d91;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      #submit-button:hover {
+        background-color: #7e3dc7;
+      }
+      #mana-display {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 24px;
+      }
+      #enemy-health {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 24px;
+      }
+      #build-menu {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .build-button {
+        background-color: #5c2d91;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 5px;
+        width: 150px;
+        text-align: left;
+      }
+      .build-button:hover {
+        background-color: #7e3dc7;
+      }
+      #game-buttons {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+      }
+      #game-buttons button {
+        background-color: #5c2d91;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      #game-buttons button:hover {
+        background-color: #7e3dc7;
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        #start-menu-screen .container #game-title {
+          font-size: 48px;
+        }
+        #start-menu-screen .container button {
+          font-size: 20px;
+          padding: 12px 24px;
+        }
+        #letter-pool .letter-tile,
+        .selected-letter {
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+        }
+        #selected-word {
+          bottom: 120px;
+        }
+        #submit-button {
+          bottom: 10px;
+        }
+        #selected-word {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Start Menu Screen -->
+    <div class="active screen" id="start-menu-screen">
+      <div class="container">
+        <h1 id="game-title">Spell Siege</h1>
+        <button id="play-button">Play</button>
+        <button id="settings-button">Settings</button>
+        <button id="instructions-button">Instructions</button>
+      </div>
+    </div>
+    <!-- Settings Screen -->
+    <div class="screen" id="settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <!-- Volume Control -->
+        <label for="volume-control">Volume:</label>
+        <input
+          type="range"
+          id="volume-control"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.5"
+        />
+        <!-- Additional Settings -->
+        <button class="main-menu-button" id="settings-back-button">Back</button>
+      </div>
+    </div>
+    <!-- In-Game Settings Screen -->
+    <div class="screen" id="in-game-settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <!-- Volume Control -->
+        <label for="in-game-volume-control">Volume:</label>
+        <input
+          type="range"
+          id="in-game-volume-control"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.5"
+        />
+        <!-- Additional Settings -->
+        <button id="resume-game-button">Resume Game</button>
+        <button class="main-menu-button" id="in-game-settings-main-menu-button">
+          Main Menu
+        </button>
+      </div>
+    </div>
+    <!-- Instructions Screen -->
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <h2>Instructions</h2>
+        <p>
+          Defend your castle by casting spells! Form words from the letter pool
+          to generate mana and cast spells. Use mana to build defenses and
+          research new technologies. Survive against waves of enemies and
+          protect your kingdom!
+        </p>
+        <button class="main-menu-button" id="instructions-back-button">
+          Back
+        </button>
+      </div>
+    </div>
+    <!-- Game Screen -->
+    <div class="screen" id="game-container">
+      <div class="container">
+        <!-- Game UI Elements -->
+        <div id="mana-display">Mana: 0</div>
+        <div id="enemy-health">Enemies Remaining: 0</div>
+        <div id="selected-word"></div>
+        <div id="letter-pool"></div>
+        <button id="submit-button">Submit Word</button>
+        <div id="build-menu">
+          <button class="build-button" data-action="build-tower">
+            Build Tower (50 Mana)
+          </button>
+          <button class="build-button" data-action="build-wall">
+            Build Wall (30 Mana)
+          </button>
+          <button class="build-button" data-action="place-trap">
+            Place Trap (20 Mana)
+          </button>
+        </div>
+        <div id="game-buttons">
+          <button id="in-game-settings-button">Settings</button>
+        </div>
+      </div>
+    </div>
+    <!-- Game Over Screen -->
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <div id="game-over-message">Game Over!</div>
+        <button id="play-again-button">Play Again</button>
+        <button class="main-menu-button" id="game-over-main-menu-button">
+          Main Menu
+        </button>
+      </div>
+    </div>
+    <!-- Audio Elements -->
+    <audio id="background-music" loop>
+      <source
+        src="https://freesound.org/data/previews/250/250749_4486188-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="start-game-sound">
+      <source
+        src="https://freesound.org/data/previews/331/331912_3248244-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="spell-cast-sound">
+      <source
+        src="https://freesound.org/data/previews/250/250748_4486188-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="build-structure-sound">
+      <source
+        src="https://freesound.org/data/previews/108/108609_1575111-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="game-over-sound">
+      <source
+        src="https://freesound.org/data/previews/178/178844_3502471-lq.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <!-- Additional audio elements for sound effects -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        class GameUI {
+          constructor() {
+            this.startMenuScreen = document.getElementById("start-menu-screen");
+            this.settingsScreen = document.getElementById("settings-screen");
+            this.instructionsScreen = document.getElementById(
+              "instructions-screen"
+            );
+            this.gameContainer = document.getElementById("game-container");
+            this.gameOverScreen = document.getElementById("game-over-screen");
+            this.inGameSettingsScreen = document.getElementById(
+              "in-game-settings-screen"
+            );
+
+            this.backgroundMusic = document.getElementById("background-music");
+            this.startGameSound = document.getElementById("start-game-sound");
+            this.spellCastSound = document.getElementById("spell-cast-sound");
+            this.buildStructureSound = document.getElementById(
+              "build-structure-sound"
+            );
+            this.gameOverSound = document.getElementById("game-over-sound");
+
+            this.volumeControl = document.getElementById("volume-control");
+            this.inGameVolumeControl = document.getElementById(
+              "in-game-volume-control"
+            );
+
+            this.manaDisplay = document.getElementById("mana-display");
+            this.enemyHealthDisplay = document.getElementById("enemy-health");
+            this.letterPoolElement = document.getElementById("letter-pool");
+            this.selectedWordElement = document.getElementById("selected-word");
+            this.buildButtons = document.querySelectorAll(".build-button");
+            this.submitButton = document.getElementById("submit-button");
+
+            this.initVolumeControl();
+            this.initInGameVolumeControl();
+            this.backgroundMusic.play();
+          }
+
+          initVolumeControl() {
+            this.backgroundMusic.volume = this.volumeControl.value;
+            this.startGameSound.volume = this.volumeControl.value;
+            this.spellCastSound.volume = this.volumeControl.value;
+            this.buildStructureSound.volume = this.volumeControl.value;
+            this.gameOverSound.volume = this.volumeControl.value;
+
+            this.volumeControl.addEventListener("input", () => {
+              this.backgroundMusic.volume = this.volumeControl.value;
+              this.startGameSound.volume = this.volumeControl.value;
+              this.spellCastSound.volume = this.volumeControl.value;
+              this.buildStructureSound.volume = this.volumeControl.value;
+              this.gameOverSound.volume = this.volumeControl.value;
+            });
+          }
+
+          initInGameVolumeControl() {
+            this.inGameVolumeControl.value = this.volumeControl.value;
+
+            this.inGameVolumeControl.addEventListener("input", () => {
+              this.backgroundMusic.volume = this.inGameVolumeControl.value;
+              this.startGameSound.volume = this.inGameVolumeControl.value;
+              this.spellCastSound.volume = this.inGameVolumeControl.value;
+              this.buildStructureSound.volume = this.inGameVolumeControl.value;
+              this.gameOverSound.volume = this.inGameVolumeControl.value;
+
+              this.volumeControl.value = this.inGameVolumeControl.value;
+            });
+          }
+
+          swapToScreen(screen) {
+            const screens = document.querySelectorAll(".screen");
+            screens.forEach((scr) => scr.classList.remove("active"));
+            screen.classList.add("active");
+          }
+
+          startGame() {
+            this.startGameSound.play();
+            this.swapToScreen(this.gameContainer);
+          }
+
+          endGame() {
+            this.gameOverSound.play();
+            this.swapToScreen(this.gameOverScreen);
+          }
+
+          mainMenu() {
+            this.swapToScreen(this.startMenuScreen);
+          }
+
+          playAgain() {
+            this.swapToScreen(this.gameContainer);
+          }
+
+          settings() {
+            this.swapToScreen(this.settingsScreen);
+          }
+
+          inGameSettings() {
+            this.swapToScreen(this.inGameSettingsScreen);
+          }
+
+          instructions() {
+            this.swapToScreen(this.instructionsScreen);
+          }
+
+          updateManaDisplay(mana) {
+            this.manaDisplay.textContent = `Mana: ${mana}`;
+          }
+
+          updateEnemyHealthDisplay(enemiesRemaining) {
+            this.enemyHealthDisplay.textContent = `Enemies Remaining: ${enemiesRemaining}`;
+          }
+
+          updateSelectedWordDisplay(selectedLetters) {
+            this.selectedWordElement.innerHTML = "";
+            selectedLetters.forEach((letter, index) => {
+              const tile = document.createElement("div");
+              tile.classList.add("selected-letter");
+              tile.textContent = letter;
+              tile.dataset.index = index;
+              this.selectedWordElement.appendChild(tile);
+            });
+          }
+
+          renderLetterPool(letters) {
+            this.letterPoolElement.innerHTML = "";
+            letters.forEach((letter, index) => {
+              const tile = document.createElement("div");
+              tile.classList.add("letter-tile");
+              tile.textContent = letter;
+              tile.dataset.index = index;
+              this.letterPoolElement.appendChild(tile);
+            });
+          }
+        }
+
+        class GameLogic {
+          constructor(ui) {
+            this.ui = ui;
+            this.wordList = new Set();
+            this.wordListLoaded = false;
+            this.loadWordList();
+            this.availableLetters = [];
+            this.selectedLetters = [];
+            this.mana = 0;
+            this.enemiesRemaining = 10;
+            this.letterPoolSize = 7;
+            this.minVowels = 2;
+            this.letterFrequency = {
+              A: 8.17,
+              B: 1.49,
+              C: 2.78,
+              D: 4.25,
+              E: 12.7,
+              F: 2.23,
+              G: 2.02,
+              H: 6.09,
+              I: 6.97,
+              J: 0.15,
+              K: 0.77,
+              L: 4.03,
+              M: 2.41,
+              N: 6.75,
+              O: 7.51,
+              P: 1.93,
+              Q: 0.1,
+              R: 5.99,
+              S: 6.33,
+              T: 9.06,
+              U: 2.76,
+              V: 0.98,
+              W: 2.36,
+              X: 0.15,
+              Y: 1.97,
+              Z: 0.07,
+            };
+            this.vowels = ["A", "E", "I", "O", "U"];
+            this.initLetterPool();
+          }
+
+          async loadWordList() {
+            try {
+              const response = await fetch(
+                "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt"
+              );
+              if (!response.ok) {
+                throw new Error("Failed to load word list.");
+              }
+              const text = await response.text();
+              const words = text
+                .split("\n")
+                .map((word) => word.trim().toLowerCase());
+              words.forEach((word) => this.wordList.add(word));
+              this.wordListLoaded = true;
+              console.log("Word list loaded successfully.");
+            } catch (error) {
+              console.error("Error loading word list:", error);
+              alert(
+                "Failed to load word list. Word validation may not work correctly."
+              );
+            }
+          }
+
+          initLetterPool() {
+            if (!this.wordListLoaded) {
+              // Wait until the word list is loaded before initializing the letter pool
+              setTimeout(() => this.initLetterPool(), 1000);
+              return;
+            }
+
+            this.availableLetters = [];
+            while (this.availableLetters.length < this.letterPoolSize) {
+              const letter = this.getRandomLetter();
+              this.availableLetters.push(letter);
+            }
+            if (!this.hasMinVowels()) {
+              this.addVowels();
+            }
+            this.ui.renderLetterPool(this.availableLetters);
+            this.ui.updateSelectedWordDisplay(this.selectedLetters);
+          }
+
+          getRandomLetter() {
+            const totalFrequency = Object.values(this.letterFrequency).reduce(
+              (sum, freq) => sum + freq,
+              0
+            );
+            let rand = Math.random() * totalFrequency;
+            for (const [letter, freq] of Object.entries(this.letterFrequency)) {
+              if (rand < freq) {
+                return letter;
+              }
+              rand -= freq;
+            }
+            return "E"; // Default letter
+          }
+
+          hasMinVowels() {
+            const vowelsInPool = this.availableLetters.filter((letter) =>
+              this.vowels.includes(letter)
+            );
+            return vowelsInPool.length >= this.minVowels;
+          }
+
+          addVowels() {
+            const numVowelsNeeded =
+              this.minVowels -
+              this.availableLetters.filter((letter) =>
+                this.vowels.includes(letter)
+              ).length;
+            for (let i = 0; i < numVowelsNeeded; i++) {
+              const vowel =
+                this.vowels[Math.floor(Math.random() * this.vowels.length)];
+              const randomIndex = Math.floor(
+                Math.random() * this.availableLetters.length
+              );
+              this.availableLetters[randomIndex] = vowel;
+            }
+          }
+
+          selectLetter(index) {
+            const letter = this.availableLetters[index];
+            this.selectedLetters.push(letter);
+            this.availableLetters.splice(index, 1);
+            this.ui.renderLetterPool(this.availableLetters);
+            this.ui.updateSelectedWordDisplay(this.selectedLetters);
+          }
+
+          deselectLetter(index) {
+            const letter = this.selectedLetters[index];
+            this.availableLetters.push(letter);
+            this.selectedLetters.splice(index, 1);
+            this.ui.renderLetterPool(this.availableLetters);
+            this.ui.updateSelectedWordDisplay(this.selectedLetters);
+          }
+
+          async submitWord() {
+            if (!this.wordListLoaded) {
+              alert("Word list is still loading. Please wait a moment.");
+              return;
+            }
+
+            const word = this.selectedLetters.join("").toLowerCase().trim();
+            if (word.length === 0) return;
+
+            if (this.wordList.has(word)) {
+              this.spellEffect(word);
+              const manaGained = word.length * 10;
+              this.mana += manaGained;
+              this.ui.updateManaDisplay(this.mana);
+              this.ui.spellCastSound.play();
+              this.replaceUsedLetters();
+              this.selectedLetters = [];
+              this.ui.updateSelectedWordDisplay(this.selectedLetters);
+            } else {
+              alert("Invalid word!");
+              this.resetSelectedLetters();
+            }
+          }
+
+          spellEffect(word) {
+            // Implement spell effects based on the word
+            // For simplicity, reduce enemiesRemaining
+            const damage = Math.min(word.length, this.enemiesRemaining);
+            this.enemiesRemaining -= damage;
+            this.ui.updateEnemyHealthDisplay(this.enemiesRemaining);
+            if (this.enemiesRemaining <= 0) {
+              this.ui.endGame();
+            }
+          }
+
+          buildStructure(structure) {
+            let cost = 0;
+            switch (structure) {
+              case "build-tower":
+                cost = 50;
+                break;
+              case "build-wall":
+                cost = 30;
+                break;
+              case "place-trap":
+                cost = 20;
+                break;
+              default:
+                return;
+            }
+            if (this.mana >= cost) {
+              this.mana -= cost;
+              this.ui.updateManaDisplay(this.mana);
+              this.ui.buildStructureSound.play();
+              // Implement building logic here
+              alert(
+                `${structure
+                  .replace("-", " ")
+                  .toUpperCase()} built successfully!`
+              );
+            } else {
+              alert("Not enough mana!");
+            }
+          }
+
+          replaceUsedLetters() {
+            const lettersNeeded =
+              this.letterPoolSize - this.availableLetters.length;
+            for (let i = 0; i < lettersNeeded; i++) {
+              const newLetter = this.getRandomLetter();
+              this.availableLetters.push(newLetter);
+            }
+            if (!this.hasMinVowels()) {
+              this.addVowels();
+            }
+            this.ui.renderLetterPool(this.availableLetters);
+          }
+
+          resetSelectedLetters() {
+            this.availableLetters.push(...this.selectedLetters);
+            this.selectedLetters = [];
+            this.ui.renderLetterPool(this.availableLetters);
+            this.ui.updateSelectedWordDisplay(this.selectedLetters);
+          }
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI();
+            this.logic = new GameLogic(this.ui);
+            this.assignButtons();
+          }
+
+          prepareGame() {
+            // Prepare game container DOM elements here
+            // Assign event listeners and initialize game state
+            this.ui.letterPoolElement.addEventListener("click", (e) => {
+              if (e.target.classList.contains("letter-tile")) {
+                const index = parseInt(e.target.dataset.index);
+                this.logic.selectLetter(index);
+              }
+            });
+
+            this.ui.selectedWordElement.addEventListener("click", (e) => {
+              if (e.target.classList.contains("selected-letter")) {
+                const index = parseInt(e.target.dataset.index);
+                this.logic.deselectLetter(index);
+              }
+            });
+
+            this.ui.submitButton.addEventListener("click", () => {
+              this.logic.submitWord();
+            });
+
+            this.ui.buildButtons.forEach((button) => {
+              button.addEventListener("click", () => {
+                const action = button.dataset.action;
+                this.logic.buildStructure(action);
+              });
+            });
+
+            this.ui.updateManaDisplay(this.logic.mana);
+            this.ui.updateEnemyHealthDisplay(this.logic.enemiesRemaining);
+          }
+
+          startGame() {
+            this.ui.startGame();
+          }
+
+          resetGame() {
+            this.logic = new GameLogic(this.ui);
+            this.prepareGame();
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById("play-button");
+            const settingsButton = document.getElementById("settings-button");
+            const instructionsButton = document.getElementById(
+              "instructions-button"
+            );
+            const playAgainButton =
+              document.getElementById("play-again-button");
+            const mainMenuButtons =
+              document.querySelectorAll(".main-menu-button");
+            const instructionsBackButton = document.getElementById(
+              "instructions-back-button"
+            );
+            const settingsBackButton = document.getElementById(
+              "settings-back-button"
+            );
+            const inGameSettingsButton = document.getElementById(
+              "in-game-settings-button"
+            );
+            const resumeGameButton =
+              document.getElementById("resume-game-button");
+            const inGameSettingsMainMenuButton = document.getElementById(
+              "in-game-settings-main-menu-button"
+            );
+
+            settingsButton.addEventListener("click", () => {
+              this.ui.settings();
+            });
+            instructionsButton.addEventListener("click", () => {
+              this.ui.instructions();
+            });
+            playAgainButton.addEventListener("click", () => {
+              this.ui.playAgain();
+              this.resetGame();
+              this.startGame();
+            });
+            mainMenuButtons.forEach((button) =>
+              button.addEventListener("click", () => {
+                this.ui.mainMenu();
+                this.resetGame();
+              })
+            );
+            playButton.addEventListener("click", () => {
+              this.startGame();
+            });
+            instructionsBackButton.addEventListener("click", () => {
+              this.ui.mainMenu();
+            });
+            settingsBackButton.addEventListener("click", () => {
+              this.ui.mainMenu();
+            });
+            inGameSettingsButton.addEventListener("click", () => {
+              this.ui.inGameSettings();
+            });
+            resumeGameButton.addEventListener("click", () => {
+              this.ui.swapToScreen(this.ui.gameContainer);
+            });
+            inGameSettingsMainMenuButton.addEventListener("click", () => {
+              this.ui.mainMenu();
+              this.resetGame();
+            });
+          }
+        }
+
+        const game = new Game();
+        game.prepareGame();
+      });
+    </script>
+  </body>
+</html>
