@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      name="viewport"
+    />
+    <title>Sudoku Detective</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #1a1a1a;
+        color: #fff;
+      }
+
+      .active {
+        display: block !important;
+      }
+
+      .screen {
+        display: none;
+        width: 100%;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      #start-menu-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background: url('https://i.imgur.com/9g7M4vV.jpg') no-repeat center
+          center/cover;
+      }
+      #start-menu-screen .container #game-title {
+        font-size: 48px;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 5px #000;
+      }
+      #start-menu-screen .container button {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        font-size: 24px;
+        cursor: pointer;
+        border-radius: 10px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #start-menu-screen .container button:hover {
+        background-color: #666;
+      }
+
+      /* Mode Selection Screen */
+      #mode-select-screen .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+      #mode-select-screen .container button {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        font-size: 24px;
+        cursor: pointer;
+        border-radius: 10px;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+      #mode-select-screen .container button:hover {
+        background-color: #666;
+      }
+
+      /* Settings, Instructions, and Other Screens */
+      #settings-screen .container,
+      #instructions-screen .container,
+      #game-over-screen .container,
+      #story-screen .container,
+      #evidence-board-screen .container,
+      #interview-screen .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+      #settings-screen .container button,
+      #instructions-screen .container button,
+      #game-over-screen .container button,
+      #story-screen .container button,
+      #evidence-board-screen .container button,
+      #interview-screen .container button {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      #settings-screen .container button:hover,
+      #instructions-screen .container button:hover,
+      #game-over-screen .container button:hover,
+      #story-screen .container button:hover,
+      #evidence-board-screen .container button:hover,
+      #interview-screen .container button:hover {
+        background-color: #666;
+      }
+
+      /* Game Container */
+      #game-container .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background-color: #1a1a1a;
+      }
+      #game-container .container #sudoku-grid {
+        display: grid;
+        grid-template-columns: repeat(9, 1fr);
+        grid-template-rows: repeat(9, 1fr);
+        width: 90%;
+        max-width: 500px;
+        aspect-ratio: 1 / 1;
+        margin: 20px auto;
+        background-color: #000;
+        border: 2px solid #fff;
+      }
+      #game-container .container #sudoku-grid input {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-size: 1.5em;
+        border: 1px solid #555;
+        outline: none;
+        background-color: #2a2a2a;
+        color: #fff;
+        box-sizing: border-box;
+      }
+      #game-container .container #sudoku-grid input:disabled {
+        background-color: #444;
+      }
+      #game-container .container #sudoku-grid input:focus {
+        outline: 2px solid #61dafb;
+      }
+
+      /* Differentiating 3x3 Subgrids */
+      #sudoku-grid input {
+        border: 1px solid #555;
+      }
+      #sudoku-grid input:nth-child(9n + 1) {
+        border-left: none;
+      }
+      #sudoku-grid input:nth-child(n + 1):nth-child(-n + 9) {
+        border-top: none;
+      }
+      #sudoku-grid input:nth-child(3n) {
+        border-right: 2px solid #fff;
+      }
+      #sudoku-grid input:nth-child(n + 19):nth-child(-n + 27),
+      #sudoku-grid input:nth-child(n + 46):nth-child(-n + 54) {
+        border-bottom: 2px solid #fff;
+      }
+
+      #game-container .container #clue-box {
+        width: 90%;
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: #333;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: left;
+        font-size: 1em;
+      }
+      #game-container .container #timer {
+        margin: 10px;
+        font-size: 1.2em;
+        text-align: center;
+      }
+      #game-container .container #menu-buttons {
+        display: flex;
+        justify-content: center;
+        margin-top: auto;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      #game-container .container #menu-buttons button {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 10px 10px;
+      }
+      #game-container .container #menu-buttons button:hover {
+        background-color: #666;
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        #start-menu-screen .container #game-title {
+          font-size: 36px;
+        }
+        #start-menu-screen .container button {
+          font-size: 20px;
+          padding: 12px 24px;
+        }
+        #game-container .container #sudoku-grid input {
+          font-size: 1em;
+        }
+      }
+
+      /* Accessibility */
+      #sudoku-grid input:focus {
+        outline: 2px solid #61dafb;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Start Menu Screen -->
+    <div class="active screen" id="start-menu-screen">
+      <div class="container">
+        <h1 id="game-title">Sudoku Detective</h1>
+        <button id="play-button">Play</button>
+        <button id="settings-button">Settings</button>
+        <button id="instructions-button">Instructions</button>
+      </div>
+    </div>
+    <!-- Mode Selection Screen -->
+    <div class="screen" id="mode-select-screen">
+      <div class="container">
+        <h2>Select Game Mode</h2>
+        <button id="normal-mode-button">Normal Mode</button>
+        <button id="timed-mode-button">Timed Mode</button>
+        <button class="main-menu-button" id="mode-back-button">Back</button>
+      </div>
+    </div>
+    <!-- Settings Screen -->
+    <div class="screen" id="settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <!-- Volume Control -->
+        <label for="volume-control">Volume:</label>
+        <input
+          type="range"
+          id="volume-control"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.5"
+        />
+        <!-- Difficulty Selection -->
+        <label for="difficulty-select">Difficulty:</label>
+        <select id="difficulty-select">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <button class="main-menu-button" id="settings-back-button">
+          Back
+        </button>
+      </div>
+    </div>
+    <!-- Instructions Screen -->
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <h2>Instructions</h2>
+        <p>
+          Welcome to <strong>Sudoku Detective</strong>! You are a detective in a
+          noir-inspired city, solving mysterious cases by completing Sudoku
+          puzzles to uncover crucial clues.
+        </p>
+        <p>
+          <strong>How to Play:</strong>
+          <ul style="text-align: left;">
+            <li>
+              Complete the Sudoku puzzles by filling in the numbers 1-9 without
+              repeating in any row, column, or 3x3 grid.
+            </li>
+            <li>
+              Solving puzzles reveals clues that help you advance the
+              investigation.
+            </li>
+            <li>
+              Use the evidence board to organize clues and connect suspects.
+            </li>
+            <li>
+              Be quick on timed puzzles to prevent further crimes!
+            </li>
+          </ul>
+        </p>
+        <button class="main-menu-button" id="instructions-back-button">
+          Back
+        </button>
+      </div>
+    </div>
+    <!-- Story Screen -->
+    <div class="screen" id="story-screen">
+      <div class="container">
+        <h2 id="story-title">Case Introduction</h2>
+        <p id="story-text">
+          <!-- Story content will be injected here -->
+        </p>
+        <button id="continue-button">Continue</button>
+      </div>
+    </div>
+    <!-- Game Screen -->
+    <div class="screen" id="game-container">
+      <div class="container">
+        <div id="timer">Time Left: <span id="time-left"></span></div>
+        <div id="sudoku-grid">
+          <!-- Sudoku grid cells will be generated here -->
+        </div>
+        <div id="clue-box">
+          <strong>Clue:</strong>
+          <p id="clue-text">Solve the puzzle to uncover the clue.</p>
+        </div>
+        <div id="menu-buttons">
+          <button id="hint-button">Use Hint (<span id="hints-left">3</span>)</button>
+          <button id="check-button">Check Puzzle</button>
+          <button id="evidence-board-button">Evidence Board</button>
+          <button id="game-settings-button">Settings</button>
+          <button id="game-main-menu-button" class="main-menu-button">
+            Main Menu
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Evidence Board Screen -->
+    <div class="screen" id="evidence-board-screen">
+      <div class="container">
+        <h2>Evidence Board</h2>
+        <div id="evidence-board">
+          <!-- Clues will be displayed here -->
+        </div>
+        <button id="back-to-game-button">Back to Game</button>
+      </div>
+    </div>
+    <!-- Interview Screen -->
+    <div class="screen" id="interview-screen">
+      <div class="container">
+        <h2 id="interview-title">Interview</h2>
+        <p id="interview-text">
+          <!-- Interview content will be injected here -->
+        </p>
+        <button id="continue-after-interview-button">Continue</button>
+      </div>
+    </div>
+    <!-- Game Over Screen -->
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <div id="game-over-message">Game Over!</div>
+        <button id="play-again-button">Play Again</button>
+        <button class="main-menu-button" id="game-over-main-menu-button">
+          Main Menu
+        </button>
+      </div>
+    </div>
+    <!-- Audio Elements -->
+    <audio id="background-music" loop>
+      <source
+        src="https://cdn.pixabay.com/download/audio/2021/08/08/audio_f7cf3d27f4.mp3?filename=smooth-jazz-105152.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="start-game-sound">
+      <source
+        src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_9d121b1a49.mp3?filename=click-110221.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="success-sound">
+      <source
+        src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_938d82b058.mp3?filename=success-1-6297.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="error-sound">
+      <source
+        src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_c06c52b9ed.mp3?filename=error-1-107803.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        class GameUI {
+          constructor() {
+            this.startMenuScreen = document.getElementById('start-menu-screen');
+            this.modeSelectScreen = document.getElementById('mode-select-screen');
+            this.settingsScreen = document.getElementById('settings-screen');
+            this.instructionsScreen = document.getElementById('instructions-screen');
+            this.gameContainer = document.getElementById('game-container');
+            this.gameOverScreen = document.getElementById('game-over-screen');
+            this.storyScreen = document.getElementById('story-screen');
+            this.evidenceBoardScreen = document.getElementById(
+              'evidence-board-screen'
+            );
+            this.interviewScreen = document.getElementById('interview-screen');
+            this.backgroundMusic = document.getElementById('background-music');
+            this.volumeControl = document.getElementById('volume-control');
+            this.difficultySelect = document.getElementById('difficulty-select');
+            this.timeLeftDisplay = document.getElementById('time-left');
+            this.hintsLeftDisplay = document.getElementById('hints-left');
+            this.initVolumeControl();
+            this.initAudioAutoplay();
+          }
+
+          initVolumeControl() {
+            this.backgroundMusic.volume = this.volumeControl.value;
+            this.volumeControl.addEventListener('input', () => {
+              this.backgroundMusic.volume = this.volumeControl.value;
+              const audios = document.querySelectorAll('audio');
+              audios.forEach((audio) => {
+                audio.volume = this.volumeControl.value;
+              });
+            });
+          }
+
+          initAudioAutoplay() {
+            // Start background music after user interaction to comply with autoplay policies
+            document.body.addEventListener(
+              'click',
+              () => {
+                if (this.backgroundMusic.paused) {
+                  this.backgroundMusic.play();
+                }
+              },
+              { once: true }
+            );
+          }
+
+          swapToScreen(screen) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach((scr) => scr.classList.remove('active'));
+            screen.classList.add('active');
+          }
+
+          startGame() {
+            const startGameSound = document.getElementById('start-game-sound');
+            startGameSound.volume = this.volumeControl.value;
+            startGameSound.play();
+            this.swapToScreen(this.storyScreen);
+          }
+
+          showGameOver(message) {
+            const gameOverMessage = document.getElementById('game-over-message');
+            gameOverMessage.textContent = message;
+            this.swapToScreen(this.gameOverScreen);
+          }
+
+          mainMenu() {
+            this.swapToScreen(this.startMenuScreen);
+          }
+
+          playAgain() {
+            this.swapToScreen(this.modeSelectScreen);
+          }
+
+          settings() {
+            this.swapToScreen(this.settingsScreen);
+          }
+
+          instructions() {
+            this.swapToScreen(this.instructionsScreen);
+          }
+
+          updateTimer(timeLeft) {
+            this.timeLeftDisplay.textContent = `${timeLeft}s`;
+          }
+
+          updateHints(hintsLeft) {
+            this.hintsLeftDisplay.textContent = hintsLeft;
+          }
+
+          showEvidenceBoard(clues) {
+            const evidenceBoard = document.getElementById('evidence-board');
+            evidenceBoard.innerHTML = '';
+            clues.forEach((clue, index) => {
+              const clueElement = document.createElement('div');
+              clueElement.classList.add('clue');
+              clueElement.textContent = clue;
+              clueElement.style.left = `${Math.random() * 70}%`;
+              clueElement.style.top = `${Math.random() * 70}%`;
+              evidenceBoard.appendChild(clueElement);
+            });
+            this.swapToScreen(this.evidenceBoardScreen);
+          }
+
+          showInterview(interview) {
+            document.getElementById('interview-title').textContent = 'Interview';
+            document.getElementById('interview-text').textContent = interview;
+            this.swapToScreen(this.interviewScreen);
+          }
+
+          // Your UI functions here
+        }
+
+        class SudokuGenerator {
+          constructor() {
+            this.gridSize = 9;
+            this.subGridSize = 3;
+          }
+
+          generatePuzzle(difficulty) {
+            let solution = this.generateFullGrid();
+            let puzzle = this.createPuzzleFromSolution(solution, difficulty);
+            return { puzzle, solution };
+          }
+
+          generateFullGrid() {
+            let grid = Array.from({ length: this.gridSize }, () =>
+              Array(this.gridSize).fill(0)
+            );
+
+            const fillGrid = (grid) => {
+              for (let row = 0; row < this.gridSize; row++) {
+                for (let col = 0; col < this.gridSize; col++) {
+                  if (grid[row][col] === 0) {
+                    let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    while (numbers.length > 0) {
+                      let number =
+                        numbers.splice(
+                          Math.floor(Math.random() * numbers.length),
+                          1
+                        )[0];
+                      if (this.isSafe(grid, row, col, number)) {
+                        grid[row][col] = number;
+                        if (fillGrid(grid)) {
+                          return true;
+                        }
+                        grid[row][col] = 0;
+                      }
+                    }
+                    return false;
+                  }
+                }
+              }
+              return true;
+            };
+
+            fillGrid(grid);
+            return grid;
+          }
+
+          isSafe(grid, row, col, num) {
+            for (let x = 0; x < this.gridSize; x++) {
+              if (grid[row][x] === num || grid[x][col] === num) {
+                return false;
+              }
+            }
+
+            let startRow = row - (row % 3);
+            let startCol = col - (col % 3);
+
+            for (let i = 0; i < 3; i++) {
+              for (let j = 0; j < 3; j++) {
+                if (grid[i + startRow][j + startCol] === num) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          }
+
+          createPuzzleFromSolution(solution, difficulty) {
+            let puzzle = JSON.parse(JSON.stringify(solution));
+            let attempts = difficulty === 'easy' ? 35 : difficulty === 'medium' ? 45 : 55;
+
+            while (attempts > 0) {
+              let row = Math.floor(Math.random() * 9);
+              let col = Math.floor(Math.random() * 9);
+              if (puzzle[row][col] !== 0) {
+                puzzle[row][col] = 0;
+                attempts--;
+              }
+            }
+            return puzzle;
+          }
+        }
+
+        class GameLogic {
+          constructor(ui) {
+            this.ui = ui;
+            this.gridSize = 9;
+            this.subGridSize = 3;
+            this.sudokuGrid = [];
+            this.solutionGrid = [];
+            this.timeLeft = 0;
+            this.timerInterval = null;
+            this.hintsLeft = 3;
+            this.currentCaseIndex = 0;
+            this.cases = this.generateCases();
+            this.currentCase = this.cases[this.currentCaseIndex];
+            this.collectedClues = [];
+            this.mode = 'normal'; // 'normal' or 'timed'
+            this.sudokuGenerator = new SudokuGenerator();
+          }
+
+          generateCases() {
+            return [
+              {
+                title: 'The Missing Necklace',
+                intro:
+                  'A priceless necklace has been stolen from the city museum. Solve the puzzle to find the first clue.',
+                clue: 'Witness saw a suspicious person near the East Gate at midnight.',
+                puzzle: null, // Will be generated dynamically
+                interview:
+                  'Witness: "I saw someone in a dark coat leaving the museum late at night."',
+                timed: false,
+              },
+              {
+                title: 'The Silent Witness',
+                intro:
+                  'A witness is too scared to talk. Solve the puzzle to gain their trust.',
+                clue: 'The witness mentions a dark sedan speeding away.',
+                puzzle: null, // Will be generated dynamically
+                interview:
+                  'Witness: "I remember the license plate started with AB1."',
+                timed: true,
+                timeLimit: 120, // seconds
+              },
+              {
+                title: 'The Final Showdown',
+                intro:
+                  'You are close to catching the culprit. Solve the last puzzle to uncover their hideout.',
+                clue: 'The culprit is hiding in the old warehouse by the docks.',
+                puzzle: null, // Will be generated dynamically
+                interview: "Suspect: \"You'll never catch me!\"",
+                timed: true,
+                timeLimit: 90, // seconds
+              },
+            ];
+          }
+
+          preparePuzzle() {
+            const gridContainer = document.getElementById('sudoku-grid');
+            gridContainer.innerHTML = '';
+            const difficulty = this.ui.difficultySelect.value;
+
+            // Generate puzzle and solution dynamically
+            const { puzzle, solution } = this.sudokuGenerator.generatePuzzle(difficulty);
+            this.currentCase.puzzle = { puzzle, solution };
+
+            this.sudokuGrid = JSON.parse(JSON.stringify(puzzle));
+            this.solutionGrid = solution;
+
+            for (let row = 0; row < this.gridSize; row++) {
+              for (let col = 0; col < this.gridSize; col++) {
+                const cell = document.createElement('input');
+                cell.setAttribute('type', 'number');
+                cell.setAttribute('min', '1');
+                cell.setAttribute('max', '9');
+                cell.dataset.row = row;
+                cell.dataset.col = col;
+                if (puzzle[row][col] !== 0) {
+                  cell.value = puzzle[row][col];
+                  cell.disabled = true;
+                } else {
+                  cell.value = '';
+                  cell.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/[^1-9]/g, '');
+                    if (value.length > 1) {
+                      value = value.slice(0, 1);
+                    }
+                    e.target.value = value;
+                    value = parseInt(value);
+                    if (value >= 1 && value <= 9) {
+                      this.sudokuGrid[row][col] = value;
+                    } else {
+                      this.sudokuGrid[row][col] = 0;
+                    }
+                  });
+                }
+                gridContainer.appendChild(cell);
+              }
+            }
+            // Reset hints
+            this.hintsLeft = 3;
+            this.ui.updateHints(this.hintsLeft);
+          }
+
+          startTimer() {
+            if (this.currentCase.timed && this.mode === 'timed') {
+              this.timeLeft = this.currentCase.timeLimit;
+              this.ui.updateTimer(this.timeLeft);
+              this.ui.timeLeftDisplay.parentElement.style.display = 'block';
+              this.timerInterval = setInterval(() => {
+                this.timeLeft--;
+                this.ui.updateTimer(this.timeLeft);
+                if (this.timeLeft <= 0) {
+                  clearInterval(this.timerInterval);
+                  this.ui.showGameOver('Time is up! The trail has gone cold.');
+                }
+              }, 1000);
+            } else {
+              this.ui.timeLeftDisplay.parentElement.style.display = 'none';
+            }
+          }
+
+          isValidSudoku(grid) {
+            // Check rows
+            for (let i = 0; i < 9; i++) {
+              let rowSet = new Set();
+              for (let j = 0; j < 9; j++) {
+                let num = grid[i][j];
+                if (num === 0) return false; // Incomplete grid
+                if (rowSet.has(num)) return false;
+                rowSet.add(num);
+              }
+            }
+            // Check columns
+            for (let j = 0; j < 9; j++) {
+              let colSet = new Set();
+              for (let i = 0; i < 9; i++) {
+                let num = grid[i][j];
+                if (colSet.has(num)) return false;
+                colSet.add(num);
+              }
+            }
+            // Check 3x3 subgrids
+            for (let boxRow = 0; boxRow < 3; boxRow++) {
+              for (let boxCol = 0; boxCol < 3; boxCol++) {
+                let boxSet = new Set();
+                for (let i = 0; i < 3; i++) {
+                  for (let j = 0; j < 3; j++) {
+                    let num = grid[boxRow * 3 + i][boxCol * 3 + j];
+                    if (boxSet.has(num)) return false;
+                    boxSet.add(num);
+                  }
+                }
+              }
+            }
+            return true;
+          }
+
+          checkSolution() {
+            if (!this.isValidSudoku(this.sudokuGrid)) {
+              const errorSound = document.getElementById('error-sound');
+              errorSound.volume = this.ui.volumeControl.value;
+              errorSound.play();
+              alert('The puzzle is not solved correctly.');
+              return;
+            }
+            clearInterval(this.timerInterval);
+            const successSound = document.getElementById('success-sound');
+            successSound.volume = this.ui.volumeControl.value;
+            successSound.play();
+            this.collectedClues.push(this.currentCase.clue);
+            if (this.currentCase.interview) {
+              this.ui.showInterview(this.currentCase.interview);
+            } else {
+              this.advanceCase();
+            }
+          }
+
+          useHint() {
+            if (this.hintsLeft > 0) {
+              // Provide a hint by filling in a random empty cell
+              let emptyCells = [];
+              for (let row = 0; row < this.gridSize; row++) {
+                for (let col = 0; col < this.gridSize; col++) {
+                  if (this.sudokuGrid[row][col] === 0) {
+                    emptyCells.push({ row, col });
+                  }
+                }
+              }
+              if (emptyCells.length > 0) {
+                const randomCell =
+                  emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                const inputs = document.querySelectorAll(
+                  `#sudoku-grid input[data-row='${randomCell.row}'][data-col='${randomCell.col}']`
+                );
+                if (inputs.length > 0) {
+                  inputs[0].value =
+                    this.solutionGrid[randomCell.row][randomCell.col];
+                  inputs[0].disabled = true;
+                  this.sudokuGrid[randomCell.row][randomCell.col] =
+                    this.solutionGrid[randomCell.row][randomCell.col];
+                  this.hintsLeft--;
+                  this.ui.updateHints(this.hintsLeft);
+                  return;
+                }
+              }
+            } else {
+              const errorSound = document.getElementById('error-sound');
+              errorSound.volume = this.ui.volumeControl.value;
+              errorSound.play();
+              alert('No hints left!');
+            }
+          }
+
+          advanceCase() {
+            if (this.currentCaseIndex < this.cases.length - 1) {
+              this.currentCaseIndex++;
+              this.currentCase = this.cases[this.currentCaseIndex];
+              this.ui.swapToScreen(this.ui.storyScreen);
+              document.getElementById('story-title').textContent =
+                this.currentCase.title;
+              document.getElementById('story-text').textContent =
+                this.currentCase.intro;
+              // Reset hints
+              this.hintsLeft = 3;
+              this.ui.updateHints(this.hintsLeft);
+            } else {
+              this.ui.showGameOver(
+                'Congratulations! You have solved all the cases and earned the rank of Chief Detective!'
+              );
+            }
+          }
+
+          resetGame() {
+            this.currentCaseIndex = 0;
+            this.currentCase = this.cases[this.currentCaseIndex];
+            this.hintsLeft = 3;
+            this.ui.updateHints(this.hintsLeft);
+            this.collectedClues = [];
+          }
+
+          // Additional game logic functions
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI();
+            this.logic = new GameLogic(this.ui);
+            this.assignButtons();
+          }
+
+          prepareGame() {
+            document.getElementById('story-title').textContent =
+              this.logic.currentCase.title;
+            document.getElementById('story-text').textContent =
+              this.logic.currentCase.intro;
+          }
+
+          startGame() {
+            this.ui.swapToScreen(this.ui.gameContainer);
+            this.logic.preparePuzzle();
+            this.logic.startTimer();
+            this.ui.updateHints(this.logic.hintsLeft);
+          }
+
+          resetGame() {
+            this.logic.resetGame();
+            this.prepareGame();
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById('play-button');
+            const settingsButton = document.getElementById('settings-button');
+            const instructionsButton = document.getElementById(
+              'instructions-button'
+            );
+            const playAgainButton = document.getElementById('play-again-button');
+            const mainMenuButtons = document.querySelectorAll('.main-menu-button');
+            const continueButton = document.getElementById('continue-button');
+            const hintButton = document.getElementById('hint-button');
+            const checkButton = document.getElementById('check-button');
+            const gameSettingsButton = document.getElementById(
+              'game-settings-button'
+            );
+            const evidenceBoardButton = document.getElementById(
+              'evidence-board-button'
+            );
+            const backToGameButton = document.getElementById('back-to-game-button');
+            const continueAfterInterviewButton = document.getElementById(
+              'continue-after-interview-button'
+            );
+            const normalModeButton = document.getElementById('normal-mode-button');
+            const timedModeButton = document.getElementById('timed-mode-button');
+            const modeBackButton = document.getElementById('mode-back-button');
+
+            settingsButton.addEventListener('click', () => {
+              this.ui.settings();
+            });
+            instructionsButton.addEventListener('click', () => {
+              this.ui.instructions();
+            });
+            playAgainButton.addEventListener('click', () => {
+              this.ui.playAgain();
+              this.resetGame();
+            });
+            mainMenuButtons.forEach((button) =>
+              button.addEventListener('click', () => {
+                this.ui.mainMenu();
+                this.resetGame();
+              })
+            );
+            playButton.addEventListener('click', () => {
+              this.ui.swapToScreen(this.ui.modeSelectScreen);
+            });
+            normalModeButton.addEventListener('click', () => {
+              this.logic.mode = 'normal';
+              this.ui.startGame();
+            });
+            timedModeButton.addEventListener('click', () => {
+              this.logic.mode = 'timed';
+              this.ui.startGame();
+            });
+            modeBackButton.addEventListener('click', () => {
+              this.ui.swapToScreen(this.ui.startMenuScreen);
+            });
+            continueButton.addEventListener('click', this.startGame.bind(this));
+            hintButton.addEventListener('click', () => {
+              this.logic.useHint();
+            });
+            checkButton.addEventListener('click', () => {
+              this.logic.checkSolution();
+            });
+            gameSettingsButton.addEventListener('click', () => {
+              this.ui.settings();
+            });
+            evidenceBoardButton.addEventListener('click', () => {
+              this.ui.showEvidenceBoard(this.logic.collectedClues);
+            });
+            backToGameButton.addEventListener('click', () => {
+              this.ui.swapToScreen(this.ui.gameContainer);
+            });
+            continueAfterInterviewButton.addEventListener('click', () => {
+              this.logic.advanceCase();
+              this.prepareGame();
+            });
+
+            document
+              .getElementById('instructions-back-button')
+              .addEventListener('click', () => {
+                this.ui.swapToScreen(this.ui.startMenuScreen);
+              });
+            document
+              .getElementById('settings-back-button')
+              .addEventListener('click', () => {
+                this.ui.swapToScreen(this.ui.startMenuScreen);
+              });
+          }
+        }
+
+        const game = new Game();
+        game.prepareGame();
+      });
+    </script>
+  </body>
+</html>

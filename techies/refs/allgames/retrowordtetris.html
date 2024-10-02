@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <!-- Updated viewport meta tag for mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Retro Word Tetris</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .active {
+      display: block !important;
+    }
+
+    .screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%; /* Made responsive */
+      height: 100%; /* Made responsive */
+      background-color: #ffffff;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Start Menu Screen */
+    #start-menu-screen .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #game-title {
+      font-size: 48px;
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    .menu-button {
+      width: 200px;
+      padding: 15px;
+      margin: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      background-color: #2196F3;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .menu-button:hover {
+      background-color: #1976D2;
+    }
+
+    /* Settings and Instructions Screen */
+    #settings-screen .container,
+    #instructions-screen .container,
+    #game-over-screen .container {
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .back-button {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #757575;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .back-button:hover {
+      background-color: #616161;
+    }
+
+    /* Instructions Screen Overlay */
+    #instructions-screen {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    #instructions-screen .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-height: 80%;
+      overflow-y: auto;
+      background: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      border-radius: 10px;
+    }
+
+    #instructions-screen h2 {
+      text-align: center;
+    }
+
+    #instructions-screen p {
+      font-size: 18px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Game Screen */
+    #game-container .container {
+      position: relative;
+      background-color: #e0e0e0;
+    }
+
+    /* Game Buttons */
+    #game-buttons {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: flex-start;
+      background-color: #f0f4f8;
+    }
+
+    #game-buttons .menu-button {
+      margin-right: 10px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    /* HUD Styles */
+    #hud {
+      font-size: 18px;
+      color: #333;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+    /* Game Board Styles */
+    #gameBoard {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 1px;
+      background-color: #333;
+      margin: 20px auto 0; /* Adjusted margin */
+      width: 90%; /* Made responsive */
+      max-width: 400px;
+      aspect-ratio: 10 / 20; /* Ensures the grid maintains aspect ratio */
+    }
+
+    .cell {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2vw; /* Responsive font size */
+      color: #000;
+    }
+
+    /* Game Over Screen */
+    #game-over-screen .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #game-over-message {
+      font-size: 36px;
+      text-align: center;
+      color: #d32f2f;
+      margin-bottom: 40px;
+    }
+
+    /* Next Letter Display */
+    #nextLetterContainer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 18px;
+      color: #333;
+      text-align: right;
+    }
+
+    #nextLetterLabel {
+      margin-bottom: 10px;
+      margin-top: 100px;
+    }
+
+    #nextLetter {
+      width: 50px;
+      height: 50px;
+      background-color: #2196F3;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      border-radius: 5px;
+      margin-left: auto;
+    }
+
+    /* File Upload Button */
+    #wordListUpload {
+      margin-top: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: none;
+    }
+
+    /* Responsive Adjustments */
+    @media only screen and (max-width: 600px) {
+      #game-title {
+        font-size: 32px;
+      }
+
+      .menu-button {
+        width: 150px;
+        padding: 10px;
+        font-size: 16px;
+      }
+
+      .cell {
+        font-size: 3vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Start Menu Screen -->
+  <div class="active screen" id="start-menu-screen">
+    <div class="container">
+      <h1 id="game-title">Retro Word Tetris</h1>
+      <button class="menu-button" id="play-button">Play</button>
+      <button class="menu-button" id="settings-button">Settings</button>
+      <button class="menu-button" id="instructions-button">Instructions</button>
+    </div>
+  </div>
+
+  <!-- Settings Screen -->
+  <div class="screen" id="settings-screen">
+    <div class="container">
+      <h2>Settings</h2>
+      <!-- Add your settings options here -->
+      <button class="back-button" id="setting-back-button">Back</button>
+    </div>
+  </div>
+
+  <!-- Instructions Screen -->
+  <div class="screen" id="instructions-screen">
+    <div class="container">
+      <h2>Instructions</h2>
+      <p>
+        Welcome to <strong>Retro Word Tetris</strong>! The goal of the game is to form words using falling letters.
+      </p>
+      <p>
+        <strong>Controls:</strong>
+      </p>
+      <ul>
+        <li><strong>Tap Left Side:</strong> Move the letter left</li>
+        <li><strong>Tap Right Side:</strong> Move the letter right</li>
+        <li><strong>Tap Below Letter:</strong> Move the letter down faster</li>
+        <li><strong>Spacebar:</strong> Drop the letter quickly</li>
+        <li><strong>P:</strong> Pause the game</li>
+      </ul>
+      <p>
+        Form valid words to score points. The game ends when the letters reach the top of the game board.
+      </p>
+      <button class="back-button" id="instructions-back-button">Back</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div class="screen" id="game-container">
+    <div id="game-buttons">
+      <button class="menu-button" id="game-menu-button">Menu</button>
+      <button class="menu-button" id="game-restart-button">Restart</button>
+      <button class="menu-button" id="game-instructions-button">Instructions</button>
+    </div>
+    <div id="hud">
+      <span id="score">Score: 0</span>
+      <span id="highScore">High Score: 0</span>
+    </div>
+    <div class="container">
+      <div id="nextLetterContainer">
+        <div id="nextLetterLabel">Next:</div>
+        <div id="nextLetter">A</div>
+      </div>
+      <div id="gameBoard">
+        <!-- Cells will be dynamically generated here -->
+      </div>
+      <!-- File input for word list upload (optional) -->
+      <input type="file" id="wordListUpload" accept=".txt">
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div class="screen" id="game-over-screen">
+    <div class="container">
+      <div id="game-over-message">Game Over!</div>
+      <button class="menu-button" id="play-again-button">Play Again</button>
+      <button class="menu-button main-menu-button" id="game-over-main-menu-button">Main Menu</button>
+    </div>
+  </div>
+
+  <!-- Audio Elements -->
+  <audio id="background-music" loop>
+    <source
+      src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="new-letter-sound">
+    <source
+      src="https://www.soundjay.com/button/sounds/button-3.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="tile-placed-sound">
+    <source
+      src="https://www.soundjay.com/button/sounds/button-10.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="word-formed-sound">
+    <source
+      src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+  <audio id="game-over-sound">
+    <source
+      src="https://www.soundjay.com/button/sounds/beep-07.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      class GameUI {
+        constructor() {
+          // Screen elements
+          this.startMenuScreen = document.getElementById('start-menu-screen');
+          this.settingsScreen = document.getElementById('settings-screen');
+          this.instructionsScreen = document.getElementById('instructions-screen');
+          this.gameContainer = document.getElementById('game-container');
+          this.gameOverScreen = document.getElementById('game-over-screen');
+
+          // Game elements
+          this.scoreElement = document.getElementById('score');
+          this.highScoreElement = document.getElementById('highScore');
+          this.nextLetterElement = document.getElementById('nextLetter');
+          this.gameBoard = document.getElementById('gameBoard');
+          this.wordListUpload = document.getElementById('wordListUpload');
+          this.gameOverMessage = document.getElementById('game-over-message');
+
+          // Audio elements
+          this.backgroundMusic = document.getElementById('background-music');
+          this.newLetterSound = document.getElementById('new-letter-sound');
+          this.tilePlacedSound = document.getElementById('tile-placed-sound');
+          this.wordFormedSound = document.getElementById('word-formed-sound');
+          this.gameOverSound = document.getElementById('game-over-sound');
+        }
+
+        swapToScreen(screen) {
+          this.startMenuScreen.classList.remove('active');
+          this.settingsScreen.classList.remove('active');
+          this.instructionsScreen.classList.remove('active');
+          this.gameContainer.classList.remove('active');
+          this.gameOverScreen.classList.remove('active');
+          screen.classList.add('active');
+        }
+
+        startGame() {
+          this.swapToScreen(this.gameContainer);
+          this.playBackgroundMusic();
+        }
+
+        endGame(score, highScore) {
+          this.gameOverMessage.innerText = `Game Over!\nYour Score: ${score}\nHigh Score: ${highScore}`;
+          this.swapToScreen(this.gameOverScreen);
+          this.stopBackgroundMusic();
+          this.playGameOverSound();
+        }
+
+        instructions() {
+          this.instructionsScreen.classList.add('active');
+          if (game.logic) {
+            game.logic.isPaused = true;
+            this.gameContainer.classList.remove('active');
+          }
+        }
+
+        hideOverlay() {
+          this.instructionsScreen.classList.remove('active');
+          if (game.logic && game.logic.isPaused) {
+            // Resume the game
+            this.gameContainer.classList.add('active');
+            game.logic.isPaused = false;
+          } else {
+            // Return to the main menu
+            this.swapToScreen(this.startMenuScreen);
+          }
+        }
+
+        updateHUD(score, highScore, nextLetter) {
+          this.scoreElement.innerText = `Score: ${score}`;
+          this.highScoreElement.innerText = `High Score: ${highScore}`;
+          this.nextLetterElement.innerText = nextLetter;
+        }
+
+        initializeGameBoard(rows, cols, addCellCallback) {
+          this.gameBoard.innerHTML = '';
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              const cell = document.createElement('div');
+              cell.classList.add('cell');
+              cell.dataset.row = row;
+              cell.dataset.col = col;
+              addCellCallback(cell);
+              this.gameBoard.appendChild(cell);
+            }
+          }
+        }
+
+        playBackgroundMusic() {
+          this.backgroundMusic.currentTime = 0;
+          this.backgroundMusic.play();
+        }
+
+        stopBackgroundMusic() {
+          this.backgroundMusic.pause();
+        }
+
+        playNewLetterSound() {
+          this.newLetterSound.currentTime = 0;
+          this.newLetterSound.play();
+        }
+
+        playTilePlacedSound() {
+          this.tilePlacedSound.currentTime = 0;
+          this.tilePlacedSound.play();
+        }
+
+        playWordFormedSound() {
+          this.wordFormedSound.currentTime = 0;
+          this.wordFormedSound.play();
+        }
+
+        playGameOverSound() {
+          this.gameOverSound.currentTime = 0;
+          this.gameOverSound.play();
+        }
+      }
+
+      class GameLogic {
+        constructor(ui) {
+          this.ui = ui;
+          this.score = 0;
+          this.highScore = 0;
+          this.nextLetter = 'A';
+          this.gameInterval = null;
+          this.gameSpeed = 1000;
+          this.currentLetter = null;
+          this.currentPosition = { row: 0, col: 4 };
+          this.isPaused = false;
+          this.dictionary = [];
+          this.letterPoints = {
+            'A': 1, 'B': 3, 'C': 3, 'D': 2,
+            'E': 1, 'F': 4, 'G': 2, 'H': 4,
+            'I': 1, 'J': 8, 'K': 5, 'L': 1,
+            'M': 3, 'N': 1, 'O': 1, 'P': 3,
+            'Q': 10, 'R': 1, 'S': 1, 'T': 1,
+            'U': 1, 'V': 4, 'W': 4, 'X': 8,
+            'Y': 4, 'Z': 10
+          };
+        }
+
+        async loadWordList(url) {
+          try {
+            const response = await fetch(url);
+            const text = await response.text();
+            this.dictionary = text.split('\n').map(word => word.trim().toUpperCase());
+          } catch (error) {
+            console.error('Failed to load word list:', error);
+          }
+        }
+
+        getRandomLetter() {
+          const weightedLetters = [];
+          const vowels = ['A', 'E', 'I', 'O', 'U'];
+
+          // Generate weighted pool
+          for (let letter in this.letterPoints) {
+            let frequency = 11 - this.letterPoints[letter];
+            if (vowels.includes(letter)) {
+              frequency *= 2;
+            }
+            for (let i = 0; i < frequency; i++) {
+              weightedLetters.push(letter);
+            }
+          }
+
+          return weightedLetters[Math.floor(Math.random() * weightedLetters.length)];
+        }
+
+        createGameBoard(rows, cols) {
+          this.ui.initializeGameBoard(rows, cols, (cell) => {
+            // Additional cell initialization if needed
+          });
+        }
+
+        updateHUD() {
+          this.ui.updateHUD(this.score, this.highScore, this.nextLetter);
+        }
+
+        placeLetter(row, col, letter) {
+          const cell = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+          if (cell) {
+            cell.innerText = letter;
+          }
+        }
+
+        clearLetter(row, col) {
+          const cell = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+          if (cell) {
+            cell.innerText = '';
+          }
+        }
+
+        isOccupied(row, col) {
+          const cell = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+          return cell && cell.innerText !== '';
+        }
+
+        calculateWordScore(word) {
+          return word.split('').reduce((acc, letter) => acc + this.letterPoints[letter], 0);
+        }
+
+        clearWord(row, startCol, length) {
+          for (let col = startCol; col < startCol + length; col++) {
+            const cell = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+            if (cell) {
+              cell.innerText = '';
+            }
+          }
+        }
+
+        checkForWords() {
+          let wordFormed = false;
+          for (let row = 0; row < 20; row++) {
+            let word = '';
+            let startCol = 0;
+            for (let col = 0; col < 10; col++) {
+              const cell = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+              if (cell && cell.innerText !== '') {
+                if (word.length === 0) startCol = col;
+                word += cell.innerText;
+              } else {
+                if (word.length >= 3 && this.dictionary.includes(word)) {
+                  this.score += this.calculateWordScore(word);
+                  this.clearWord(row, startCol, word.length);
+                  wordFormed = true;
+                }
+                word = '';
+              }
+            }
+            if (word.length >= 3 && this.dictionary.includes(word)) {
+              this.score += this.calculateWordScore(word);
+              this.clearWord(row, startCol, word.length);
+              wordFormed = true;
+            }
+          }
+          if (wordFormed) {
+            this.ui.playWordFormedSound();
+          }
+          this.updateHUD();
+        }
+
+        moveLetterDown() {
+          if (this.currentPosition.row < 19 && !this.isOccupied(this.currentPosition.row + 1, this.currentPosition.col)) {
+            this.clearLetter(this.currentPosition.row, this.currentPosition.col);
+            this.currentPosition.row++;
+            this.placeLetter(this.currentPosition.row, this.currentPosition.col, this.currentLetter);
+          } else {
+            this.ui.playTilePlacedSound();
+            this.checkForWords();
+            if (this.currentPosition.row === 0) {
+              this.endGame();
+              return;
+            }
+            this.currentLetter = this.nextLetter;
+            this.nextLetter = this.getRandomLetter();
+            this.ui.playNewLetterSound();
+            this.currentPosition = { row: 0, col: 4 };
+            this.updateHUD();
+            this.placeLetter(this.currentPosition.row, this.currentPosition.col, this.currentLetter);
+          }
+        }
+
+        moveLetterLeft() {
+          if (this.currentPosition.col > 0 && !this.isOccupied(this.currentPosition.row, this.currentPosition.col - 1)) {
+            this.clearLetter(this.currentPosition.row, this.currentPosition.col);
+            this.currentPosition.col--;
+            this.placeLetter(this.currentPosition.row, this.currentPosition.col, this.currentLetter);
+          }
+        }
+
+        moveLetterRight() {
+          if (this.currentPosition.col < 9 && !this.isOccupied(this.currentPosition.row, this.currentPosition.col + 1)) {
+            this.clearLetter(this.currentPosition.row, this.currentPosition.col);
+            this.currentPosition.col++;
+            this.placeLetter(this.currentPosition.row, this.currentPosition.col, this.currentLetter);
+          }
+        }
+
+        quickDropLetter() {
+          while (this.currentPosition.row < 19 && !this.isOccupied(this.currentPosition.row + 1, this.currentPosition.col)) {
+            this.clearLetter(this.currentPosition.row, this.currentPosition.col);
+            this.currentPosition.row++;
+          }
+          this.placeLetter(this.currentPosition.row, this.currentPosition.col, this.currentLetter);
+          this.moveLetterDown();
+        }
+
+        pauseGame() {
+          if (this.isPaused) {
+            this.gameInterval = setInterval(() => this.moveLetterDown(), this.gameSpeed);
+            this.isPaused = false;
+          } else {
+            clearInterval(this.gameInterval);
+            this.isPaused = true;
+          }
+        }
+
+        startGameLoop() {
+          this.gameInterval = setInterval(() => this.moveLetterDown(), this.gameSpeed);
+        }
+
+        endGame() {
+          clearInterval(this.gameInterval);
+          if (this.score > this.highScore) {
+            this.highScore = this.score;
+          }
+          this.ui.endGame(this.score, this.highScore);
+        }
+
+        resetGame() {
+          this.score = 0;
+          this.currentLetter = this.getRandomLetter();
+          this.nextLetter = this.getRandomLetter();
+          this.currentPosition = { row: 0, col: 4 };
+          this.isPaused = false;
+          this.updateHUD();
+          this.createGameBoard(20, 10);
+          this.placeLetter(this.currentPosition.row, this.currentPosition.col, this.currentLetter);
+          this.ui.playNewLetterSound();
+          this.startGameLoop();
+        }
+
+        initialize() {
+          this.createGameBoard(20, 10);
+          this.resetGame();
+        }
+      }
+
+      class Game {
+        constructor() {
+          this.ui = new GameUI();
+          this.logic = null;
+          this.assignButtons();
+        }
+
+        prepareGame() {
+          this.ui.swapToScreen(this.ui.startMenuScreen);
+        }
+
+        startGame() {
+          this.logic = new GameLogic(this.ui);
+          this.logic.loadWordList('https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt');
+          this.ui.startGame();
+          this.logic.initialize();
+        }
+
+        playAgain() {
+          this.logic.resetGame();
+          this.ui.swapToScreen(this.ui.gameContainer);
+        }
+
+        mainMenu() {
+          this.ui.swapToScreen(this.ui.startMenuScreen);
+        }
+
+        handleTouchStart(e) {
+          e.preventDefault();
+          if (!this.ui.gameContainer.classList.contains('active')) return;
+          if (this.logic.isPaused) return;
+
+          const touch = e.touches[0];
+          const touchX = touch.clientX;
+          const touchY = touch.clientY;
+
+          // Get the position of the gameBoard
+          const gameBoardRect = this.ui.gameBoard.getBoundingClientRect();
+
+          // Check if touch is within the gameBoard
+          if (
+            touchX < gameBoardRect.left ||
+            touchX > gameBoardRect.right ||
+            touchY < gameBoardRect.top ||
+            touchY > gameBoardRect.bottom
+          ) {
+            return;
+          }
+
+          // Get the position of the current letter
+          const currentCol = this.logic.currentPosition.col;
+          const currentRow = this.logic.currentPosition.row;
+
+          const cellWidth = gameBoardRect.width / 10;
+          const cellHeight = gameBoardRect.height / 20;
+
+          const letterX = gameBoardRect.left + cellWidth * currentCol + cellWidth / 2;
+          const letterY = gameBoardRect.top + cellHeight * currentRow + cellHeight / 2;
+
+          if (touchX < letterX - cellWidth / 2) {
+            // Touch is on the left side of the current letter
+            this.logic.moveLetterLeft();
+          } else if (touchX > letterX + cellWidth / 2) {
+            // Touch is on the right side of the current letter
+            this.logic.moveLetterRight();
+          } else if (touchY > letterY + cellHeight / 2) {
+            // Touch is below the current letter
+            this.logic.moveLetterDown();
+          }
+        }
+
+        assignButtons() {
+          const playButton = document.getElementById('play-button');
+          const settingsButton = document.getElementById('settings-button');
+          const instructionsButton = document.getElementById('instructions-button');
+          const playAgainButton = document.getElementById('play-again-button');
+          const gameOverMainMenuButton = document.getElementById('game-over-main-menu-button');
+          const settingBackButton = document.getElementById('setting-back-button');
+          const instructionsBackButton = document.getElementById('instructions-back-button');
+          const inGameInstructionsButton = document.getElementById('game-instructions-button');
+          const gameMenuButton = document.getElementById('game-menu-button');
+          const gameRestartButton = document.getElementById('game-restart-button');
+          const wordListUpload = document.getElementById('wordListUpload');
+
+          playButton.addEventListener('click', this.startGame.bind(this));
+          settingsButton.addEventListener('click', () => this.ui.swapToScreen(this.ui.settingsScreen));
+          instructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
+          playAgainButton.addEventListener('click', this.playAgain.bind(this));
+          gameOverMainMenuButton.addEventListener('click', this.mainMenu.bind(this));
+          settingBackButton.addEventListener('click', this.mainMenu.bind(this));
+
+          instructionsBackButton.addEventListener('click', () => {
+            this.ui.hideOverlay();
+          });
+
+          inGameInstructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
+
+          gameMenuButton.addEventListener('click', () => {
+            this.logic.endGame();
+            this.logic = null;
+            this.mainMenu();
+          });
+          gameRestartButton.addEventListener('click', () => {
+            this.logic.endGame();
+            this.playAgain();
+          });
+
+          // Word List Upload
+          wordListUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const text = e.target.result;
+                this.logic.dictionary = text.split('\n').map(word => word.trim().toUpperCase());
+              };
+              reader.readAsText(file);
+            }
+          });
+
+          // Keyboard Controls
+          document.addEventListener('keydown', (event) => {
+            if (!this.ui.gameContainer.classList.contains('active')) return;
+            if (this.logic.isPaused && event.key.toLowerCase() !== 'p') return;
+            switch (event.key) {
+              case 'ArrowLeft':
+              case 'a':
+              case 'A':
+                this.logic.moveLetterLeft();
+                break;
+              case 'ArrowRight':
+              case 'd':
+              case 'D':
+                this.logic.moveLetterRight();
+                break;
+              case 'ArrowDown':
+              case 's':
+              case 'S':
+                this.logic.moveLetterDown();
+                break;
+              case ' ':
+                this.logic.quickDropLetter();
+                break;
+              case 'p':
+              case 'P':
+                this.logic.pauseGame();
+                break;
+              default:
+                break;
+            }
+          });
+
+          // Touch Controls
+          this.ui.gameBoard.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+        }
+      }
+
+      const game = new Game();
+      game.prepareGame();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=640, height=960, user-scalable=no" name="viewport" />
+    <title>Cipher Chronicles</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #1e1e1e;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #fff;
+        overflow: hidden;
+      }
+
+      .active {
+        display: block !important;
+      }
+
+      .screen {
+        display: none;
+        width: 640px;
+        height: 960px;
+        position: absolute;
+        top: calc(50% - 480px);
+        left: calc(50% - 320px);
+        border: 1px solid #444;
+        background-image: url("https://i.imgur.com/8YQF4pH.jpg");
+        background-size: cover;
+        background-position: center;
+      }
+
+      #start-menu-screen .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+      #game-title {
+        font-size: 48px;
+        margin-bottom: 50px;
+        text-shadow: 2px 2px 4px #000;
+      }
+      #start-menu-screen .container button {
+        width: 200px;
+        padding: 15px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        background-color: #444;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+      }
+      #start-menu-screen .container button:hover {
+        background-color: #555;
+      }
+
+      #settings-screen .container,
+      #instructions-screen .container,
+      #game-over-screen .container {
+        padding: 20px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.8);
+        height: 100%;
+        overflow-y: auto;
+      }
+      #settings-screen .container h2,
+      #instructions-screen .container h2,
+      #game-over-screen .container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .main-menu-button,
+      .back-to-game-button {
+        margin-top: 20px;
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+      }
+      .main-menu-button:hover,
+      .back-to-game-button:hover {
+        background-color: #555;
+      }
+
+      #game-container .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Game-specific styles */
+      .game-menu {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        display: flex;
+        justify-content: flex-end;
+        z-index: 2;
+      }
+      .game-menu button {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+        margin-left: 10px;
+      }
+      .game-menu button:hover {
+        background-color: #555;
+      }
+      .cipher-puzzle {
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 30px;
+        border-radius: 10px;
+        z-index: 1;
+      }
+      .cipher-puzzle h2 {
+        margin-bottom: 20px;
+      }
+      .cipher-puzzle p {
+        margin-bottom: 20px;
+      }
+      .cipher-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+        margin-bottom: 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff;
+      }
+      .cipher-input::placeholder {
+        color: #bbb;
+      }
+      .cipher-submit,
+      .notebook-button {
+        width: 48%;
+        padding: 15px;
+        font-size: 18px;
+        background-color: #444;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 1%;
+      }
+      .cipher-submit:hover,
+      .notebook-button:hover {
+        background-color: #555;
+      }
+
+      /* Volume sliders */
+      .volume-control {
+        margin-bottom: 20px;
+      }
+      .volume-control label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .volume-control input {
+        width: 100%;
+      }
+
+      /* Feedback message */
+      .feedback-message {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        color: #fff;
+        border-radius: 5px;
+        z-index: 3;
+        animation: fadeOut 2s forwards;
+      }
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        80% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e1e1e;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #444;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="active screen" id="start-menu-screen">
+      <div class="container">
+        <h1 id="game-title">Cipher Chronicles</h1>
+        <button id="play-button">Play</button>
+        <button id="settings-button">Settings</button>
+        <button id="instructions-button">Instructions</button>
+      </div>
+    </div>
+    <div class="screen" id="settings-screen">
+      <div class="container">
+        <h2>Settings</h2>
+        <div class="volume-control">
+          <label for="music-volume">Background Music Volume:</label>
+          <input
+            type="range"
+            id="music-volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.2"
+          />
+        </div>
+        <div class="volume-control">
+          <label for="sfx-volume">Sound Effects Volume:</label>
+          <input
+            type="range"
+            id="sfx-volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.2"
+          />
+        </div>
+        <button class="back-to-game-button" id="settings-back-button">
+          Back
+        </button>
+      </div>
+    </div>
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <h2>Instructions</h2>
+        <p>
+          Welcome to Cipher Chronicles! As a cryptographer, your mission is to
+          decipher ancient scripts and uncover the secrets of a lost
+          civilization.
+        </p>
+        <ul>
+          <li>Use clues from the environment to solve ciphers.</li>
+          <li>Interact with your team for hints and assistance.</li>
+          <li>
+            Access your <strong>Notebook</strong> to keep track of clues, hints,
+            and solved puzzles.
+          </li>
+          <li>Progress through the story by unlocking chapters.</li>
+          <li>
+            Utilize tools like cipher wheels and frequency analysis charts.
+          </li>
+        </ul>
+        <button class="back-to-game-button" id="instructions-back-button">
+          Back
+        </button>
+      </div>
+    </div>
+    <div class="screen" id="game-container">
+      <div class="container">
+        <!-- Game content will be injected here -->
+      </div>
+    </div>
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <h2 id="game-over-message">Congratulations!</h2>
+        <p>
+          You have successfully uncovered the hidden history of the lost
+          civilization.
+        </p>
+        <button id="play-again-button">Play Again</button>
+        <button class="main-menu-button" id="game-over-main-menu-button">
+          Main Menu
+        </button>
+      </div>
+    </div>
+    <audio id="background-music" loop>
+      <source
+        src="https://www.bensound.com/bensound-music/bensound-epic.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="start-game-sound">
+      <source
+        src="https://www.fesliyanstudios.com/play-mp3/6671"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="end-game-sound">
+      <source
+        src="https://www.fesliyanstudios.com/play-mp3/6508"
+        type="audio/mpeg"
+      />
+    </audio>
+    <!--Extra audio tags for sound effects-->
+    <audio id="correct-answer-sound">
+      <source
+        src="https://www.fesliyanstudios.com/play-mp3/6511"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="wrong-answer-sound">
+      <source
+        src="https://www.fesliyanstudios.com/play-mp3/6510"
+        type="audio/mpeg"
+      />
+    </audio>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        class GameUI {
+          constructor() {
+            this.startMenuScreen = document.getElementById("start-menu-screen");
+            this.settingsScreen = document.getElementById("settings-screen");
+            this.instructionsScreen = document.getElementById(
+              "instructions-screen"
+            );
+            this.gameContainer = document.getElementById("game-container");
+            this.gameOverScreen = document.getElementById("game-over-screen");
+            this.backgroundMusic = document.getElementById("background-music");
+            this.musicVolumeSlider = document.getElementById("music-volume");
+            this.sfxVolumeSlider = document.getElementById("sfx-volume");
+            this.isGameActive = false;
+          }
+
+          swapToScreen(screen) {
+            this.startMenuScreen.classList.remove("active");
+            this.settingsScreen.classList.remove("active");
+            this.instructionsScreen.classList.remove("active");
+            this.gameContainer.classList.remove("active");
+            this.gameOverScreen.classList.remove("active");
+            screen.classList.add("active");
+          }
+
+          startGame() {
+            const startGameSound = document.getElementById("start-game-sound");
+            startGameSound.volume = this.sfxVolumeSlider.value;
+            startGameSound.play();
+
+            // Start background music if not already playing
+            if (this.backgroundMusic.paused) {
+              this.backgroundMusic.volume = this.musicVolumeSlider.value;
+              this.backgroundMusic.play();
+            }
+
+            this.swapToScreen(this.gameContainer);
+            this.isGameActive = true;
+            // Start the first puzzle
+            game.logic.loadNextPuzzle();
+          }
+
+          endGame() {
+            const endGameSound = document.getElementById("end-game-sound");
+            endGameSound.volume = this.sfxVolumeSlider.value;
+            endGameSound.play();
+            this.swapToScreen(this.gameOverScreen);
+            this.isGameActive = false;
+          }
+
+          mainMenu() {
+            this.swapToScreen(this.startMenuScreen);
+            this.isGameActive = false;
+          }
+
+          playAgain() {
+            this.swapToScreen(this.gameContainer);
+            game.logic.resetGame();
+            this.isGameActive = true;
+            game.logic.loadNextPuzzle();
+          }
+
+          settings() {
+            this.swapToScreen(this.settingsScreen);
+          }
+
+          instructions() {
+            this.swapToScreen(this.instructionsScreen);
+          }
+
+          adjustMusicVolume() {
+            this.backgroundMusic.volume = this.musicVolumeSlider.value;
+          }
+
+          adjustSFXVolume() {
+            // Adjust volume for all sound effects
+            const sfxElements = document.querySelectorAll(
+              'audio[id$="-sound"]'
+            );
+            sfxElements.forEach((sfx) => {
+              sfx.volume = this.sfxVolumeSlider.value;
+            });
+          }
+
+          // Display a cipher puzzle
+          displayPuzzle(puzzle) {
+            const container = this.gameContainer.querySelector(".container");
+            container.innerHTML = `
+              <div class="game-menu">
+                <button class="in-game-settings-button">Settings</button>
+                <button class="in-game-main-menu-button">Main Menu</button>
+              </div>
+              <div class="cipher-puzzle">
+                <h2>${puzzle.title}</h2>
+                <p>${puzzle.description}</p>
+                <input type="text" class="cipher-input" placeholder="Enter your solution here">
+                <div>
+                  <button class="cipher-submit">Submit</button>
+                  <button class="notebook-button">Notebook</button>
+                </div>
+              </div>
+            `;
+            const submitButton = container.querySelector(".cipher-submit");
+            const inputField = container.querySelector(".cipher-input");
+            const notebookButton = container.querySelector(".notebook-button");
+            const settingsButton = container.querySelector(
+              ".in-game-settings-button"
+            );
+            const mainMenuButton = container.querySelector(
+              ".in-game-main-menu-button"
+            );
+            submitButton.addEventListener("click", () => {
+              game.logic.checkAnswer(inputField.value);
+            });
+            notebookButton.addEventListener("click", () => {
+              this.showNotebook();
+            });
+            settingsButton.addEventListener("click", this.settings.bind(this));
+            mainMenuButton.addEventListener(
+              "click",
+              this.confirmMainMenu.bind(this)
+            );
+          }
+
+          // Show feedback message
+          showFeedback(message, isCorrect) {
+            const container = this.gameContainer.querySelector(".container");
+            const feedback = document.createElement("div");
+            feedback.className = "feedback-message";
+            feedback.style.backgroundColor = isCorrect ? "green" : "red";
+            feedback.innerText = message;
+            container.appendChild(feedback);
+            setTimeout(() => {
+              feedback.remove();
+            }, 2000);
+          }
+
+          // Display notebook
+          showNotebook() {
+            const container = this.gameContainer.querySelector(".container");
+            const notebook = document.createElement("div");
+            notebook.style.position = "absolute";
+            notebook.style.top = "0";
+            notebook.style.left = "0";
+            notebook.style.width = "100%";
+            notebook.style.height = "100%";
+            notebook.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+            notebook.style.color = "#fff";
+            notebook.style.padding = "20px";
+            notebook.style.overflowY = "auto";
+            notebook.style.zIndex = "4";
+            notebook.innerHTML = `
+              <h2>Notebook</h2>
+              <ul>
+                ${game.logic.notebook
+                  .map(
+                    (entry) =>
+                      `<li><strong>${entry.title}</strong>: ${entry.content}</li>`
+                  )
+                  .join("")}
+              </ul>
+              <button class="close-notebook">Close</button>
+            `;
+            const closeButton = notebook.querySelector(".close-notebook");
+            closeButton.style.backgroundColor = "#444";
+            closeButton.style.color = "#fff";
+            closeButton.style.border = "none";
+            closeButton.style.padding = "10px 20px";
+            closeButton.style.cursor = "pointer";
+            closeButton.style.fontSize = "16px";
+            closeButton.style.borderRadius = "5px";
+            closeButton.style.marginTop = "20px";
+            closeButton.addEventListener("click", () => {
+              notebook.remove();
+            });
+            container.appendChild(notebook);
+          }
+
+          // Confirm returning to main menu
+          confirmMainMenu() {
+            if (
+              confirm(
+                "Are you sure you want to return to the main menu? Your progress will be lost."
+              )
+            ) {
+              game.logic.resetGame();
+              this.mainMenu();
+            }
+          }
+        }
+
+        class GameLogic {
+          constructor() {
+            this.currentPuzzleIndex = 0;
+            this.notebook = [];
+            this.puzzles = [
+              {
+                title: "Chapter 1: The Desert Whisper",
+                description:
+                  'You arrive at the desolate desert ruins. Amidst the sands, an ancient tablet reads: "Khoor, Zruog!" The winds howl as if urging you to decipher its message.',
+                solution: "Hello, World!",
+                type: "caesar",
+                shift: 3,
+                hint: "The winds speak in shifted tones of 3 steps.",
+              },
+              {
+                title: "Chapter 2: Jungle Murmurs",
+                description:
+                  'Deep within the dense jungle, you find carvings on the bark of a colossal tree: "Uifsf jt b tfdsfu dpef." The sounds of nature seem to conceal a hidden truth.',
+                solution: "There is a secret code.",
+                type: "caesar",
+                shift: 1,
+                hint: "Nature often whispers with a shift of 1.",
+              },
+              {
+                title: "Chapter 3: Temple Echoes",
+                description:
+                  'Entering the ancient temple, symbols adorn the walls: "☉☽☿♀♁♃♄☉☿". The celestial bodies seem to hold the key to unlocking the temple\'s secrets.',
+                solution: "SOLARSYSTEM",
+                type: "pictograph",
+                hint: "Celestial symbols represent letters.",
+              },
+              {
+                title: "Chapter 4: Mountain Shadows",
+                description:
+                  'At the mountain\'s peak, an inscription reads: "Gsv xlwv gl gsv hznv." The reflection of the setting sun suggests looking at things in reverse.',
+                solution: "The cave is the path.",
+                type: "atbash",
+                hint: "A mirror reflects the alphabet.",
+              },
+              {
+                title: "Chapter 5: Ocean Secrets",
+                description:
+                  'On the shores of a forgotten island, a message in a bottle contains: "16-9-5 9-19 4-5-12-9-3-9-15-21-19". The rhythmic waves hint at a numerical mystery.',
+                solution: "PIE IS DELICIOUS",
+                type: "numeric",
+                hint: "Numbers correspond to letters (A=1, B=2, ...).",
+              },
+            ];
+          }
+
+          loadNextPuzzle() {
+            if (this.currentPuzzleIndex < this.puzzles.length) {
+              const puzzle = this.puzzles[this.currentPuzzleIndex];
+              this.addToNotebook(puzzle.title, "Started this chapter.");
+              game.ui.displayPuzzle(puzzle);
+            } else {
+              // Game completed
+              game.ui.endGame();
+            }
+          }
+
+          checkAnswer(answer) {
+            const puzzle = this.puzzles[this.currentPuzzleIndex];
+            if (
+              answer.trim().toUpperCase() ===
+              puzzle.solution.trim().toUpperCase()
+            ) {
+              const correctSound = document.getElementById(
+                "correct-answer-sound"
+              );
+              correctSound.volume = game.ui.sfxVolumeSlider.value;
+              correctSound.play();
+              game.ui.showFeedback("Correct!", true);
+              this.addToNotebook(puzzle.title, "Solved the puzzle.");
+              this.currentPuzzleIndex++;
+              setTimeout(() => {
+                this.loadNextPuzzle();
+              }, 1000);
+            } else {
+              const wrongSound = document.getElementById("wrong-answer-sound");
+              wrongSound.volume = game.ui.sfxVolumeSlider.value;
+              wrongSound.play();
+              game.ui.showFeedback(
+                "Incorrect. Check your notebook for hints.",
+                false
+              );
+              this.addToNotebook("Hint", puzzle.hint);
+            }
+          }
+
+          resetGame() {
+            this.currentPuzzleIndex = 0;
+            this.notebook = [];
+          }
+
+          addToNotebook(title, content) {
+            this.notebook.push({ title, content });
+          }
+        }
+
+        class Game {
+          constructor() {
+            this.ui = new GameUI();
+            this.logic = new GameLogic();
+          }
+
+          prepareGame() {
+            this.assignButtons();
+            // Set initial volume levels
+            this.ui.adjustMusicVolume();
+            this.ui.adjustSFXVolume();
+          }
+
+          assignButtons() {
+            const playButton = document.getElementById("play-button");
+            const settingsButton = document.getElementById("settings-button");
+            const instructionsButton = document.getElementById(
+              "instructions-button"
+            );
+            const playAgainButton =
+              document.getElementById("play-again-button");
+            const mainMenuButtons =
+              document.querySelectorAll(".main-menu-button");
+            const backButtons = document.querySelectorAll(
+              ".back-to-game-button"
+            );
+
+            settingsButton.addEventListener(
+              "click",
+              this.ui.settings.bind(this.ui)
+            );
+            instructionsButton.addEventListener(
+              "click",
+              this.ui.instructions.bind(this.ui)
+            );
+            playAgainButton.addEventListener(
+              "click",
+              this.ui.playAgain.bind(this.ui)
+            );
+            mainMenuButtons.forEach((button) =>
+              button.addEventListener("click", this.ui.mainMenu.bind(this.ui))
+            );
+            playButton.addEventListener(
+              "click",
+              this.ui.startGame.bind(this.ui)
+            );
+
+            // Back buttons behavior
+            backButtons.forEach((button) => {
+              button.addEventListener("click", () => {
+                if (this.ui.isGameActive) {
+                  this.ui.swapToScreen(this.ui.gameContainer);
+                } else {
+                  this.ui.swapToScreen(this.ui.startMenuScreen);
+                }
+              });
+            });
+
+            // Volume controls
+            this.ui.musicVolumeSlider.addEventListener(
+              "input",
+              this.ui.adjustMusicVolume.bind(this.ui)
+            );
+            this.ui.sfxVolumeSlider.addEventListener(
+              "input",
+              this.ui.adjustSFXVolume.bind(this.ui)
+            );
+          }
+        }
+
+        const game = new Game();
+        game.prepareGame();
+      });
+    </script>
+  </body>
+</html>
