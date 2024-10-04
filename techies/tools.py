@@ -130,6 +130,10 @@ class WriteFileTool(BaseTool):
                     f.write(content)
 
                 return f"File {path} created successfully."
+            elif not os.path.exists(f"{self.base_dir}/{path}"):
+                with open(f"{self.base_dir}/{path}", "w") as f:
+                    f.write(content)
+                return f"File {path} created successfully."
             else:
                 with open(f"{self.base_dir}/{path}", "r") as f:
                     old_content = f.read()
