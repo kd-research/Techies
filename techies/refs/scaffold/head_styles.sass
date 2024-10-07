@@ -1,0 +1,169 @@
+body
+  margin: 0
+  padding: 0
+
+.active
+  display: block !important
+
+.screen
+  display: none
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+
+#start-menu-screen .container
+  /* Background gradient resembling a game interface
+  background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%)
+
+  /* Positioning and layering
+  position: relative
+  overflow: hidden
+
+  /* White border with rounded corners
+  border: 3px solid #fff
+  border-radius: 12px
+  height: 100%
+
+  /* Shadow for a 3D effect
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3)
+
+  /* Text styling
+  color: #fff
+  font-family: 'Orbitron', sans-serif
+  text-align: center
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+
+  /* Spacing
+  padding: 25px
+
+  /* Flexbox for centering content
+  display: flex
+  flex-direction: column
+  justify-content: center
+  box-sizing: border-box
+
+  #game-title
+    /* Title styles here
+    font-size: 48px
+    color: #ffffff
+    text-shadow: 2px 2px 4px #000000
+    margin-bottom: 50px
+
+  button
+    /* Background gradient
+    background: linear-gradient(135deg, #283c86 0%, #45a247 100%)
+
+    /* White border and rounded corners
+    border: 2px solid #fff
+    border-radius: 8px
+
+    /* Text styling
+    color: #fff
+    font-family: 'Orbitron', sans-serif
+    font-size: 18px
+    text-transform: uppercase
+    text-align: center
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+
+    /* Shadow for depth
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2)
+
+    /* Spacing
+    padding: 12px 30px
+    margin: 20px auto 0
+    display: inline-block
+    width: 215.15px
+
+    /* Cursor and transitions
+    cursor: pointer
+    transition: background 0.3s ease, transform 0.2s ease
+
+    &:hover
+      /* Hover effects
+      background: linear-gradient(135deg, #45a247 0%, #283c86 100%)
+      transform: scale(1.05)
+
+    &:active
+      /* Active effects
+      transform: scale(0.95)
+
+#instructions-screen
+  background: rgba(0, 0, 0, 0.7)
+
+  .container
+    /* Instructions screen styles here
+    background: rgba(0, 0, 0, 0.7)
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    width: 80%
+    max-height: 80%
+    overflow-y: auto
+    background: #fff
+    padding: 20px
+    box-sizing: border-box
+    border-radius: 10px
+
+    h2
+      text-align: center
+
+    p
+      font-size: 18px
+      color: #333
+      line-height: 1.6
+      margin-bottom: 20px
+
+#game-over-screen
+  .container button
+    /* Background gradient
+    background: linear-gradient(135deg, #283c86 0%, #45a247 100%)
+
+    /* White border and rounded corners
+    border: 2px solid #fff
+    border-radius: 8px
+
+    /* Text styling
+    color: #fff
+    font-family: 'Orbitron', sans-serif
+    font-size: 18px
+    text-transform: uppercase
+    text-align: center
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+
+    /* Shadow for depth
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2)
+
+    /* Spacing
+    padding: 12px 30px
+    margin: 20px auto 0
+    display: inline-block
+    width: 215.15px
+
+    /* Cursor and transitions
+    cursor: pointer
+    transition: background 0.3s ease, transform 0.2s ease
+
+  button
+    &:hover
+      /* Hover effects
+      background: linear-gradient(135deg, #45a247 0%, #283c86 100%)
+      transform: scale(1.05)
+
+    &:active
+      /* Active effects
+      transform: scale(0.95)
+
+/* Responsive Styles
+@media only screen and (max-width: 600px)
+  #game-title
+    font-size: 36px
+
+  button
+    font-size: 20px
+    padding: 10px 20px
+
+  #game-container .hud
+    font-size: 16px

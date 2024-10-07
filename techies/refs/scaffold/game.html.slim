@@ -1,63 +1,15 @@
 doctype 5
 html
   head
+    /! BEGIN You must not change anything in head tag, use them as reference only
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"
-    title
-      /! Your game title
+    title Generated Game
     sass:
-      body
-        margin: 0
-        padding: 0
-
-      .active
-        display: block !important
-
-      .screen
-        display: none
-        position: fixed
-        top: 0
-        left: 0
-        width: 100%
-        height: 100%
-        /* background-color: #000000
-
-      #start-menu-screen .container
-        display: flex
-        /* Change display properties when needed
-        flex-direction: column
-        justify-content: center
-        align-items: center
-        height: 100%
-
-        #game-title
-          /* Title styles here
-        button
-          /* Button styles here
-
-      #settings-screen.screen .container
-        /* Settings screen styles here
-        button
-          /* Button styles here
-
-      #instructions-screen.screen .container
-        /* Instructions screen styles here
-        button
-          /* Button styles here
-
-      #game-container.screen .container
-        /* Game container styles here
-        button
-          /* Button styles here
-
-      #game-over-screen.screen .container
-        /* Game over screen styles here
-        #game-over-message
-          /* Game over message styles here
-        button
-          /* Button styles here
-
-      /* Add more styles here
+      @import head_styles.sass
+    script
+      include head.js
+    /! END You must not change anything in head tag, use them as reference only
   body
     #start-menu-screen.active.screen
       .container
@@ -70,6 +22,17 @@ html
         button#setting-back-button.main-menu-button Back
     #instructions-screen.screen
       .container
+        h2 Instructions
+        p
+          strong How to Play:
+        ul
+          li
+          li
+        p
+          strong Controls:
+        ul
+          li
+          li
         button#instructions-back-button.main-menu-button Back
     #game-container.screen: .container
     #game-over-screen.screen
@@ -84,6 +47,9 @@ html
 
     /! Extra audio tags for sound effects
 
+    /! You will create your own styles and scripts in the following files
+    sass:
+      @import game_styles.sass
     script
       include game.js
 
