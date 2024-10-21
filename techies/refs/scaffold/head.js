@@ -1,4 +1,4 @@
-if Platform.majorVersion() != 1 
+if (Platform.majorVersion() != 1)
 {
     throw "This script requires Platform version 1.x";
 }
