@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Word Wheels</title>
+    <style>
+      /* Reset and Base Styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #222;
+        color: white;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Screen Management */
+      .screen {
+        display: none;
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .active {
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Container Styles */
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+      }
+
+      /* Buttons */
+      button {
+        padding: 10px 20px;
+        font-size: 18px;
+        margin: 10px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Game Container */
+      #game-container {
+        flex-direction: column;
+        background-color: #d3d3d3;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Track Styles */
+      .track {
+        width: 100%;
+        height: 80%;
+        background-color: #444;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Lane Styles */
+      .lane {
+        flex: 1;
+        border-top: 1px dashed #555;
+        position: relative;
+      }
+
+      /* Car Styles */
+      .car {
+        width: 50px;
+        height: 100px;
+        background-color: red;
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: top 0.2s ease;
+        z-index: 2;
+      }
+
+      /* Obstacle Styles */
+      .obstacle {
+        width: 50px;
+        height: 50px;
+        background-color: black;
+        position: absolute;
+        right: -60px; /* Start just outside the right boundary */
+        top: 50%;
+        transform: translateY(-50%);
+        transition: transform 0.02s linear;
+        z-index: 1;
+      }
+
+      /* Controls */
+      #controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        background-color: #222;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+      }
+
+      .control-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 20px;
+        margin: 5px 0;
+      }
+
+      input {
+        width: 250px;
+        padding: 10px;
+        font-size: 18px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+      }
+
+      .word-display {
+        font-size: 18px;
+        color: yellow;
+        margin-bottom: 10px;
+      }
+
+      /* Distance Display */
+      #distance-display {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 3;
+      }
+
+      /* High Score Display */
+      #high-score-display {
+        position: absolute;
+        top: 40px; /* Positioned below the distance display */
+        right: 20px;
+        font-size: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 3;
+      }
+
+      /* Start Menu High Score Display */
+      #start-high-score-display {
+        margin-top: 20px;
+        font-size: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+
+      /* Game Over Message */
+      #game-over-message {
+        font-size: 32px;
+        color: red;
+        margin-bottom: 20px;
+      }
+
+      /* Instructions Styles */
+      #instructions-content {
+        text-align: left;
+        max-width: 600px;
+      }
+
+      #instructions-content h2 {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      #instructions-content p,
+      #instructions-content li {
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+
+      #back-button {
+        background-color: #6c757d;
+      }
+
+      #back-button:hover {
+        background-color: #5a6268;
+      }
+
+      /* Reset High Score Button */
+      #reset-high-score-button {
+        background-color: #dc3545; /* Bootstrap Danger Color */
+      }
+
+      #reset-high-score-button:hover {
+        background-color: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Start Menu Screen -->
+    <div class="screen active" id="start-menu-screen">
+      <div class="container">
+        <h1>Word Wheels</h1>
+        <button id="play-button">Play</button>
+        <button id="settings-button">Settings</button>
+        <button id="instructions-button">Instructions</button>
+        <!-- High Score Display on Start Menu -->
+        <div id="start-high-score-display">High Score: 0</div>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div class="screen" id="game-container">
+      <!-- Track -->
+      <div class="track" id="track">
+        <!-- Distance Display -->
+        <div id="distance-display">Distance: 0</div>
+        <!-- High Score Display -->
+        <div id="high-score-display">High Score: 0</div>
+        <!-- Car -->
+        <div class="car" id="car"></div>
+      </div>
+      <!-- Controls -->
+      <div id="controls">
+        <div class="control-block">
+          <label>Up:</label>
+          <div class="word-display" id="up-word">word</div>
+        </div>
+        <div class="control-block">
+          <label>Down:</label>
+          <div class="word-display" id="down-word">word</div>
+        </div>
+        <input type="text" id="direction-control" placeholder="Type the word here" autocomplete="off" />
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="screen" id="game-over-screen">
+      <div class="container">
+        <div id="game-over-message">Game Over!</div>
+        <div id="final-distance" style="font-size: 24px; margin-bottom: 20px;">You traveled: 0</div>
+        <button id="play-again-button">Play Again</button>
+        <button class="main-menu-button" id="game-over-main-menu-button">Main Menu</button>
+        <!-- Reset High Score Button -->
+        <button id="reset-high-score-button">Reset High Score</button>
+      </div>
+    </div>
+
+    <!-- Instructions Screen -->
+    <div class="screen" id="instructions-screen">
+      <div class="container">
+        <div id="instructions-content">
+          <h2>Word Wheels - Game Instructions</h2>
+          <p><strong>Objective:</strong></p>
+          <p>
+            Navigate your car along the track by moving it up or down to avoid incoming obstacles. Use your typing skills to control the car's movement based on the words displayed.
+          </p>
+          <p><strong>How to Play:</strong></p>
+          <ul>
+            <li><strong>Start the Game:</strong> Click the <em>"Play"</em> button on the main menu to begin.</li>
+            <li><strong>Understand the Controls:</strong>
+              <ul>
+                <li>Two words will appear on the screen labeled <em>"Up"</em> and <em>"Down"</em>.</li>
+                <li>These words correspond to the actions you need to perform to move your car.</li>
+              </ul>
+            </li>
+            <li><strong>Moving the Car:</strong>
+              <ul>
+                <li><strong>To Move Up:</strong> Type the exact word displayed under <em>"Up"</em> into the input field and press <em>Enter</em> or wait for it to be automatically processed.</li>
+                <li><strong>To Move Down:</strong> Type the exact word displayed under <em>"Down"</em> into the input field and press <em>Enter</em> or wait for it to be automatically processed.</li>
+                <li>After each move, new words will be generated for the next action.</li>
+              </ul>
+            </li>
+            <li><strong>Avoiding Obstacles:</strong>
+              <ul>
+                <li>Obstacles will appear from the right side of the screen and move towards your car.</li>
+                <li>Each obstacle occupies a specific lane on the track.</li>
+                <li>Ensure your car is in a different lane than the incoming obstacle by typing the correct word to move up or down.</li>
+              </ul>
+            </li>
+            <li><strong>Distance Tracking:</strong>
+              <ul>
+                <li>Your progress is measured by the distance traveled.</li>
+                <li>The distance increases over time as you survive longer.</li>
+                <li>Try to achieve the highest distance possible!</li>
+              </ul>
+            </li>
+            <li><strong>Game Over:</strong>
+              <ul>
+                <li>If your car collides with an obstacle, the game ends.</li>
+                <li>You will see a <em>"Game Over"</em> message with your final distance and options to <em>"Play Again"</em> or return to the <em>"Main Menu"</em>.</li>
+              </ul>
+            </li>
+            <li><strong>Tips for Success:</strong>
+              <ul>
+                <li><em>Speed Matters:</em> As the game progresses, obstacles will appear more frequently and move faster.</li>
+                <li><em>Typing Accuracy:</em> Ensure you type the words accurately to make timely moves.</li>
+                <li><em>Stay Focused:</em> Pay attention to the lanes and anticipate incoming obstacles.</li>
+              </ul>
+            </li>
+          </ul>
+          <button id="back-button">Back to Main Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const gameUI = {
+          // Screen Elements
+          startMenuScreen: document.getElementById('start-menu-screen'),
+          gameContainer: document.getElementById('game-container'),
+          instructionsScreen: document.getElementById('instructions-screen'),
+          gameOverScreen: document.getElementById('game-over-screen'),
+
+          // Game Elements
+          car: document.getElementById('car'),
+          control: document.getElementById('direction-control'),
+          upWordDisplay: document.getElementById('up-word'),
+          downWordDisplay: document.getElementById('down-word'),
+          distanceDisplay: document.getElementById('distance-display'),
+          highScoreDisplay: document.getElementById('high-score-display'),
+          startHighScoreDisplay: document.getElementById('start-high-score-display'),
+          finalDistanceDisplay: document.getElementById('final-distance'),
+          track: document.getElementById('track'),
+
+          // Buttons
+          resetHighScoreButton: document.getElementById('reset-high-score-button'),
+
+          // Game State
+          wordList: [],
+          currentUpWord: "",
+          currentDownWord: "",
+          lanes: 5,
+          currentLane: 3,
+          obstacleGenerationInterval: 3000, // ms
+          obstacleIncreaseRate: 0.95,
+          currentObstacleSpeed: 3, // pixels per frame
+          distance: 0,
+          distanceInterval: null,
+          gameOver: false,
+          highScore: 0,
+
+          // Methods
+          swapToScreen(screen) {
+            // Remove 'active' from all screens
+            [this.startMenuScreen, this.gameContainer, this.instructionsScreen, this.gameOverScreen].forEach(s => s.classList.remove('active'));
+            // Add 'active' to the desired screen
+            screen.classList.add('active');
+
+            // If swapping to Start Menu, update High Score display
+            if (screen === this.startMenuScreen) {
+              this.loadHighScore();
+              this.updateHighScoreDisplay();
+            }
+          },
+
+          async fetchWords() {
+            try {
+              const response = await fetch('https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt');
+              const text = await response.text();
+              this.wordList = text.split('\n').filter(word => word.length > 3 && word.length < 8);
+              this.randomizeWords();
+            } catch (error) {
+              console.error('Error fetching word list:', error);
+            }
+          },
+
+          randomizeWords() {
+            if (this.wordList.length > 0) {
+              this.currentUpWord = this.wordList[Math.floor(Math.random() * this.wordList.length)].trim();
+              this.currentDownWord = this.wordList[Math.floor(Math.random() * this.wordList.length)].trim();
+              this.upWordDisplay.textContent = this.currentUpWord;
+              this.downWordDisplay.textContent = this.currentDownWord;
+            }
+          },
+
+          startGame() {
+            this.swapToScreen(this.gameContainer);
+            this.fetchWords();
+            this.currentLane = 3;
+            this.updateCarPosition();
+            this.distance = 0;
+            this.updateDistanceDisplay();
+
+            // Load and display high score
+            this.loadHighScore();
+            this.updateHighScoreDisplay();
+
+            // Start distance tracking
+            this.startDistanceTracking();
+
+            // Start obstacle generation
+            this.startObstacleGeneration();
+
+            // Add event listener for controls
+            this.control.addEventListener('input', gameLogic.handleControlInput);
+          },
+
+          endGame() {
+            this.gameOver = true;
+            this.stopDistanceTracking();
+            this.control.removeEventListener('input', gameLogic.handleControlInput);
+            this.updateHighScore();
+            this.finalDistanceDisplay.textContent = `You traveled: ${this.distance}`;
+            this.swapToScreen(this.gameOverScreen);
+          },
+
+          moveCarUp() {
+            if (this.currentLane > 1) {
+              this.currentLane--;
+              this.updateCarPosition();
+              this.randomizeWords();
+            }
+          },
+
+          moveCarDown() {
+            if (this.currentLane < this.lanes) {
+              this.currentLane++;
+              this.updateCarPosition();
+              this.randomizeWords();
+            }
+          },
+
+          updateCarPosition() {
+            const laneHeight = this.track.clientHeight / this.lanes;
+            const newTop = (this.currentLane - 1) * laneHeight + (laneHeight - this.car.clientHeight) / 2;
+            this.car.style.top = `${newTop}px`;
+          },
+
+          startDistanceTracking() {
+            this.distanceInterval = setInterval(() => {
+              this.distance += 1;
+              this.updateDistanceDisplay();
+            }, 1000);
+          },
+
+          stopDistanceTracking() {
+            clearInterval(this.distanceInterval);
+          },
+
+          updateDistanceDisplay() {
+            this.distanceDisplay.textContent = `Distance: ${this.distance}`;
+          },
+
+          updateHighScoreDisplay() {
+            this.highScoreDisplay.textContent = `High Score: ${this.highScore}`;
+            this.startHighScoreDisplay.textContent = `High Score: ${this.highScore}`;
+          },
+
+          loadHighScore() {
+            const storedHighScore = localStorage.getItem('wordWheelsHighScore');
+            if (storedHighScore) {
+              this.highScore = parseInt(storedHighScore, 10);
+            } else {
+              this.highScore = 0;
+            }
+          },
+
+          updateHighScore() {
+            if (this.distance > this.highScore) {
+              this.highScore = this.distance;
+              localStorage.setItem('wordWheelsHighScore', this.highScore);
+              this.updateHighScoreDisplay();
+
+              // Optional: Add visual feedback for new High Score
+              this.highScoreDisplay.style.backgroundColor = 'gold';
+              setTimeout(() => {
+                this.highScoreDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+              }, 1000); // Reset after 1 second
+            }
+          },
+
+          resetHighScore() {
+            this.highScore = 0;
+            localStorage.setItem('wordWheelsHighScore', this.highScore);
+            this.updateHighScoreDisplay();
+            // Also update start menu high score display
+            this.startHighScoreDisplay.textContent = `High Score: ${this.highScore}`;
+          },
+
+          spawnObstacle() {
+            if (this.gameOver) return;
+
+            // Select a random lane (no exclusion of car's lane)
+            const obstacleLane = Math.floor(Math.random() * this.lanes) + 1;
+
+            // Create obstacle element
+            const obstacle = document.createElement('div');
+            obstacle.classList.add('obstacle');
+            obstacle.style.left = `${this.track.clientWidth + 10}px`; // Start just outside the right boundary
+
+            // Position obstacle within the lane
+            const laneHeight = this.track.clientHeight / this.lanes;
+            const obstacleTop = (obstacleLane - 1) * laneHeight + (laneHeight - obstacle.clientHeight) / 2;
+            obstacle.style.top = `${obstacleTop}px`;
+
+            this.track.appendChild(obstacle);
+
+            // Move obstacle using requestAnimationFrame
+            const moveObstacle = () => {
+              if (this.gameOver) return;
+
+              let currentLeft = parseInt(obstacle.style.left, 10);
+              currentLeft -= this.currentObstacleSpeed;
+              obstacle.style.left = `${currentLeft}px`;
+
+              // Collision detection
+              gameLogic.checkCollision(obstacle);
+
+              // Remove obstacle if it moves off-screen
+              if (currentLeft < -50) { // Obstacle width is 50px
+                this.track.removeChild(obstacle);
+              } else {
+                requestAnimationFrame(moveObstacle);
+              }
+            };
+
+            requestAnimationFrame(moveObstacle);
+          },
+
+          startObstacleGeneration() {
+            const generateObstacle = () => {
+              if (!this.gameOver) {
+                this.spawnObstacle();
+                // Increase difficulty over time
+                this.obstacleGenerationInterval = Math.max(500, this.obstacleGenerationInterval * this.obstacleIncreaseRate);
+                this.currentObstacleSpeed += 0.05;
+                setTimeout(generateObstacle, this.obstacleGenerationInterval);
+              }
+            };
+            generateObstacle();
+          },
+
+          showInstructions() {
+            this.swapToScreen(this.instructionsScreen);
+          },
+
+          backToMainMenu() {
+            this.swapToScreen(this.startMenuScreen);
+          }
+        };
+
+        const gameLogic = {
+          handleControlInput(event) {
+            const inputWord = event.target.value.toLowerCase().trim();
+            if (inputWord === gameUI.currentUpWord.toLowerCase()) {
+              gameUI.moveCarUp();
+              event.target.value = '';
+            } else if (inputWord === gameUI.currentDownWord.toLowerCase()) {
+              gameUI.moveCarDown();
+              event.target.value = '';
+            }
+          },
+
+          checkCollision(obstacle) {
+            const carRect = gameUI.car.getBoundingClientRect();
+            const obstacleRect = obstacle.getBoundingClientRect();
+
+            if (
+              carRect.left < obstacleRect.right &&
+              carRect.right > obstacleRect.left &&
+              carRect.top < obstacleRect.bottom &&
+              carRect.bottom > obstacleRect.top
+            ) {
+              gameUI.endGame();
+            }
+          }
+        };
+
+        // Initial Load: Load and display high score on Start Menu
+        gameUI.loadHighScore();
+        gameUI.updateHighScoreDisplay();
+
+        // Event Listeners
+        document.getElementById('play-button').addEventListener('click', () => {
+          gameUI.startGame();
+        });
+
+        document.getElementById('instructions-button').addEventListener('click', () => {
+          gameUI.showInstructions();
+        });
+
+        document.getElementById('back-button').addEventListener('click', () => {
+          gameUI.backToMainMenu();
+        });
+
+        document.getElementById('play-again-button').addEventListener('click', () => {
+          location.reload();
+        });
+
+        document.getElementById('game-over-main-menu-button').addEventListener('click', () => {
+          gameUI.backToMainMenu();
+        });
+
+        // Reset High Score Button
+        if (gameUI.resetHighScoreButton) {
+          gameUI.resetHighScoreButton.addEventListener('click', () => {
+            const confirmReset = confirm('Are you sure you want to reset your High Score?');
+            if (confirmReset) {
+              gameUI.resetHighScore();
+              alert('High Score has been reset to 0.');
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
