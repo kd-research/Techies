@@ -3,12 +3,19 @@
   <head>
     <!--BEGIN You must not change anything in head tag, use them as reference only-->
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
+    <meta
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      name="viewport"
+    />
     <title>Generated Game</title>
     <style>
       body {
         margin: 0;
         padding: 0;
+        font-family: "Orbitron", sans-serif;
+        background-color: #1a1a2e;
+        color: #ffffff;
+        overflow: hidden;
       }
       .active {
         display: block !important;
@@ -20,6 +27,7 @@
         left: 0;
         width: 100%;
         height: 100%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       }
       #start-menu-screen .container {
         /* Background gradient resembling a game interface */
@@ -35,7 +43,6 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         /* Text styling */
         color: #fff;
-        font-family: "Orbitron", sans-serif;
         text-align: center;
         text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         /* Spacing */
@@ -45,52 +52,89 @@
         flex-direction: column;
         justify-content: center;
         box-sizing: border-box;
+        background-image: url('images/splash-mobile-v3.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
       }
-      #start-menu-screen .container #game-title {
+      #start-menu-screen .container h1 {
         /* Title styles here */
-        font-size: 48px;
-        color: #ffffff;
-        text-shadow: 2px 2px 4px #000000;
-        margin-bottom: 50px;
+        font-size: clamp(2em, 5vw, 2.5em);
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        color: #e94560;
+        padding-top: 50%;
       }
       #start-menu-screen .container button {
-        /* Background gradient */
+        /* Button styles here */
         background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
-        /* White border and rounded corners */
         border: 2px solid #fff;
         border-radius: 8px;
-        /* Text styling */
         color: #fff;
-        font-family: "Orbitron", sans-serif;
-        font-size: 18px;
+        font-size: clamp(16px, 2vw, 18px);
         text-transform: uppercase;
         text-align: center;
         text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        /* Shadow for depth */
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        /* Spacing */
         padding: 12px 30px;
         margin: 20px auto 0;
-        display: inline-block;
+        display: block;
         width: 215.15px;
-        /* Cursor and transitions */
         cursor: pointer;
-        transition: background 0.3s ease, transform 0.2s ease;
+        transition: all 0.3s ease;
       }
       #start-menu-screen .container button:hover {
-        /* Hover effects */
         background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
-        transform: scale(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       }
       #start-menu-screen .container button:active {
-        /* Active effects */
         transform: scale(0.95);
       }
-      #instructions-screen {
+      /* Settings Screen Styles */
+      #settings-screen .container {
         background: rgba(0, 0, 0, 0.7);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
       }
+      #settings-screen .container button {
+        /* Button styles here */
+        background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
+        border: 2px solid #fff;
+        border-radius: 8px;
+        color: #fff;
+        font-size: clamp(16px, 2vw, 18px);
+        text-transform: uppercase;
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        padding: 12px 30px;
+        margin: 20px auto 0;
+        display: block;
+        width: 215.15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      #settings-screen .container button:hover {
+        background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      #settings-screen .container button:active {
+        transform: scale(0.95);
+      }
+      /* Instructions Screen Styles */
       #instructions-screen .container {
-        /* Instructions screen styles here */
         background: rgba(0, 0, 0, 0.7);
         position: absolute;
         top: 50%;
@@ -113,57 +157,198 @@
         line-height: 1.6;
         margin-bottom: 20px;
       }
-      #game-over-screen .container button {
-        /* Background gradient */
+      #instructions-screen .container button {
+        /* Button styles here */
         background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
-        /* White border and rounded corners */
         border: 2px solid #fff;
         border-radius: 8px;
-        /* Text styling */
         color: #fff;
-        font-family: "Orbitron", sans-serif;
-        font-size: 18px;
+        font-size: clamp(16px, 2vw, 18px);
         text-transform: uppercase;
         text-align: center;
         text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        /* Shadow for depth */
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        /* Spacing */
         padding: 12px 30px;
         margin: 20px auto 0;
-        display: inline-block;
+        display: block;
         width: 215.15px;
-        /* Cursor and transitions */
         cursor: pointer;
-        transition: background 0.3s ease, transform 0.2s ease;
+        transition: all 0.3s ease;
       }
-      #game-over-screen button:hover {
-        /* Hover effects */
+      #instructions-screen .container button:hover {
         background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
-        transform: scale(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       }
-      #game-over-screen button:active {
-        /* Active effects */
+      #instructions-screen .container button:active {
         transform: scale(0.95);
       }
-      /* Responsive Styles */
-      @media only screen and (max-width: 600px) {
-        #game-title {
-          font-size: 36px;
-        }
-        button {
-          font-size: 20px;
-          padding: 10px 20px;
-        }
-        #game-container .hud {
-          font-size: 16px;
-        }
+      /* Game Container Styles */
+      #game-container .container {
+        /* Game container styles here */
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: #0f3460;
+        border: 2px solid #e94560;
+        box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+        overflow: hidden;
+      }
+      /* Game Over Screen Styles */
+      #game-over-screen .container {
+        /* Game over screen styles here */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 10px;
+        padding: 20px;
+        box-sizing: border-box;
+        color: #e94560;
+      }
+      #game-over-screen .container #game-over-message {
+        /* Game over message styles here */
+        font-size: 1.8em;
+        text-align: center;
+        margin-bottom: 1em;
+      }
+      #game-over-screen .container button {
+        /* Button styles here */
+        background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
+        border: 2px solid #fff;
+        border-radius: 8px;
+        color: #fff;
+        font-size: clamp(16px, 2vw, 18px);
+        text-transform: uppercase;
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        padding: 12px 30px;
+        margin: 20px auto 0;
+        display: block;
+        width: 215.15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      #game-over-screen .container button:hover {
+        background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      #game-over-screen .container button:active {
+        transform: scale(0.95);
+      }
+      /* HUD Styles */
+      #hud {
+        /* HUD styles */
+        touch-action: none;
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #1a1a2e;
+        padding: 10px;
+        z-index: 100;
+        font-family: "Orbitron", sans-serif;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+      }
+      #hud-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      #hud span {
+        margin: 0 10px;
+        font-size: clamp(12px, 2vw, 16px);
+      }
+      /* Game Controls Styles */
+      #game-controls {
+        /* Game Controls styles */
+        touch-action: none;
+        position: absolute;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        background-color: rgba(26, 26, 46, 0.8);
+        padding: 10px 0;
+        z-index: 101;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 8px;
+      }
+      #game-controls button {
+        background: linear-gradient(135deg, #283c86 0%, #45a247 100%);
+        border: 2px solid #fff;
+        border-radius: 8px;
+        color: #fff;
+        font-size: clamp(12px, 2vw, 14px);
+        text-transform: uppercase;
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        padding: 8px 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      #game-controls button:hover {
+        background: linear-gradient(135deg, #45a247 0%, #283c86 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      #game-controls button:active {
+        transform: scale(0.95);
       }
     </style>
     <script>
-      if (Platform.majorVersion() != 1)
-      {
-          throw "This script requires Platform version 1.x";
+      if (typeof Platform === "undefined") {
+        // Mock Platform API for local testing
+        var Platform = {
+          majorVersion: function () {
+            return 1;
+          },
+          minorVersion: function () {
+            return 0;
+          },
+          setHighestScore: function (score) {
+            localStorage.setItem("triviaHighScore", score);
+          },
+          getHighestScore: function () {
+            return parseInt(localStorage.getItem("triviaHighScore")) || 0;
+          },
+          getSoundVolume: function () {
+            const stored = localStorage.getItem("triviaVolume");
+            if (stored === null) {
+              // If no volume in storage yet, default to 50
+              return 50;
+            }
+            const vol = parseInt(stored, 10);
+            if (isNaN(vol) || vol < 0 || vol > 100) {
+              // If the parsed value is invalid or out of 0-100, fallback
+              return 50;
+            }
+            return vol; // Even if vol = 0, we return 0 properly
+          },
+          setSoundVolume: function (volume) {
+            localStorage.setItem("triviaVolume", volume);
+          },
+          getPreferredDifficulty: function () {
+            return 3; // Default to medium
+          },
+        };
+      }
+
+      if (Platform.majorVersion() != 1) {
+        throw "This script requires Platform version 1.x";
       }
       // Platform version 1.x provides the following functions:
       // All numbers are integer numbers
@@ -177,160 +362,166 @@
     <!--END You must not change anything in head tag, use them as reference only-->
   </head>
   <body>
+    <!-- Start Menu Screen -->
     <div class="active screen" id="start-menu-screen">
       <div class="container">
-        <h1 id="game-title">
-          Your Game Title
-        </h1>
-        <button id="play-button">Play</button><button id="settings-button">Settings</button><button id="instructions-button">Instructions</button>
+        <!-- Title should be rendered in background image, Do not put text here -->
+        <button id="play-button">Play</button>
+        <button id="settings-button">Settings</button>
+        <button id="instructions-button">Instructions</button>
       </div>
     </div>
+
+    <!-- Settings Screen -->
     <div class="screen" id="settings-screen">
       <div class="container">
-        <button class="main-menu-button" id="setting-back-button">Back</button>
+        <h2>Settings</h2>
+        <button class="main-menu-button" id="settings-back-button">Back</button>
       </div>
     </div>
+
+    <!-- Instructions Screen -->
     <div class="screen" id="instructions-screen">
       <div class="container">
-        <h2>
-          Instructions
-        </h2>
+        <h2>Instructions</h2>
         <p>
           <strong>How to Play:</strong>
         </p>
         <ul>
-          <li></li>
-          <li></li>
+          <!-- Sample instruction items -->
+          <!-- <li>Instruction 1</li>
+          <li>Instruction 2</li> -->
         </ul>
         <p>
           <strong>Controls:</strong>
         </p>
         <ul>
-          <li></li>
-          <li></li>
+          <!-- Sample control items -->
+          <!-- <li>Control 1</li>
+          <li>Control 2</li> -->
         </ul>
-        <button class="main-menu-button" id="instructions-back-button">Back</button>
+        <button class="main-menu-button" id="instructions-back-button">
+          Back
+        </button>
       </div>
     </div>
+
+    <!-- Game Container Screen -->
     <div class="screen" id="game-container">
-      <div class="container"></div>
+      <!-- Heads-Up Display (HUD) -->
+      <div id="hud">
+        <div id="hud-content">
+          <span id="score-display">Score: 0</span> |
+          <span id="high-score-display">High Score: 0</span> |
+          <!-- Other HUD elements can be added here -->
+          <!-- <span id="time-display">Time: 0</span> -->
+        </div>
+      </div>
+
+      <!-- Game Controls -->
+      <div id="game-controls">
+        <button id="game-menu-button">Menu</button>
+        <button id="game-restart-button">Restart</button>
+        <button id="game-instructions-button">Instructions</button>
+      </div>
+
+      <div class="container">
+        <!-- Additional game elements can be added here -->
+      </div>
     </div>
+
+    <!-- Game Over Screen -->
     <div class="screen" id="game-over-screen">
       <div class="container">
         <div id="game-over-message"></div>
-        <button id="play-again-button">Play Again</button><button class="main-menu-button" id="game-over-main-menu-button">Main Menu</button>
+        <button id="play-again-button">Play Again</button>
+        <button class="main-menu-button" id="game-over-main-menu-button">
+          Main Menu
+        </button>
       </div>
     </div>
+
+    <!-- Audio Elements -->
     <audio autoplay="" id="background-music" loop="">
       <source src="background-music.mp3" type="audio/mpeg" />
     </audio>
     <audio id="start-game-sound">
       <source src="start-game-sound.mp3" type="audio/mpeg" />
     </audio>
-    <!--Extra audio tags for sound effects--><!--You will create your own styles and scripts in the following files-->
+    <!-- Extra audio tags for sound effects -->
+    <!-- <audio id="example-sound">
+      <source src="sounds/example-sound.mp3" type="audio/mpeg" />
+    </audio> -->
+
+    <!-- Additional Styles for HUD and Game Controls -->
     <style>
-      #start-menu-screen.screen .container {
-        /* Start menu screen styles here */
-      }
-      #start-menu-screen.screen .container button {
-        /* Button styles here */
-      }
-      #settings-screen.screen .container {
-        /* Settings screen styles here */
-      }
-      #settings-screen.screen .container button {
-        /* Button styles here */
-      }
-      #instructions-screen.screen .container {
-        /* Instructions screen styles here */
-      }
-      #instructions-screen.screen .container button {
-        /* Button styles here */
-      }
-      #game-container.screen .container {
-        /* Game container styles here */
-      }
-      #game-container.screen .container button {
-        /* Button styles here */
-      }
-      #game-over-screen.screen .container {
-        /* Game over screen styles here */
-      }
-      #game-over-screen.screen .container #game-over-message {
-        /* Game over message styles here */
-      }
-      #game-over-screen.screen .container .container button {
-        /* Button styles here */
-      }
-      /* Add more styles here */
-      /* Responsive Styles */
-      @media only screen and (max-width: 600px) {
-        /* Add more styles here */
-      }
     </style>
+
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener("DOMContentLoaded", () => {
         class GameUI {
           constructor() {
-            this.startMenuScreen = document.getElementById('start-menu-screen');
-            this.settingsScreen = document.getElementById('settings-screen');
-            this.instructionsScreen = document.getElementById('instructions-screen');
-            this.gameContainer = document.getElementById('game-container');
-            this.gameOverScreen = document.getElementById('game-over-screen');
-          };
+            this.startMenuScreen = document.getElementById("start-menu-screen");
+            this.settingsScreen = document.getElementById("settings-screen");
+            this.instructionsScreen = document.getElementById("instructions-screen");
+            this.gameContainer = document.getElementById("game-container");
+            this.gameOverScreen = document.getElementById("game-over-screen");
+            this.scoreDisplay = document.getElementById("score-display");
+            this.highScoreDisplay = document.getElementById("high-score-display");
+          }
+
           swapToScreen(screen) {
-            this.startMenuScreen.classList.remove('active');
-            this.settingsScreen.classList.remove('active');
-            this.instructionsScreen.classList.remove('active');
-            this.gameContainer.classList.remove('active');
-            this.gameOverScreen.classList.remove('active');
-            screen.classList.add('active');
-          };
+            this.startMenuScreen.classList.remove("active");
+            this.settingsScreen.classList.remove("active");
+            this.instructionsScreen.classList.remove("active");
+            this.gameContainer.classList.remove("active");
+            this.gameOverScreen.classList.remove("active");
+            screen.classList.add("active");
+          }
+
           startGame() {
-            const startGameSound = document.getElementById('start-game-sound');
+            const startGameSound = document.getElementById("start-game-sound");
             this.swapToScreen(this.gameContainer);
             startGameSound.play();
             // Your start game code here;
           }
+
           endGame() {
-            const endGameSound = document.getElementById('end-game-sound');
+            const endGameSound = document.getElementById("end-game-sound");
             this.swapToScreen(this.gameOverScreen);
             endGameSound.play();
             // Your end game code here;
           }
+
           mainMenu() {
             this.swapToScreen(this.startMenuScreen);
           }
+
           playAgain() {
             this.swapToScreen(this.gameContainer);
           }
+
           settings() {
             this.swapToScreen(this.settingsScreen);
           }
+
           instructions() {
             this.swapToScreen(this.instructionsScreen);
           }
-          addBoard(boardElement, row, col, addCellCallback) {
-            boardElement.classList.add('board');
-            boardElement.style.gridTemplateColumns = `repeat(${col}, 1fr)`;
-            this.resetBoard(boardElement, row, col, addCellCallback);
+
+          updateHUD(score, highScore, time, ceiling) {
+            this.scoreDisplay.textContent = `Score: ${score}`;
+            this.highScoreDisplay.textContent = `High Score: ${highScore}`;
           }
-          resetBoard(boardElement, row, col, addCellCallback) {
-            boardElement.innerHTML = '';
-            for (let i = 0; i < size; i++) {
-              const cell = document.createElement('div');
-              cell.classList.add('cell');
-              addCellCallback(cell);
-              boardElement.appendChild(cell);
-            }
-          }
-          // Your UI functions here;
         }
+
         class GameLogic {
           constructor() {
+            // Initialize game logic here
           }
-          // Your game logic here;
+          // Your game logic methods here
         }
+
         class Game {
           constructor() {
             this.ui = new GameUI();
@@ -339,52 +530,71 @@
             this.updateInterval = 1000 / 60;
             this.done = false;
           }
+
           prepareGame() {
-            const gameContainer = document.getElementById('game-container');
-            // Prepare game container DOM elements here;
-            // To add a board in game
-            // const boardElement = document.createElement('div');
-            // this.ui.addBoard(boardElement, row, col, (cell) => { /* Add cell logic here */ });
-            // gameContainer.firstChild.appendChild(boardElement);
-            // Connect DOM element to game logic or game ui accordingly;
+            // Prepare game elements here
             this.assignButtons();
           }
+
           startGame() {
             this.ui.startGame();
-            // Start game logic here;
-            // If you want to use game loop, uncomment the line below;
-            // this.updateInterval = /* Your desired update interval */;
-            // requestAnimationFrame(this.gameLoop.bind(this));
+            // Start game loop or other initialization
           }
-          updateGame() {
-            // Update game logic here;
+
+          endGame() {
+            this.ui.endGame();
+            // Handle end game logic
           }
-          resetGame() {
-            // Reset game logic here;
+
+          mainMenu() {
+            this.ui.mainMenu();
+            // Handle main menu logic
           }
-          gameLoop(timestamp) {
-            if (this.done) return;
-            const deltaTime = timestamp - this.lastFrameTime;
-            if (deltaTime > this.updateInterval) {
-              this.updateGame();
-              this.lastFrameTime = timestamp;
-            }
-            requestAnimationFrame(this.gameLoop.bind(this));
+
+          playAgain() {
+            this.ui.playAgain();
+            // Reset and start game again
           }
+
+          settings() {
+            this.ui.settings();
+            // Handle settings logic
+          }
+
+          instructions() {
+            this.ui.instructions();
+            // Handle instructions logic
+          }
+
           assignButtons() {
-            const playButton = document.getElementById('play-button');
-            const settingsButton = document.getElementById('settings-button');
-            const instructionsButton = document.getElementById('instructions-button');
-            const playAgainButton = document.getElementById('play-again-button');
-            const mainMenuButtons = document.querySelectorAll('.main-menu-button');
-            settingsButton.addEventListener('click', this.ui.settings.bind(this.ui));
-            instructionsButton.addEventListener('click', this.ui.instructions.bind(this.ui));
-            playAgainButton.addEventListener('click', this.ui.playAgain.bind(this.ui));
-            mainMenuButtons.forEach(button => button.addEventListener('click', this.ui.mainMenu.bind(this.ui)));
-            playButton.addEventListener('click', this.startGame.bind(this));
-            // Your button event listeners here;
+            const playButton = document.getElementById("play-button");
+            const settingsButton = document.getElementById("settings-button");
+            const instructionsButton = document.getElementById(
+              "instructions-button"
+            );
+            const playAgainButton = document.getElementById("play-again-button");
+            const mainMenuButtons = document.querySelectorAll(
+              ".main-menu-button"
+            );
+            const gameMenuButton = document.getElementById("game-menu-button");
+            const gameRestartButton = document.getElementById("game-restart-button");
+            const gameInstructionsButton = document.getElementById(
+              "game-instructions-button"
+            );
+
+            playButton.addEventListener("click", this.startGame.bind(this));
+            settingsButton.addEventListener("click", this.settings.bind(this));
+            instructionsButton.addEventListener("click", this.instructions.bind(this));
+            playAgainButton.addEventListener("click", this.playAgain.bind(this));
+            mainMenuButtons.forEach((button) =>
+              button.addEventListener("click", this.mainMenu.bind(this))
+            );
+            gameMenuButton.addEventListener("click", this.mainMenu.bind(this));
+            gameRestartButton.addEventListener("click", this.playAgain.bind(this));
+            gameInstructionsButton.addEventListener("click", this.instructions.bind(this));
           }
         }
+
         const game = new Game();
         game.prepareGame();
       });
