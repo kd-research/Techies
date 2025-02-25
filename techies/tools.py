@@ -4,7 +4,7 @@ import re
 import requests
 
 from bs4 import BeautifulSoup
-from crewai_tools import BaseTool
+from crewai.tools import BaseTool
 from freesound import FreesoundClient
 from pydantic.v1 import BaseModel, Field
 from tempfile import TemporaryDirectory

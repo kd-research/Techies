@@ -40,19 +40,49 @@ def expect_all_present(string, targets):
 def refute_any_present(string, targets):
     return not any((target in string) for target in targets)
 
-class MockLLM(BaseChatModel):
-    DEFAULT_RESPONSE = "Thought: I now can give a great answer\nFinal Answer: my final answer"
+
+#class MockLLM(BaseChatModel):
+#    DEFAULT_RESPONSE: str = "Thought: I now can give a great answer\nFinal Answer: my final answer"
+#    called_times: int = 0
+#    last_messages: List[str] = []
+#    responses: List[str] = []
+#
+#    def _generate(self, messages, **kwargs):
+#        self.called_times += 1
+#        self.last_messages.append(messages[-1].content)
+#        response = self.responses.pop(0) if self.responses else self.DEFAULT_RESPONSE
+#        return ChatResult(generations=[ChatGeneration(message=AIMessage(content=response))])
+#
+#    @property
+#    def _llm_type(self):
+#        return "mocked"
+
+import litellm
+from litellm import CustomLLM, completion, get_llm_provider
+
+class MockLLM(CustomLLM):
+    DEFAULT_RESPONSE: str = "Thought: I now can give a great answer\nFinal Answer: my final answer"
+    identifier: str = "mock-llm/default"
     called_times: int = 0
-    last_messages: List[str] = []
-    responses: List[str] = []
+    last_messages: List[str]
+    responses: List[str]
 
-    def _generate(self, messages, **kwargs):
+    def __init__(self, *args, **kwargs):
+        self.last_messages = []
+        self.responses = []
+
+    def completion(self, model, messages, *args, **kwargs) -> litellm.ModelResponse:
+        for m in messages:
+            print("----", m["role"])
+            print(m["content"])
+
         self.called_times += 1
-        self.last_messages.append(messages[-1].content)
+        self.last_messages.append("".join([m["content"] for m in messages]))
         response = self.responses.pop(0) if self.responses else self.DEFAULT_RESPONSE
-        return ChatResult(generations=[ChatGeneration(message=AIMessage(content=response))])
-
-    @property
-    def _llm_type(self):
-        return "mocked"
+        print("response", response)
+        return litellm.completion(
+            model="*",
+            messages=messages,
+            mock_response=response,
+        )  # type: ignore
 
