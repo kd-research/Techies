@@ -38,7 +38,7 @@ def get_openai_crew(crewname, manage_agentops=False):
 
     from langchain_openai import ChatOpenAI
 
-    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0.2))
+    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini", temperature=0.2))
     task_pool = Task.eager_load_all(agent_pool)
     if isinstance(crewname, str):
         crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
@@ -163,14 +163,14 @@ Usage:
 
     def kickoff_html5_crew(self, extra_args):
         if "--help" in extra_args:
-            kickoff_hierarchy_crew(extra_args)
+            self.kickoff_hierarchy_crew(extra_args)
             return
 
         if not os.path.exists("game.html"):
             scaffold_file_path = os.path.normpath(__file__ + "../refs/build/game.html")
             shutil.copy(scaffold_file_path, "game.html")
 
-        kickoff_hierarchy_crew(extra_args)
+        self.kickoff_hierarchy_crew(extra_args)
 
 def main():
     cli = CLI()

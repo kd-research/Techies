@@ -72,14 +72,9 @@ class MockLLM(CustomLLM):
         self.responses = []
 
     def completion(self, model, messages, *args, **kwargs) -> litellm.ModelResponse:
-        for m in messages:
-            print("----", m["role"])
-            print(m["content"])
-
         self.called_times += 1
         self.last_messages.append("".join([m["content"] for m in messages]))
         response = self.responses.pop(0) if self.responses else self.DEFAULT_RESPONSE
-        print("response", response)
         return litellm.completion(
             model="*",
             messages=messages,
