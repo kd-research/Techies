@@ -138,6 +138,13 @@ class WriteFileTool(BaseTool):
                 with open(f"{self.base_dir}/{path}", "r") as f:
                     old_content = f.read()
 
+                if path.endswith(".html") and (len(old_content.splitlines()) * 0.8 > len(content.splitlines())):
+                    return f"""
+Updating file {path} is rejected because new content is significantly smaller than the old content.
+You should include every unchanged line in output html file. Also target this file to be run-as-is.
+Please Try Again.
+"""
+
                 with open(f"{self.base_dir}/{path}", "w") as f:
                     f.write(content)
 
