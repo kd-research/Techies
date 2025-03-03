@@ -11,6 +11,22 @@ from techies.game_specs import game_specs, specs
 from techies.fixture_loader import runtime_config
 from importlib.metadata import version
 
+def get_system_crew(crewname, manage_agentops=False):
+    if manage_agentops:
+        import agentops
+        agentops.init()
+
+    agent_pool = Agent.eager_load_all()
+    task_pool = Task.eager_load_all(agent_pool)
+    if isinstance(crewname, str):
+        crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
+        return crew
+    elif isinstance(crewname, list):
+        crews = [Crew(crew, agent_pool=agent_pool, task_pool=task_pool) for crew in crewname]
+        return crews
+    else:
+        raise ValueError("crewname must be a string or a list of strings")
+
 def get_groq_crew(crewname, **kwargs):
     from langchain_groq import ChatGroq
 
@@ -78,6 +94,8 @@ class CLI:
             self.get_crew = get_openai_crew
         elif ai == "anthropic":
             self.get_crew = get_anthropic_crew
+        elif ai == "system":
+            self.get_crew = get_system_crew
 
     def execute(self, argv):
         description = f"""{self.prog_name} - Command line interface
@@ -95,7 +113,7 @@ Usage:
         parser = argparse.ArgumentParser(prog=self.prog_name, description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
         parser.add_argument('command', type=str, help='Command to run')
         parser.add_argument('crew', type=str, help='Crew to use', nargs='?', default="hierarchy_crew")
-        parser.add_argument('--ai', type=str, help='AI to use', default="openai", choices=["groq", "openai", "anthropic"])
+        parser.add_argument('--ai', type=str, help='AI to use', default="openai", choices=["groq", "openai", "anthropic", "system"])
         if not argv:
             parser.print_help()
             sys.exit(1)
