@@ -1,17 +1,38 @@
 import re
 import crewai
 import pytest
+import litellm
 
-from crewai_tools import BaseTool
+from crewai.tools import BaseTool
 from tests.helpers import expect_all_present, refute_any_present, MockLLM
 
-# CrewAI agent should see all the information
-def test_crewai_calls_llm():
-    agentllm = MockLLM()
-    otherllm = MockLLM()
+def setup_function(function):
+    mock_llm = MockLLM()
+    litellm.custom_provider_map = [
+            {"provider": "mock-llm", "custom_handler": mock_llm}
+        ]
 
-    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm, allow_delegation=False)
-    unused_agent = crewai.Agent(role="UNUSEDAGENT_AGENT", goal="UNUSEDAGENT_GOAL", backstory="UNUSEDAGENT_BACKSTORY", llm=otherllm)
+@pytest.fixture
+def agentllm():
+    mock_llm = MockLLM()
+    provider = "agent-llm"
+    mock_llm.identifier = f"{provider}/default"
+    litellm.custom_provider_map.append({"provider": provider, "custom_handler": mock_llm})
+    return mock_llm
+
+@pytest.fixture
+def otherllm():
+    mock_llm = MockLLM()
+    provider = "other-llm"
+    mock_llm.identifier = f"{provider}/default"
+    litellm.custom_provider_map.append({"provider": provider, "custom_handler": mock_llm})
+    return mock_llm
+
+
+# CrewAI agent should see all the information
+def test_crewai_calls_llm(agentllm, otherllm):
+    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm.identifier, allow_delegation=False)
+    unused_agent = crewai.Agent(role="UNUSEDAGENT_AGENT", goal="UNUSEDAGENT_GOAL", backstory="UNUSEDAGENT_BACKSTORY", llm=otherllm.identifier)
     task = crewai.Task(description="TASK_DESCRIPTION", expected_output="TAST_EXPECTED_OUTPUT", agent=agent)
     crew = crewai.Crew(agents=[agent, unused_agent], tasks=[task])
     result = crew.kickoff()
@@ -23,12 +44,10 @@ def test_crewai_calls_llm():
     assert str(result) == "my final answer"
 
 # When the agent is not allowed to delegate, it should not see any other agent
-def test_agent_should_sees_no_delegation():
-    agentllm = MockLLM()
-    otherllm = MockLLM()
+def test_agent_should_sees_no_delegation(agentllm, otherllm):
 
-    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm, allow_delegation=False)
-    unused_agent = crewai.Agent(role="UNUSEDAGENT_AGENT", goal="UNUSEDAGENT_GOAL", backstory="UNUSEDAGENT_BACKSTORY", llm=otherllm)
+    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm.identifier, allow_delegation=False)
+    unused_agent = crewai.Agent(role="UNUSEDAGENT_AGENT", goal="UNUSEDAGENT_GOAL", backstory="UNUSEDAGENT_BACKSTORY", llm=otherllm.identifier)
     task = crewai.Task(description="TASK_DESCRIPTION", expected_output="TAST_EXPECTED_OUTPUT", agent=agent)
     crew = crewai.Crew(agents=[agent, unused_agent], tasks=[task])
     result = crew.kickoff()
@@ -39,20 +58,18 @@ def test_agent_should_sees_no_delegation():
 
     assert str(result) == "my final answer"
 
-def test_crewai_seeing_delegation():
-    agentllm = MockLLM()
+def test_crewai_seeing_delegation(agentllm, otherllm):
     agentllm.responses.append("""\
 Action: Delegate work to coworker
 Action Input: {"task": "DELEGATE_GOAL", "context": "DELEGATE_BACKSTORY", coworker: "DELEGATE_AGENT"}
 """)
     agentllm.responses.append("Thought: I now can give a great answer\nFinal Answer: my final answer")
 
-    otherllm = MockLLM()
     otherllm.responses.append("Thought: I now can give a great answer\nFinal Answer: DELEGATE_AGENT's final answer")
 
-    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm, allow_delegation=True)
+    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm.identifier, allow_delegation=True)
     # Agent can not re-delegate even if it is allowed
-    delegate_agent = crewai.Agent(role="DELEGATE_AGENT", goal="DELEGATE_GOAL", backstory="DELEGATE_BACKSTORY", llm=otherllm, allow_delegation=True)
+    delegate_agent = crewai.Agent(role="DELEGATE_AGENT", goal="DELEGATE_GOAL", backstory="DELEGATE_BACKSTORY", llm=otherllm.identifier, allow_delegation=True)
     task = crewai.Task(description="TASK_DESCRIPTION", expected_output="TAST_EXPECTED_OUTPUT", agent=agent)
     crew = crewai.Crew(agents=[agent, delegate_agent], tasks=[task])
     result = crew.kickoff()
@@ -83,20 +100,18 @@ class TruthyTools(BaseTool):
         self.being_called = True
         return "TRUTHYTOOL_OUTPUT"
 
-def test_crewai_seeing_tools_through_agent():
-    agentllm = MockLLM()
+def test_crewai_seeing_tools_through_agent(agentllm, otherllm):
     agentllm.responses.append("""\
 Action: TRUTHYTOOL
 Action Input: {"argument": "TRUTHYTOOL_ARGUMENT"}
 """)
     agentllm.responses.append("Thought: I now can give a great answer\nFinal Answer: AGENT_AGENT's final answer")
-    otherllm = MockLLM()
     otherllm.responses.append("Thought: I now can give a great answer\nFinal Answer: OTHER_AGENT's final answer")
 
     tool = TruthyTools()
 
-    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm, allow_delegation=False, tools=[tool])
-    other_agent = crewai.Agent(role="OTHER_AGENT", goal="OTHER_GOAL", backstory="OTHER_BACKSTORY", llm=otherllm, allow_delegation=False)
+    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm.identifier, allow_delegation=False, tools=[tool])
+    other_agent = crewai.Agent(role="OTHER_AGENT", goal="OTHER_GOAL", backstory="OTHER_BACKSTORY", llm=otherllm.identifier, allow_delegation=False)
     task = crewai.Task(description="TASK_DESCRIPTION", expected_output="TAST_EXPECTED_OUTPUT", agent=agent)
     other_task = crewai.Task(description="OTHER_TASK_DESCRIPTION", expected_output="OTHER_TAST_EXPECTED_OUTPUT", agent=other_agent)
     crew = crewai.Crew(agents=[other_agent, agent], tasks=[task, other_task])

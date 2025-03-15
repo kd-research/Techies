@@ -1,9 +1,32 @@
 import crewai
 import pytest
+import litellm
 
 from importlib.metadata import version
-from crewai_tools import BaseTool, tool
+from crewai.tools import BaseTool, tool
 from tests.helpers import expect_all_present, refute_any_present, MockLLM
+
+def setup_function(function):
+    mock_llm = MockLLM()
+    litellm.custom_provider_map = [
+            {"provider": "mock-llm", "custom_handler": mock_llm}
+        ]
+
+@pytest.fixture
+def agentllm():
+    mock_llm = MockLLM()
+    provider = "agent-llm"
+    mock_llm.identifier = f"{provider}/default"
+    litellm.custom_provider_map.append({"provider": provider, "custom_handler": mock_llm})
+    return mock_llm
+
+@pytest.fixture
+def otherllm():
+    mock_llm = MockLLM()
+    provider = "other-llm"
+    mock_llm.identifier = f"{provider}/default"
+    litellm.custom_provider_map.append({"provider": provider, "custom_handler": mock_llm})
+    return mock_llm
 
 
 class TruthyTools(BaseTool):
@@ -19,15 +42,12 @@ class TruthyTools(BaseTool):
 
 
 # CrewAI agent should see all the information
-def test_crewai_should_see_delegation_with_tools():
-    agentllm = MockLLM()
-    otherllm = MockLLM()
-
+def test_crewai_should_see_delegation_with_tools(agentllm, otherllm):
     tool = TruthyTools()
 
-    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm, allow_delegation=True, tools=[tool])
     # Agent can not re-delegate even if it is allowed
-    delegate_agent = crewai.Agent(role="DELEGATE_AGENT", goal="DELEGATE_GOAL", backstory="DELEGATE_BACKSTORY", llm=otherllm, allow_delegation=True)
+    agent = crewai.Agent(role="AGENT_AGENT", goal="AGENT_GOAL", backstory="AGENT_BACKSTORY", llm=agentllm.identifier, allow_delegation=True, tools=[tool])
+    delegate_agent = crewai.Agent(role="DELEGATE_AGENT", goal="DELEGATE_GOAL", backstory="DELEGATE_BACKSTORY", llm=otherllm.identifier, allow_delegation=True)
     task = crewai.Task(description="TASK_DESCRIPTION", expected_output="TAST_EXPECTED_OUTPUT", agent=agent)
     crew = crewai.Crew(agents=[agent, delegate_agent], tasks=[task])
     result = crew.kickoff()

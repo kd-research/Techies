@@ -4,9 +4,9 @@ import re
 import requests
 
 from bs4 import BeautifulSoup
-from crewai_tools import BaseTool
+from crewai.tools import BaseTool
 from freesound import FreesoundClient
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from tempfile import TemporaryDirectory
 from typing import Type, List, Dict, Any, Optional
 
@@ -137,6 +137,13 @@ class WriteFileTool(BaseTool):
             else:
                 with open(f"{self.base_dir}/{path}", "r") as f:
                     old_content = f.read()
+
+                if path.endswith(".html") and (len(old_content.splitlines()) * 0.8 > len(content.splitlines())):
+                    return f"""
+Updating file {path} is rejected because new content is significantly smaller than the old content.
+You should include every unchanged line in output html file. Also target this file to be run-as-is.
+Please Try Again.
+"""
 
                 with open(f"{self.base_dir}/{path}", "w") as f:
                     f.write(content)
