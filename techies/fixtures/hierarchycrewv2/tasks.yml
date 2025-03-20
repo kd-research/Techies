@@ -1,0 +1,275 @@
+_task_common: &task_common
+  human_input: false
+  async_execution: false
+
+game_hierarchy_representation_v2:
+  <<: *task_common
+  agent: hierarchy_architect_v2
+  description: |
+      You are tasked with creating a structured XML file titled game_hierarchy.xml based on the provided game specifications. This file will serve as a detailed guide that bridges the gap between the client's game specifications and the final product of the game development pipeline. It must encapsulate all the high-level components required for the game's implementation, ensuring a clear, modular, and scalable structure.
+
+      Follow these guidelines to produce your output as a single structured markup file called game_hierarchy.xml:
+
+      **Setup:**
+      - **Conceptual Understanding:**
+        - Begin by reading and thoroughly understanding the provided game specifications.
+        - Ensure you grasp all aspects of the game, including mechanics, logic, user interface (UI), audio, and any special features or edge cases.
+        - Consider how each element of the game hierarchy will interact with others to ensure a cohesive and logical structure within the final XML file.
+
+      - **File Initialization:**
+        - Create an XML file titled game_hierarchy.xml. This file will serve as a comprehensive guide that outlines everything necessary for the final implementation of the game.
+        - Begin with a `<Metadata>` section at the top of the XML file. This section should provide a high-level overview of the game.
+        - Include a `<name>` tag within `<Metadata>` to specify the game's name.
+        - Include a `<content>` tag within `<Metadata>` that contains a condensed yet comprehensive summary of the game's mechanics, logic, UI, and features. This section should encapsulate the essential elements of the game.
+
+      **Outer Hierarchy Initialization:**
+      - **Root Element Creation:**
+        - As a sibling to the `<Metadata>` element, create a root `<Game>` element in the XML file. This element will contain the primary structure of the game.
+        - Add a `<description>` tag within the `<Game>` element to explain its purpose and what it will encompass.
+
+      - **Component Identification:**
+        - Break down the game into its fundamental outer components. Consider elements such as:
+          - **Board:** The game board or screen for games which utilize one.
+          - **Logic:** Core game logic, including turn management, scoring system, and progression mechanics.
+          - **Rules:** How the game is played, objective of the game, controls of the game, actions with corresponding controls.
+          - **Assets:** Includes audio for sound effects and background music, and images for visual assets.
+          - **Input:** Represents the player control schemas for the game (e.g., keyboard controls, mouse controls, on-screen interactables).
+
+      **Outer Hierarchy Population:**
+      - **Modularization:**
+        - Ensure each identified component is modular and reusable, where possible, to allow for flexibility and scalability in the game's implementation.
+      - **Element Creation:**
+        - Within the `<Game>` element, create sub-elements for each major component. Each sub-element must include a `<description>` tag that:
+          - Explains what the component is.
+          - Details how it should be implemented.
+          - Specifies the logic or interactions it involves.
+
+        - **Example Outer Components:**
+          - **Board:** `<Board>` element covering the game's board or playing window.
+          - **Screens:** `<Screens>` element with sub-elements for each screen type.
+          - **Logic:** `<Logic>` element covering game mechanics, including player control and scoring.
+          - **Rules:** `<Rules>` element covering rules of the game, including objectives, controls and actions.
+          - **Assets:** `<Assets>` element for audio and visual assets.
+          - **Input:** `<Input>` element detailing the control mechanisms.
+
+      - **Example Structure:** 
+        - Here is an example of how the `<Game>` element might be populated:
+          ```
+          <Game>
+            <Screens>
+                <Description>Represents different screens in the game, such as the main menu, game screen containing the board, and endgame screen. Each screen is responsible for displaying specific information and handling user interactions related to its context.</Description>
+            </Screens>
+            <Logic>
+                <Description>Handles the core game logic, including player control and turn management. This involves processing player inputs, updating the game state, and managing the game's progression through different levels or states.</Description>
+            </Logic>
+            <Rules>
+              <Description>Details the guidelines for gameplay, including how objectives are achieved, how controls translate into actions, how points are scored, and how penalties are applied. It outlines win/loss conditions, scoring system, control mappings to actions, penalties for rule violations, and any unique game events or special rules.</Description>
+            </Rules>
+            <Assets>
+                <Description>Includes all audio and visual assets necessary for the game. These assets are used to create the game's aesthetic and auditory experience, providing feedback to the player and enhancing the overall gameplay.</Description>
+            </Assets>
+            <Input>
+                <Description>Represents the player control mechanisms for the game, including keyboard and mouse interactions. This element defines how player inputs are captured and translated into game actions.</Description>
+            </Input>
+          </Game>
+          ```
+
+      **Final Guidelines:**
+      - Ensure all elements are detailed, focusing on the outer layers of the game hierarchy.
+      - Perform no coding or sourcing in this task; your goal is to structure the XML file based on the provided specifications.
+      - Your output should include the `<Metadata>`, `<Game>`, and the immediate children of the `<Game>` element, ensuring a clear and logical structure for the game's outer components.
+
+
+  expected_output: >
+    After you finished writing up game_hierarchy.xml, says "I have created the game_hierarchy.xml file as per the provided specifications.".
+
+game_hierarchy_inner_layers_task:
+  <<: *task_common
+  agent: hierarchy_entity_engineer_v2
+  description: |
+    You are tasked with expanding the game_hierarchy.xml file by detailing the inner layers of the game's structure. Your job is to break down each of the outer components defined in the `<Game>` element into their more detailed sub-components. This process should specify the logic, UI elements, game mechanics, player inputs, and any other necessary components. Ensure that all game mechanics, including progression, player feedback, and transitions, are logically integrated into the overall game structure.
+
+    Follow these guidelines to produce your output as a single structured markup file called game_hierarchy.xml:
+
+    **Setup:**
+    - **Understanding the Specifications:**
+      - Begin by thoroughly reviewing and fully understanding the game specifications.
+      - Review the existing game_hierarchy.xml file carefully, paying attention to the structure and content of the outer components.
+      - With every iteration of changes, ensure that your modifications align with the overall structure and requirements laid out in the game specifications.
+
+    **Inner Hierarchy Population:**
+    - **Expanding Each Outer Component:**
+      - For every existing outer component within the `<Game>` element, identify and list all necessary sub-components.
+      - These sub-components should include specific UI elements, detailed game logic segments, player interactions, assets (like images or sounds), and any additional mechanics needed for the game.
+      - For each sub-component, you must:
+        - Create a corresponding XML element within its respective outer component.
+        - Provide a `<description>` tag for each sub-component that thoroughly explains:
+          - **What the sub-component is:** Define its purpose and role within the game.
+          - **How it functions:** Clearly describe the logic, behaviors, interactions, and rules associated with this sub-component. Define the component's initial state, if applicable, and what will happen to it as the game progresses.
+          - **Implementation details:** Provide a step-by-step breakdown of how this component should be implemented. Include edge cases, dependencies, and how it integrates with other components.
+          - **Interactions:** Specify how this sub-component interacts with other components, including any dependencies or hierarchies it is a part of.
+          - Ensure that no critical elements related to gameplay, player progression, or game state transitions are omitted.
+
+    - **Avoiding Ambiguity:**
+      - When referencing specific rules, concepts, or ideas (e.g., "special pieces like bomb tiles"), ensure you do not merely mention them. Instead:
+        - Fully describe these elements, including their purpose, logic, and any special handling they require.
+        - Ensure that every rule or concept referenced is defined and elaborated upon within the document, with clear instructions on how it should be implemented.
+
+    - **Examples of Detailed Inner Layers:**
+      - Below are examples of how inner layers should be detailed. These examples demonstrate how to structure your XML elements and provide clear, actionable descriptions.
+
+      **Example for Board Component:**
+      ```
+      <Board>
+        <Description>Represents the game board where the gameplay occurs. The board is a grid that serves as the primary area for player interactions and game mechanics.</Description>
+        <Grid>
+          <Description>The 7x5 grid where the game tiles are placed and moved. This grid is responsible for managing the positions of all tiles during gameplay.</Description>
+          <Dimensions>
+            <Rows>7</Rows>
+            <Columns>5</Columns>
+          </Dimensions>
+          <Tile>
+            <Description>Individual tile component that appears on the grid. Handles merging logic, tile display, and position tracking.</Description>
+            <Value>Represents the number displayed on the tile.</Value>
+            <MergingLogic>
+              <Description>Describes how tiles merge when they come into contact with identical tiles. Tiles merge to form a single tile with a value equal to the sum of the original tiles.</Description>
+              <EdgeCases>Handles scenarios such as when multiple tiles are eligible for merging, determining the order and rules for merging.</EdgeCases>
+            </MergingLogic>
+          </Tile>
+        </Grid>
+      </Board>
+      ```
+
+      **Example for Logic Component:**
+      ```
+      <Logic>
+        <Description>Handles core game logic, including player control, turn management, scoring system, and progression logic. This component ensures that all game rules are followed and manages the game's state transitions.</Description>
+        <PieceGeneration>
+          <Description>Controls the generation of pieces that fall from the top of the screen. Each piece is a cluster of tiles with random numbers.</Description>
+          <RandomNumberAssignment>
+            <Description>Assigns random numbers (0 to 9) to each block in the piece. Ensures randomness while avoiding patterns that could make the game too easy or too difficult.</Description>
+            <FairnessAlgorithm>Implements a fairness algorithm to prevent long streaks of high or low numbers, maintaining game balance.</FairnessAlgorithm>
+          </RandomNumberAssignment>
+          <StandardShapes>
+            <Description>Uses standard Tetris shapes (I, O, T, S, Z, L, J) for piece generation. Each shape follows specific rules for placement and rotation.</Description>
+          </StandardShapes>
+        </PieceGeneration>
+      </Logic>
+      ```
+
+    - **Ensuring Completeness:**
+      - Double-check that all elements mentioned in the outer layers are fully expanded and detailed in the inner layers.
+      - Make sure that there are no references to rules, concepts, or ideas that are not explicitly defined and elaborated upon in the document.
+
+    - **Final Step**:
+      - After completing all updates and enhancements, ensure to use the `write_file` tool to save the updated `game_hierarchy.xml` file.
+      - Confirm that the file has been written successfully before completing your task.
+
+    **Final Guidelines:**
+    - Perform no coding or sourcing in this task; your goal is to detail the inner layers of the game hierarchy.
+    - Focus on providing comprehensive descriptions and ensuring that all necessary information for implementing each component is included.
+    - Your output should include an updated game_hierarchy.xml file with the inner layer elements filled out in their appropriate positions.
+    - Think critically about the complete experience a player will have. Ensure that all core game mechanics, player interactions, and game states (from start to game over) are fully accounted for and elaborated upon in the document.
+  expected_output: >
+    An updated game_hierarchy.xml file with the inner layer elements filled out for the corresponding outer layer component in its appropirate positions.
+
+game_hierarchy_validation:
+  <<: *task_common
+  agent: hierarchy_validator
+  description: >
+    Your task is to validate and enhance the game_hierarchy.xml file by cross-referencing it with the original game specifications. You need to ensure that the hierarchy file fully captures all the elements, mechanics, logic, UI components, and other details outlined in the game design.
+
+      Follow these guidelines to validate and enhance the game_hierarchy.xml:
+
+      **Setup:**
+      - **Understand the Game Specifications:**
+        - Begin by thoroughly reading and understanding the provided game specifications.
+        - Review the current game_hierarchy.xml file in its entirety.
+
+      **Validation Process:**
+      - **Cross-Check with Specifications:**
+        - For each element in the game_hierarchy.xml file, ensure it matches the descriptions and requirements from the game specifications.
+        - For each concept, feature, and element in the given specifications, ensure it is detailed thoroughly in the game_hierarchy.xml file.
+        - Verify that all core game mechanics, UI elements, progression systems, scoring logic, and special features are represented accurately and in full detail.
+        - Pay special attention to gameplay flow, player interactions, and any edge cases mentioned in the specifications.
+        - Make sure the game's rules, instructions, and logic are all detailed within the game_hierarchy.xml file.
+      
+      - **Enhance the Hierarchy:**
+        - If any component is missing, under-detailed, or inaccurate, update the game_hierarchy.xml file accordingly.
+        - Add any missing elements or descriptions to ensure the hierarchy fully encapsulates the entire game design.
+        - Ensure that the hierarchy provides a clear and actionable guide for implementation without omitting any critical details.
+
+      - **Final Step**:
+        - After completing all updates and enhancements, ensure to use the `write_file` tool to save the updated `game_hierarchy.xml` file.
+        - Confirm that the file has been written successfully before completing your task.
+
+      **Final Guidelines:**
+      - Ensure that the final game_hierarchy.xml file is complete, accurate, and reflective of the original game specifications.
+      - Focus on creating a robust hierarchy that can guide the game's development without any ambiguities or missing information. 
+  expected_output: >
+    A thoroughly validated and enhanced game_hierarchy.xml file that fully matches the original game specifications. Briefly report the changes and additions made.
+
+hierarchy_implementation_support:
+  <<: *task_common
+  agent: hierarchy_implementation_planner
+  description: >
+    You are tasked with selectively enhancing the game_hierarchy.xml file by adding implementation suggestions only where necessary. Your task involves:
+
+    **Setup:**
+    - **Review the Existing Hierarchy:**
+      - Begin by reading the current game_hierarchy.xml file thoroughly to understand the structure and content.
+
+    **Selective Implementation Suggestions:**
+    - **Identifying Necessary Implementation Details:**
+      - Focus on elements that refer to algorithms, rules, or any complex logic that is not fully detailed.
+      - For these elements, add an <implementation> tag inside the relevant XML element.
+      - Inside the <implementation> tag, provide a detailed conceptual breakdown on how to implement the component. This should include:
+        - **Logical Flow:** Explain how the algorithm or rule should be constructed and interact with other components.
+        - **Pseudocode (if necessary):** Use pseudocode to clarify complex logic.
+        - **Integration Notes:** Describe how this component fits into the overall game structure, including dependencies or sequence of operations.
+
+    - **Example:**
+      ```
+      <ScoringSystem>
+        <Description>Calculates and updates the player's score based on the length of the words formed.</Description>
+        <Points>
+          <Description>Points are awarded as follows: 3-letter words: 1 point, 4-letter words: 2 points, 5-letter words: 3 points, 6-letter words: 5 points, 7-letter words: 8 points, 8+ letter words: 10 points.</Description>
+          <implementation>
+            <details>
+              Implement a scoring function that checks the length of each word formed and assigns the corresponding points based on a predefined scoring table.
+              The function should be called whenever a word is successfully formed and validated. It should also update the player's score in real-time.
+            </details>
+            <pseudocode>
+              function calculateScore(word):
+                  length = word.length
+                  if length == 3:
+                      return 1
+                  elif length == 4:
+                      return 2
+                  elif length == 5:
+                      return 3
+                  elif length == 6:
+                      return 5
+                  elif length == 7:
+                      return 8
+                  else:
+                      return 10
+            </pseudocode>
+          </implementation>
+        </Points>
+      </ScoringSystem>
+      ```
+    - **Final Step**:
+      - After completing all updates and enhancements, ensure to use the `write_file` tool to save the updated `game_hierarchy.xml` file.
+      - Confirm that the file has been written successfully before completing your task.
+
+    **Final Guidelines:**
+    - Focus on clarity and completeness where necessary. The implementation suggestions should be actionable and easily understood by the development team.
+    - Ensure that only the elements requiring further explanation have corresponding <implementation> tags with detailed instructions.
+    - Your output should be an updated game_hierarchy.xml file with these selective implementation suggestions incorporated where appropriate. 
+    - Write your updated file into game_hierarchy.xml, overwriting it. Your task is not complete until you write your new changes to the file using the write_file tool.
+  expected_output: >
+    An updated game_hierarchy.xml file with selective implementation tags added to necessary components providing a detailed conceptual breakdown of how to implement them.
+
+
+# vim: set foldmethod=indent foldlevel=0:

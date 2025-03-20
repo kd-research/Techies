@@ -1,0 +1,18 @@
+_crew_common: &crew_common
+  cache: false
+  max_iter: 100
+  memory: false
+
+hierarchy_crew_v2:
+  <<: *crew_common
+  agents:
+    - hierarchy_architect_v2
+    - hierarchy_entity_engineer_v2
+    - hierarchy_validator
+    - hierarchy_implementation_planner
+  tasks:
+    - game_hierarchy_representation_v2
+    - game_hierarchy_inner_layers_task
+    - game_hierarchy_validation
+    - hierarchy_implementation_support
+

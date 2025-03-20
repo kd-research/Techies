@@ -3,16 +3,30 @@ _crew_common: &crew_common
   max_iter: 100
   memory: false
 
-hierarchy_crew_v2:
+hierarchy_crew:
   <<: *crew_common
   agents:
-    - hierarchy_architect_v2
-    - hierarchy_entity_engineer_v2
-    - hierarchy_validator
-    - hierarchy_implementation_planner
+    - hierarchy_architect
+    - hierarchy_entity_engineer
+    - hierarchy_manager_engineer
+    - hierarchy_reviewer
+    - hierarchy_detailed_reviewer
+    - hierarchy_question_reflector
+    - hierarchy_architect_refiner
+    - hierarchy_entity_refiner
+    - hierarchy_manager_refiner
+    - hierarchy_assembler
   tasks:
-    - game_hierarchy_representation_v2
-    - game_hierarchy_inner_layers_task
-    - game_hierarchy_validation
-    - hierarchy_implementation_support
+    - game_hierarchy_representation
+    - hierarchy_review
+    - game_hierarchy_refinement
+    - game_hierarchy_assembling
 
+code_crew:
+  <<: *crew_common
+  agents:
+    - game_develop_manager
+    - game_develop_engineer
+  tasks:
+    - code_develop
+    - code_assemble
