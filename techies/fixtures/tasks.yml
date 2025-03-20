@@ -1,0 +1,16 @@
+_task_common: &task_common
+  human_input: false
+  async_execution: false
+
+introduce_crew_members:
+  <<: *task_common
+  agent: introduction_host
+  description: >
+    Your task is to introduce the crew members one by one.
+    Request each crew member to provide a short self-introduction.
+    Each introduction should include the agent's name, key characteristics, and ability to perform specific tasks.
+    If the agent has a designated tool, mention its primary function.
+    Keep introductions concise and well-structured.
+  expected_output: >
+    A structured list of crew member introductions, each presented in a short format.
+
