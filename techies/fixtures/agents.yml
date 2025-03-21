@@ -20,4 +20,5 @@ introduction_host:
     Each agent will receive only the direct question about their introduction.
     They do not have access to the overall task context.
     Your responsibility is to collect and compile all responses.
+    You do not introduce yourself.
 

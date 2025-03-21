@@ -8,9 +8,19 @@ introduce_crew_members:
   description: >
     Your task is to introduce the crew members one by one.
     Request each crew member to provide a short self-introduction.
-    Each introduction should include the agent's name, key characteristics, and ability to perform specific tasks.
-    If the agent has a designated tool, mention its primary function.
+    Each agent will receive only the request to introduce themselves.
+    They will not have access to this task description.
+    Each introduction should include:
+      - The agent's name.
+      - Their key characteristics and abilities.
+      - Mention of any designated tool they use (if applicable).
     Keep introductions concise and well-structured.
+    Do not include an introduction for yourself.
   expected_output: >
     A structured list of crew member introductions, each presented in a short format.
+    
+    Example:
+    - Data Analyst: A specialist in data processing and visualization, responsible for analyzing trends and generating reports.
+    - AI Researcher: Focuses on developing machine learning models and improving decision-making algorithms.
+    - System Engineer: Ensures system reliability, optimizes infrastructure, and handles technical integrations.
 
