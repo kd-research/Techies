@@ -107,10 +107,10 @@ techiex run mycrew
 ## 📄 Documentation
 
 - 📘 [Getting Started with Techies](./docs/Getting-Started-With-Techies.md)
+- 🚀 [Running Predefined Crews](./docs/Running-Predefined-Crews.md)
 - 🧩 [Understand Crew Configurations](./docs/Understand-Crew-Configurations.md)
 - 🔧 [Modifying Existing Crews](./docs/Modifying-Existing-Crews.md)
 - 🏗 [Create Your Own Crew](./docs/Create-Your-Own-Crew.md)
-- 🚀 [Running Predefined Crews](./docs/Running-Predefined-Crews.md)
 
 ---
 
