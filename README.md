@@ -142,5 +142,5 @@ techies/
 
 ## 🤝 License
 
-Licensed under the [MIT License](./LICENSE).
+Licensed under the [GNU GPLv3 License](./LICENSE).
 Created and maintained by [Kaidong Hu](https://hukaidong.com) at [KD Research](https://github.com/kd-research).
