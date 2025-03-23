@@ -1,93 +1,146 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kd-research/Techies/main/docs/assets/techies-logo.png" alt="Techies Logo" height="100">
+</p>
 
-# Setting environment variables
+<h1 align="center">Techies</h1>
 
-First, we need to make sure that all the required API keys are added to your environment variable. These include:
-- [OpenAI API](https://openai.com/index/openai-api/) Key: For using openAI LLM models \
-  `export OPENAI_API_KEY=<Your API Key>`
-- [Agentops AI](https://www.agentops.ai/) Key: For agents' monitoring, testing and debugging \
-  `export AGENTOPS_API_KEY=<Your API Key>`
-- [Freesound API](https://freesound.org/apiv2/apply) Key: For downloading sound resources \
-  `export FREESOUND_CLIENT_API_KEY=<Your API Key>`
+<p align="center">
+  A modular agent framework for collaborative creativity and structured workflows.
+</p>
 
-# Usage
+<p align="center">
+  <a href="https://github.com/kd-research/Techies/releases">
+    <img src="https://img.shields.io/github/v/tag/kd-research/Techies?label=version&color=blue" alt="Latest Version">
+  </a>
+  <a href="https://github.com/kd-research/Techies/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/kd-research/Techies" alt="License">
+  </a>
+  <img src="https://img.shields.io/badge/python-3.12.4%2B-blue.svg" alt="Python Version">
+  <img src="https://img.shields.io/badge/cli-techies%20%7C%20techiex-orange" alt="CLI Interface">
+</p>
 
-- To install the package
-    ```bash
-    $ VERSION=0.1.2
-    $ pip install git+https://github.com/kd-research/Techies.git@${VERSION}
-    ```
+---
 
-- Show avaliable crews
-    ```bash
-    $ techies list_crews
-    ```
-- Show help on specific crew
-    ```bash
-    $ techies help `crew_name`
-    ```
-- To run the crew
-    
-    ```bash
-    $ techies --ai openai run hierarchy_crew_v2 --game Wordlenew_game_specifications
-    ```
+## 🚀 What is Techies?
 
+**Techies** is a flexible agent framework for designing and running collaborative, multi-agent workflows. It supports dynamic planning, modular task execution, and structured agent coordination — ideal for creative tasks such as game design, code generation, and more.
 
-# Developing Techies
+Originally designed for research at [KD Research](https://github.com/kd-research), Techies is led by [Kaidong Hu](https://hukaidong.com).
 
-## To compile
+---
 
-Follow these steps to compile the project locally:
+## 📦 Installation
+
+Install via Git:
+
 ```bash
-# Clone the latest code from the remote branch
-$ git clone https://github.com/kd-research/Techies.git
-# Move to the root director
-$ cd Techies
-# Compile the code
-$ pip install -e .
+VERSION=0.1.2
+pip install git+https://github.com/kd-research/Techies.git@${VERSION}
 ```
 
-As long as no error appears, it means all the dependencies have been met, and the code is good to go!
-  
-## To run
+This will install both:
 
-Follow these steps to run *Hierarch Crew* (game tree)  and/or *HTML Crew* (coding):
+- ✅ `techies` — original stable CLI
+- 🧪 `techiex` — new **experimental CLI** (Click-based)
+
+---
+
+## 🧰 Environment Setup
+
+Set the following environment variables before running Techies:
+
 ```bash
-# Create a new working directory in the root and move there
-$ mkdir working_dir
-$ cd working_dir
+# OpenAI API Key (for LLM-powered agents)
+export OPENAI_API_KEY=<your-api-key>
+
+# AgentOps API Key (monitoring, logging)
+export AGENTOPS_API_KEY=<your-api-key>
+
+# Freesound API Key (optional audio assets)
+export FREESOUND_CLIENT_API_KEY=<your-api-key>
 ```
 
-### For Hierarchy Crew
+---
 
-- Use the following command to run the hierarchy crew
-    ```bash
-    $python ../techies/cli.py --ai `LLM_MODEL` run hierarchy_crew_v2 --game `GAME_SPECS` 
-    ```
-    Here is a sample run:
-    ```bash
-    $ python ../techies/cli.py --ai openai run hierarchy_crew_v2 --game Wordlenew_game_specifications
-    ```
-  
-- You can choose an exisiting [game specification](https://github.com/kd-research/Techies/blob/main/techies/game_specs.py) or add a new one in the same file.
-- The hierarchy crew will generate a game_hierarchy.xml (game tree file), in the current working directory (e.g., inside working_dir/)
+## ⚙️ CLI Tools
 
-### For HTML Crew
+### ✅ `techies`: Original CLI
 
-- Use the following command to run the HTML crew
-    ```bash
-    $ python ../techies/cli.py --ai `LLM_MODEL` run html5_crew
-    ```
+Stable, battle-tested interface.
 
-    Here is a sample run:
-    ```bash
-    $ python ../techies/cli.py --ai openai run html5_crew
-    ```
-  
-- HTML crew assumes that there is a `game_hierarchy.xml` file exist in the current working directory (e.g., working_dir/game_hierarchy.xml).
-- The HTML crew will generate a couple of files as output in the current working directory (E.g., inside working_dir/). These include:
-    - index.html
-    - style.css
-    - script.js
-    - game.html (combines `index.html`, `style.css`, and `script.js`)
-    - *.mp3 (sounds files)
-- You can run the game by either running `game.html` or `index.html`
+```bash
+techies list_crews
+techies introduce my_crew
+techies run hierarchy_crew_v2 --game tictactoe
+```
+
+> See [Getting Started with Techies](./Getting-Started-With-Techies.md) for full usage.
+
+---
+
+### 🧪 `techiex`: Experimental CLI (Drop-in Replacement)
+
+Click-based CLI designed to **match and extend** `techies`. Supports dynamic crew detection and automatic argument validation.
+
+```bash
+techiex list_crews
+techiex introduce my_crew
+techiex run hierarchy my_crew --game tictactoe
+techiex run html5 html5_crew game_hierarchy.xml
+techiex run my_custom_crew
+```
+
+> To test it as your default CLI, use:
+> ```bash
+> alias techies="techiex"
+> ```
+
+> ⚠️ `techiex` will **eventually replace** `techies`.
+
+---
+
+## 📄 Documentation
+
+- [Getting Started with Techies](./Getting-Started-With-Techies.md)
+- [Running Predefined Crews](./Running-Predefined-Crew.md)
+- [Modifying Existing Crews](./Modifying-Existing-Crew.md)
+- [Create Your Own Crew](./Create-Your-Own-Crew.md)
+
+---
+
+## 🛠 Development
+
+### Clone & Install Locally
+
+```bash
+git clone https://github.com/kd-research/Techies.git
+cd Techies
+pip install -e .
+```
+
+> Recommended Python version: **3.12.4**
+
+This gives you access to both `techies` and `techiex` command-line tools.
+
+---
+
+## 🗂 Directory Overview
+
+```
+techies/
+├── cli/               # Click-based experimental CLI
+│   ├── commands/      # Subcommands: run, introduce, etc.
+│   ├── utils/         # Crew dispatching, helpers
+│   └── main.py        # CLI entry point
+├── agent.py
+├── task.py
+├── crew.py
+└── ...
+```
+
+---
+
+## 🤝 License
+
+Licensed under the [MIT License](./LICENSE).
+Created and maintained by [Kaidong Hu](https://hukaidong.com) at [KD Research](https://github.com/kd-research).
