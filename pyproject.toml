@@ -6,7 +6,8 @@ readme = "README.md"
 version = "0.4.0"
 
 [tool.poetry.scripts]
-techies = "techies.cli:main"
+techies = "techies._cli:main"
+techiex = "techies.cli.main:main" # new experimental cli
 
 [tool.poetry.dependencies]
 python                 =  "3.12.4"
@@ -29,6 +30,7 @@ freesound-python       =  {git = "https://github.com/MTG/freesound-python", rev 
 # all = ["gpt4all", "groq", "langchain-groq", "langchain-huggingface"]
 # groq = ["groq", "langchain-groq"]
 # local = ["gpt4all", "langchain-huggingface"]
+click = "^8.1.8"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
