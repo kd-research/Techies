@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kd-research/Techies/new-cli/docs/assets/techies-logo.png" alt="Techies Logo" height="100">
+  <img src="https://raw.githubusercontent.com/kd-research/Techies/new-cli/docs/assets/techies-logo.png" alt="Techies Logo" height="150">
 </p>
 
 <h1 align="center">Techies</h1>
