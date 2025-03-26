@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kd-research/Techies/new-cli/docs/assets/techies-logo.png" alt="Techies Logo" height="120">
+  <img src="https://raw.githubusercontent.com/kd-research/Techies/main/docs/assets/techies-logo.png" alt="Techies Logo" height="120">
 </p>
 
 <h1 align="center">Techies</h1>
@@ -12,7 +12,7 @@
   <a href="https://github.com/kd-research/Techies/releases">
     <img src="https://img.shields.io/github/v/tag/kd-research/Techies?label=version&color=blue" alt="Latest Version">
   </a>
-  <a href="https://github.com/kd-research/Techies/blob/new-cli/LICENSE">
+  <a href="https://github.com/kd-research/Techies/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/kd-research/Techies" alt="License">
   </a>
   <img src="https://img.shields.io/badge/python-3.12.4%2B-blue.svg" alt="Python Version">
