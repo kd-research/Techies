@@ -128,22 +128,6 @@ pip install -e .
 
 ---
 
-## 🗂 Directory Overview
-
-```
-techies/
-├── cli/               # Click-based experimental CLI
-│   ├── commands/      # Subcommands: run, introduce, etc.
-│   ├── utils/         # Crew dispatching, helpers
-│   └── main.py        # CLI entry point
-├── agent.py
-├── task.py
-├── crew.py
-└── ...
-```
-
----
-
 ## ✅ Best Practices
 
 - Use `techiex` with `scaffold` to start your own crew
