@@ -27,52 +27,9 @@ def get_system_crew(crewname, manage_agentops=False, introduce_only=False):
     else:
         raise ValueError("crewname must be a string or a list of strings")
 
-def get_groq_crew(crewname, **kwargs):
-    if kwargs.get("introduce_only", False):
-        raise ValueError("Introduce only is not supported for GROQ crew")
-
-    from langchain_groq import ChatGroq
-
-    agent_pool = Agent.eager_load_all(llm=ChatGroq(model="llama3-8b-8192"))
-    task_pool = Task.eager_load_all(agent_pool)
-    crew = Crew(
-        crewname,
-        agent_pool=agent_pool,
-        task_pool=task_pool,
-        embedder={
-            "provider": "huggingface",
-            "config": {
-                "model": "sentence-transformers/all-mpnet-base-v2"
-            }
-        },
-        max_rpm=2
-    )
-
-    return crew
-
-def get_openai_crew(*args, **kwargs):
-    os.environ["MODEL"] = "openai/o3-mini"
-    return get_system_crew(*args, **kwargs)
-
-
-def get_anthropic_crew(crewname, **kwargs):
-    os.environ["MODEL"] = "anthropic/claude-3-7-sonnet-latest"
-    return get_system_crew(crewname, **kwargs)
-
-
 class CLI:
     def __init__(self):
         self.prog_name = os.path.basename(sys.argv[0])
-
-    def assign_ai_crew(self, ai):
-        if ai == "groq":
-            self.get_crew = get_groq_crew
-        elif ai == "openai":
-            self.get_crew = get_openai_crew
-        elif ai == "anthropic":
-            self.get_crew = get_anthropic_crew
-        elif ai == "system":
-            self.get_crew = get_system_crew
 
     def execute(self, argv):
         description = f"""{self.prog_name} - Command line interface
@@ -91,14 +48,12 @@ Usage:
         parser = argparse.ArgumentParser(prog=self.prog_name, description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
         parser.add_argument('command', type=str, help='Command to run')
         parser.add_argument('crew', type=str, help='Crew to use', nargs='?', default="hierarchy_crew")
-        parser.add_argument('--ai', type=str, help='AI to use', default="openai", choices=["groq", "openai", "anthropic", "system"])
+
         if not argv or (argv[0] == "help" and len(argv) == 1):
             parser.print_help()
             sys.exit(1)
 
         options, args = parser.parse_known_args(argv)
-
-        self.assign_ai_crew(options.ai)
 
         if options.command == "list_crews":
             print("[Available crews]")
@@ -135,7 +90,7 @@ Usage:
             print("Command not found")
 
     def introduce_crew(self, crewname):
-        crew = self.get_crew(crewname, introduce_only=True)
+        crew = get_system_crew(crewname, introduce_only=True)
         crew.kickoff()
 
     def kickoff_default_crew(self, extra_args):
@@ -143,7 +98,7 @@ Usage:
         parser.add_argument('crew', type=str, help=f'Crew to use, with {extra_args[0]}')
         options = parser.parse_args(extra_args)
 
-        crew = self.get_crew(options.crew, manage_agentops=True).kickoff()
+        get_system_crew(options.crew, manage_agentops=True).kickoff()
 
     def kickoff_hierarchy_crew(self, extra_args):
         parser = argparse.ArgumentParser(prog=f"{self.prog_name} run", description=f"{extra_args[0]} - Description-included crew interface")
@@ -153,7 +108,7 @@ Usage:
         options = parser.parse_args(extra_args)
 
         if options.game:
-            game_specifications= game_specs(options.game)
+            game_specifications = game_specs(options.game)
         elif options.gamefiles:
             with fileinput.input(files=options.gamefiles) as f:
                 game_specifications = "\n".join(f)
@@ -162,7 +117,7 @@ Usage:
             sys.exit(1)
 
         inputs = { "game_specifications": game_specifications }
-        crew = self.get_crew(options.crew, manage_agentops=True).kickoff(inputs)
+        get_system_crew(options.crew, manage_agentops=True).kickoff(inputs)
 
     def kickoff_html5_crew(self, extra_args):
         if "--help" in extra_args:

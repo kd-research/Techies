@@ -4,7 +4,7 @@ def game_specs(key):
 
 specs = dict(
 
-NumSeq_game_specifications = """
+numseq = """
 NumSeq Scramble is a strategic board game where players aim to form the longest
 sequences of the same digit on a 15x15 grid to score points. Each player starts
 with 7 number tiles, drawing from a bag, and takes turns placing tiles to build
@@ -19,7 +19,7 @@ thinking, and problem-solving skills, blending the familiar Scrabble format
 with numerical challenges.
 """,
 
-Wordsum_game_specifications = """
+wordsum = """
 Players start with a 9x9 blank grid similar to Sudoku, where each square can
 hold a letter or number tile. The objective is to fill the grid with valid
 words horizontally and vertically, while each row and column must also satisfy
@@ -31,14 +31,14 @@ Special tiles and numerical modifiers, along with time-based or limited-move
 challenges, add strategic depth to the game.
 """,
 
-Boggle_game_specifications = """
+boggle = """
 Players start with a 9x9 grid, where each square has a letter.
 Player could choose a square and a direction (up, down, left, right) to form a word.
 The word must be at least 3 letters long.
 There will be one solution that every letter in the grid is used exactly once.
 """,
 
-LexiMath_game_specifications = """
+leximath = """
 Game Title: LexiMath Concept: LexiMath combines the word-building mechanics of
 popular word games with the numerical challenge of mathematical puzzles.
 Players strategically place tiles on a grid to form words horizontally and
@@ -58,7 +58,7 @@ challenges players to think strategically about both forming words and solving
 mathematical equations within a single grid-based puzzle format.
 """,
 
-Word2048_game_specifications = """
+word2048 = """
 Word2048 merges the sliding tile mechanics of 2048 with the word-building
 creativity of Scrabble. Players slide letter tiles on a grid to form words,
 combining identical letters to create higher-value words. The grid consists of
@@ -74,7 +74,7 @@ gameplay experience, blending linguistic skills and spatial reasoning for fans
 of both word and puzzle games.
 """,
 
-Wordle_game_specifications = """
+wordle = """
 The client envisions a Wordle-inspired game where the target word can vary between 
 3 to 5 letters. Players will have up to 10 guesses to identify the correct word. 
 To aid players, an alphabet chart will be provided, utilizing color-coded indicators: 
@@ -86,7 +86,7 @@ such as themed word lists, daily challenges, or power-ups have been specified, b
 these can be considered in future conversations to enrich the player experience.
 """,
 
-Tictactoe_game_specifications = """
+tictactoe = """
 The client is seeking an HTML5-based Tic Tac Toe game with a comprehensive user interface 
 that includes a welcome screen, menu buttons, game over screen, and a proper scoring mechanism. 
 Specifically, the requirements are: 1. **Welcome Screen**: An initial screen that welcomes 
@@ -107,7 +107,7 @@ CSS for styling, and JavaScript for functionality to ensure an immersive and int
 experience.
 """,
 
-Pure2048_game_specifications = """
+pure2048 = """
 The client has requested the development of a simple 2048 game featuring a
 standard 4x4 game board. The primary objective is to maintain the classic
 essence of the 2048 gameplay while ensuring the overall user experience remains

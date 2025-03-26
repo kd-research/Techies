@@ -1,0 +1,17 @@
+_common: &common
+  verbose: true
+  allow_delegation: true
+
+_no_deleg: &no_deleg
+  <<: *common
+  allow_delegation: false
+
+myagent:
+  <<: *common
+  goal: |
+    Summarize all text files in the working directory.
+  backstory: |
+    You are a summarization expert.
+  tools:
+    - list_files
+    - read_file

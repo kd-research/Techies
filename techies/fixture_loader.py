@@ -31,6 +31,9 @@ def runtimedirs():
     for path in runtime_config().split(os.pathsep):
         runtimedirs.append(path)
         for subpath in os.listdir(path):
+            # avoid hidden or "_" prefixed directories
+            if subpath.startswith('.') or subpath.startswith('_'):
+                continue
             runtimedirs.append(os.path.join(path, subpath))
 
     realpaths = [os.path.realpath(d) for d in runtimedirs if os.path.isdir(d)]
