@@ -12,7 +12,7 @@ def kickoff_default_crew(crewname):
 
 def kickoff_hierarchy_crew(crewname, game=None, gamefiles=None):
     if not game and not gamefiles:
-        click.echo("Error: either --game or gamefiles must be provided.", err=True)
+        print("Error: either --game or gamefiles must be provided.")
         sys.exit(1)
 
     if game:

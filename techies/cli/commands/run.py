@@ -16,20 +16,26 @@ def run(ctx):
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help())
 
-@run.command("hierarchy")
-@click.argument("crew")
+@run.command("hierarchy_crew")
 @click.option("--game", help="Predefined game specification")
 @click.argument("gamefiles", required=False)
-def run_hierarchy(crew, game, gamefiles):
-    """Run a hierarchy-based crew with game input."""
-    kickoff_hierarchy_crew(crewname=crew, game=game, gamefiles=gamefiles)
+def run_hierarchy_crew(*args, **kwargs):
+    click.echo("Running hierarchy crew")
+    args = ["hierarchy_crew"] + list(args)
+    kickoff_hierarchy_crew(*args, **kwargs)
 
-@run.command("html5")
-@click.argument("crew")
+@run.command("hierarchy_crew_v2")
 @click.option("--game", help="Predefined game specification")
 @click.argument("gamefiles", required=False)
-def run_html5(crew, game, gamefiles):
-    """Run an HTML5 crew with game input and optional scaffold injection."""
-    kickoff_html5_crew(crewname=crew, game=game, gamefiles=gamefiles)
+def run_hierarchy_crew_v2(*args, **kwargs):
+    click.echo("Running hierarchy crew v2")
+    args = ["hierarchy_crew_v2"] + list(args)
+    kickoff_hierarchy_crew(*args, **kwargs)
 
-# The fallback/default is handled by DefaultRunGroup, not defined as a subcommand
+@run.command("html5_crew")
+@click.option("--game", help="Predefined game specification")
+@click.argument("gamefiles", required=False)
+def run_html5(*args, **kwargs):
+    click.echo("Running HTML5 crew")
+    args = ["html5_crew"] + list(args)
+    kickoff_html5_crew(*args, **kwargs)

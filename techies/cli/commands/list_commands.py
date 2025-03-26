@@ -26,3 +26,4 @@ def list_game_specs():
     """List available game specifications."""
     click.echo("[Available game specifications]")
     click.echo("\t".join(specs.keys()))
+

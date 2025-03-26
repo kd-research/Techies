@@ -1,0 +1,11 @@
+_crew_common: &crew_common
+  cache: false
+  max_iter: 100
+  memory: false
+
+mycrew:
+  <<: *crew_common
+  agents:
+    - myagent
+  tasks:
+    - mytask

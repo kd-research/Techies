@@ -1,0 +1,11 @@
+_task_common: &task_common
+  human_input: false
+  async_execution: false
+
+mytask:
+  <<: *task_common
+  agent: myagent
+  description: |
+    Read all `.txt` files and write a summary to summary.txt
+  expected_output: >
+    summary.txt is created with the combined summary.
