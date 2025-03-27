@@ -1,11 +1,6 @@
 name: Sync docs to Wiki
 
-on:
-  push:
-    paths:
-      - 'docs/**'
-    branches:
-      - main
+on: [push]
 
 jobs:
   sync-to-wiki:
