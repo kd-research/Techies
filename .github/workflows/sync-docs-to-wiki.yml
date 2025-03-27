@@ -5,7 +5,7 @@ on:
     paths:
       - 'docs/**'
     branches:
-      - new-cli
+      - main
 
 jobs:
   sync-to-wiki:
