@@ -47,7 +47,7 @@ You can now open and edit the dumped YAML files:
 After editing, run the crew from the same directory:
 
 ```bash
-techies run hierarchy_crew_v2 --game snake
+techies run hierarchy_crew_v2 --game word2048
 ```
 
 Techies will prioritize the local files over built-in definitions when resolving the crew configuration.
