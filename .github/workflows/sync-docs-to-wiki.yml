@@ -2,10 +2,7 @@ name: Sync docs to Wiki
 
 on:
   push:
-    paths:
-      - 'docs/**'
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   sync-to-wiki:
@@ -17,11 +14,11 @@ jobs:
 
       - name: Clone the Wiki repository
         run: |
-          git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.wiki.git wiki
+          git clone https://x-access-token:${{ secrets.WIKI_PAT }}@github.com/${{ github.repository }}.wiki.git wiki
 
       - name: Sync docs to wiki
         run: |
-          rsync -av --delete docs/ wiki/
+          rsync -av --delete --exclude=.git docs/ wiki/
           cd wiki
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
