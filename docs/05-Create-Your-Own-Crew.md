@@ -12,7 +12,7 @@ This guide walks you through how to scaffold a new custom crew from scratch, lin
 
 ---
 
-## 🚀 Step 1: Scaffold a New Crew
+## Step 1: Scaffold a New Crew
 
 Use the `techies scaffold <crewname>` command to generate a starter configuration:
 
@@ -35,7 +35,7 @@ Each includes a minimal working example:
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```bash
 my_crew/
@@ -48,7 +48,7 @@ Each file supports multiple entries, structured by unique keys.
 
 ---
 
-## 👤 agents.yml
+## `agents.yml`
 
 Defines agent behaviors, goals, tools, and delegation settings.
 
@@ -79,7 +79,7 @@ myagent:
     - read_file
 ```
 
-### 🔄 Delegation Rules
+### Delegation Rules
 
 - Agents using `_common` can delegate tasks to **other agents in the crew**
 - Agents using `_no_deleg` **must work independently**
@@ -87,7 +87,7 @@ myagent:
 
 ---
 
-## 🧠 tasks.yml
+## `tasks.yml`
 
 Defines what tasks should be done and which agent does them.
 
@@ -109,7 +109,7 @@ Use `_task_common` to keep your task definitions clean and DRY.
 
 ---
 
-## 🧩 crews.yml
+## `crews.yml`
 
 Defines how agents and tasks work together in a structured execution plan.
 
@@ -145,9 +145,9 @@ The arguments are passed in the same order as defined and will be available to t
 
 ---
 
-## 🧪 Step 2: Run Your Custom Crew
+## Step 2: Run Your Custom Crew
 
-### ✅ From inside the crew folder:
+### From inside the crew folder:
 
 ```bash
 techies run mycrew
@@ -157,14 +157,14 @@ Techies will automatically detect your YAMLs and load local overrides.
 
 ---
 
-### 🌐 From anywhere using `TECHIES_RUNTIME`:
+### From anywhere using `TECHIES_RUNTIME`:
 
 ```bash
 export TECHIES_RUNTIME=/absolute/path/to/my_crew
 techies run mycrew
 ```
 
-> 📌 This disables built-in crews and agents unless you include the system runtime path:
+> This disables built-in crews and agents unless you include the system runtime path:
 
 ```bash
 export TECHIES_RUNTIME=$(techies get_runtime_path):/absolute/path/to/my_crew
@@ -177,7 +177,7 @@ Use this if:
 
 ---
 
-## 💬 (Optional) Step 3.5: Introduce Your Crew
+## (Optional) Step 3.5: Introduce Your Crew
 
 You can test your custom crew using `techies introduce`:
 
@@ -193,11 +193,11 @@ This will run a built-in task where your crew introduces itself.
 export TECHIES_RUNTIME=$(techies get_runtime_path):/absolute/path/to/my_crew
 ```
 
-✅ A TODO is in place to remove this dependency in the future.
+A TODO is in place to remove this dependency in the future.
 
 ---
 
-## 🛠 List Available Tools
+## List Available Tools
 
 Your `agents.yml` scaffold will include commented tool names.
 
@@ -207,11 +207,11 @@ You can list them manually using:
 techies list_tools
 ```
 
-> 🧪 Custom tool support is a **work in progress** — stay tuned!
+> Custom tool support is a **work in progress** — stay tuned!
 
 ---
 
-## ✅ Best Practices
+## Best Practices
 
 - Use `_common`, `_no_deleg`, `_task_common`, and `_crew_common` anchors for reusable settings
 - Match agents, tasks, and crews using unique keys
@@ -221,7 +221,7 @@ techies list_tools
 
 ---
 
-## 🔗 See Also
+## See Also
 
 - [Understand Crew Configurations](./Understand-Crew-Configurations.md)
 - [Modifying Existing Crews](./Modifying-Existing-Crew.md)

@@ -21,7 +21,7 @@
 
 ---
 
-## 🚀 What is Techies?
+## What is Techies?
 
 **Techies** is a flexible agent framework for designing and running collaborative, multi-agent workflows. It supports dynamic planning, modular task execution, and structured agent coordination — ideal for creative tasks such as game design, code generation, and more.
 
@@ -29,7 +29,7 @@ Developed by the [KD Research](https://github.com/kd-research) organization, led
 
 ---
 
-## 📦 Installation
+## Installation
 
 Install Techies from GitHub:
 
@@ -40,8 +40,8 @@ pip install git+https://github.com/kd-research/Techies.git@${VERSION}
 
 This installs both:
 
-- ✅ `techies` — original stable CLI
-- 🧪 `techiex` — new **experimental CLI** (Click-based)
+- `techies` — original stable CLI
+- `techiex` — new **experimental CLI** (Click-based)
 
 > To alias `techiex` as your default CLI:
 > ```bash
@@ -50,7 +50,7 @@ This installs both:
 
 ---
 
-## 🧰 Environment Setup
+## Environment Setup
 
 Set the following environment variables before running Techies:
 
@@ -68,15 +68,15 @@ export FREESOUND_CLIENT_API_KEY=<your-api-key>
 export MODEL=openai/gpt-4o
 ```
 
-> 🔍 Visit [LiteLLM's model list](https://docs.litellm.ai/docs/providers) for supported providers.
+> Visit [LiteLLM's model list](https://docs.litellm.ai/docs/providers) for supported providers.
 
 > If you're using another LLM provider (e.g. Groq, Anthropic, Mistral), you'll need to export its matching API key too.
 
 ---
 
-## ⚙️ CLI Tools
+## CLI Tools
 
-### ✅ `techies`: Original CLI
+### `techies`: Original CLI
 
 Stable, tested interface for running built-in crews.
 
@@ -86,13 +86,13 @@ techies run hierarchy_crew_v2 --game tictactoe
 techies introduce hierarchy_crew_v2
 ```
 
-### 🧪 `techiex`: Experimental CLI (Drop-in Replacement)
+### `techiex`: Experimental CLI (Drop-in Replacement)
 
 Fully modular CLI with support for:
 
-- 🛠️ `scaffold` — create new custom crews
-- 🧠 `dump` — extract and modify existing crews
-- 🌍 `TECHIES_RUNTIME` — define custom runtime paths
+- `scaffold` — create new custom crews
+- `dump` — extract and modify existing crews
+- `TECHIES_RUNTIME` — define custom runtime paths
 
 ```bash
 techiex scaffold my_crew
@@ -104,17 +104,17 @@ techiex run mycrew
 
 ---
 
-## 📄 Documentation
+## Documentation
 
-- 📘 [Getting Started with Techies](./docs/Getting-Started-With-Techies.md)
-- 🚀 [Running Predefined Crews](./docs/Running-Predefined-Crews.md)
-- 🧩 [Understand Crew Configurations](./docs/Understand-Crew-Configurations.md)
-- 🔧 [Modifying Existing Crews](./docs/Modifying-Existing-Crews.md)
-- 🏗 [Create Your Own Crew](./docs/Create-Your-Own-Crew.md)
+- [Getting Started with Techies](./docs/Getting-Started-With-Techies.md)
+- [Running Predefined Crews](./docs/Running-Predefined-Crews.md)
+- [Understand Crew Configurations](./docs/Understand-Crew-Configurations.md)
+- [Modifying Existing Crews](./docs/Modifying-Existing-Crews.md)
+- [Create Your Own Crew](./docs/Create-Your-Own-Crew.md)
 
 ---
 
-## 🛠 Development
+## Development
 
 ### Clone & Install Locally
 
@@ -124,11 +124,11 @@ cd Techies
 pip install -e .
 ```
 
-> ✅ Requires Python `3.12.4+`
+> Requires Python `3.12.4+`
 
 ---
 
-## ✅ Best Practices
+## Best Practices
 
 - Use `techiex` with `scaffold` to start your own crew
 - Define a clean working directory for each run
@@ -137,7 +137,7 @@ pip install -e .
 
 ---
 
-## 🤝 License & Credits
+## License & Credits
 
 Techies is open-source and licensed under the [GPLv3 License](./LICENSE).  
 Created and maintained by [Kaidong Hu](https://hukaidong.com) at [KD Research](https://github.com/kd-research).

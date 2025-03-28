@@ -10,7 +10,7 @@ Before modifying or creating your own crew, it's important to understand how a T
 
 ---
 
-## 🧪 Dump a Crew Configuration
+## Dump a Crew Configuration
 
 Use the following command to inspect the definition of any built-in crew:
 
@@ -34,11 +34,11 @@ You can safely explore these files without modifying anything.
 
 ---
 
-## 📁 File Overview
+## File Overview
 
 ---
 
-### 👤 `agents.yml`
+### `agents.yml`
 
 This file defines the roles, personalities, and tool access of each agent.
 
@@ -70,7 +70,7 @@ hierarchy_architect_v2:
     - write_file
 ```
 
-### 🔄 Delegation Behavior
+### Delegation Behavior
 
 - `_common` agents **can delegate** tasks to others in the same crew  
 - `_no_deleg` agents must **complete their tasks independently**
@@ -78,7 +78,7 @@ hierarchy_architect_v2:
 
 ---
 
-### 🧠 `tasks.yml`
+### `tasks.yml`
 
 Defines task logic and links each task to the appropriate agent.
 
@@ -103,7 +103,7 @@ Each task:
 
 ---
 
-### 🧩 `crews.yml`
+### `crews.yml`
 
 Defines a complete crew — the agents and tasks involved, and how they're executed.
 
@@ -128,7 +128,7 @@ hierarchy_crew_v2:
 
 Each crew is an execution pipeline — a collection of agents performing tasks in order.
 
-#### 📣 Input Arguments
+#### Input Arguments
 
 The `input_args` key allows crews to accept command-line arguments when run:
 
@@ -150,11 +150,11 @@ These values will be accessible in the crew's tasks as template variables.
 
 ---
 
-## 🤖 Comparing Agent Definition vs. Self-Introduction
+## Comparing Agent Definition vs. Self-Introduction
 
 The `techies introduce <crewname>` command gives a high-level overview of the crew, including auto-generated agent introductions.
 
-### 📘 Agent YAML (Definition)
+### Agent YAML (Definition)
 
 ```yaml
 hierarchy_architect_v2:
@@ -167,26 +167,26 @@ hierarchy_architect_v2:
     - read_file
 ```
 
-### 💬 Introduction Output
+### Introduction Output
 
 ```
 hierarchy_architect_v2: An expert in game architecture focusing on creating clear, modular structures for complex projects. Key characteristics include logical organization and the ability to design expandable game hierarchies. Uses dedicated tools for managing and updating files.
 ```
 
-### 🔍 Why This Matters
+### Why This Matters
 
 - The introduction is generated from the agent's `goal`, `backstory`, and tools
 - It reflects the **professional tone and scope** of the agent's role
 - It's a great way to validate your intent and ensure consistency in design
 
-> 🧪 Try this yourself after dumping a crew:
+> Try this yourself after dumping a crew:
 > ```bash
 > techies introduce hierarchy_crew_v2
 > ```
 
 ---
 
-## ✅ Summary
+## Summary
 
 - Crews are composed of agents and tasks defined in three YAML files
 - Each file supports multiple definitions under unique keys
@@ -196,7 +196,7 @@ hierarchy_architect_v2: An expert in game architecture focusing on creating clea
 
 ---
 
-## 🚀 Next Step
+## Next Step
 
 Ready to make your own changes?
 

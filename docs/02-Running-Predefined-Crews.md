@@ -6,7 +6,7 @@ Techies comes with several **predefined crews** designed for creative workflows 
 
 ---
 
-## 📋 Available Crews
+## Available Crews
 
 Run the following to list available crews:
 
@@ -26,7 +26,7 @@ hierarchy_crew_v2
 
 ---
 
-## 📁 Working Directory Rules
+## Working Directory Rules
 
 When running any crew, Techies assumes the **current working directory** is a clean, isolated workspace.
 
@@ -35,7 +35,7 @@ When running any crew, Techies assumes the **current working directory** is a cl
 - Any outputs, including HTML files, code, or intermediate artifacts, will be written here.
 - **Do not run crews in your home folder or a project root** — always use a temporary or dedicated folder.
 
-### ✅ Recommended
+### Recommended
 
 ```bash
 mkdir working_dir
@@ -45,21 +45,21 @@ techies run hierarchy_crew_v2 --game word2048
 
 ---
 
-## 🧠 1. `hierarchy_crew`
+## 1. `hierarchy_crew`
 
 This is the original hierarchy-planning crew.
 
-### 🔍 Purpose:
+### Purpose:
 Breaks down a game concept into a structured **game hierarchy tree**, representing game mechanics and sub-components.
 
-### ✅ Input:
+### Input:
 - Either a **predefined game spec** via `--game`, or
 - A custom game prompt via file (`.txt`)
 
-### 📦 Output:
+### Output:
 - `game_hierarchy.xml`
 
-### ▶️ Example:
+### Example:
 
 ```bash
 techies run hierarchy_crew --game tictactoe
@@ -73,20 +73,20 @@ techies run hierarchy_crew my_game_idea.txt
 
 ---
 
-## 🚀 2. `hierarchy_crew_v2` (Recommended)
+## 2. `hierarchy_crew_v2` (Recommended)
 
 An improved version of `hierarchy_crew` with refined agents and logic.
 
-### 🔍 Purpose:
+### Purpose:
 Same goal as `hierarchy_crew`, but with better decomposition and structure. Preferred for most workflows.
 
-### ✅ Input:
+### Input:
 - Same as `hierarchy_crew`
 
-### 📦 Output:
+### Output:
 - `game_hierarchy.xml` (in current directory)
 
-### ▶️ Example:
+### Example:
 
 ```bash
 techies run hierarchy_crew_v2 --game snake
@@ -94,47 +94,47 @@ techies run hierarchy_crew_v2 --game snake
 
 ---
 
-## 🎨 3. `html5_crew`
+## 3. `html5_crew`
 
 Generates a full playable HTML5 game based on a game hierarchy structure.
 
-### 🔍 Purpose:
+### Purpose:
 Converts a `game_hierarchy.xml` file (from a hierarchy crew) into a playable game using HTML, CSS, JS, and sounds.
 
-### ✅ Input:
+### Input:
 - `game_hierarchy.xml` must exist in the current directory
 
-### 📦 Output:
+### Output:
 - `index.html`
 - `style.css`
 - `script.js`
 - `game.html` (merged)
 - Optional: `.mp3` sound files
 
-### ▶️ Example:
+### Example:
 
 ```bash
 techies run html5_crew game_hierarchy.xml
 ```
 
-> ⚠️ If `game.html` doesn't exist, it will scaffold it using a built-in template.
+> If `game.html` doesn't exist, it will scaffold it using a built-in template.
 
 ---
 
-## 🧑‍💻 4. `code_crew`
+## 4. `code_crew`
 
 Generates Python code components from a given game hierarchy.
 
-### 🔍 Purpose:
+### Purpose:
 Transforms game structure (in `.xml`) into basic playable code components, focusing on **game logic and mechanics**.
 
-### ✅ Input:
+### Input:
 - `game_hierarchy.xml` file in current directory
 
-### 📦 Output:
+### Output:
 - Python modules/files related to the game's logic
 
-### ▶️ Example:
+### Example:
 
 ```bash
 techies run code_crew game_hierarchy.xml
@@ -144,7 +144,7 @@ techies run code_crew game_hierarchy.xml
 
 ---
 
-## 🧭 Recommended Workflow
+## Recommended Workflow
 
 To keep things clean and isolated, use a fresh working directory for each project:
 
@@ -166,7 +166,7 @@ techies run code_crew game_hierarchy.xml
 
 ---
 
-## 🧰 Debugging Tips
+## Debugging Tips
 
 - Use `techies introduce <crew>` to get a natural language explanation of what a crew does.
 - Ensure you are inside a writable working directory.
@@ -176,7 +176,7 @@ techies run code_crew game_hierarchy.xml
 
 ---
 
-## 🔗 Next Steps
+## Next Steps
 
 - [Modifying Existing Crews](./Modifying-Existing-Crew.md)
 - [Create Your Own Crew](./Create-Your-Own-Crew.md)
