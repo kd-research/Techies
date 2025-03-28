@@ -6,6 +6,6 @@ mytask:
   <<: *task_common
   agent: myagent
   description: |
-    Read all `.txt` files and write a summary to summary.txt
+    Read all `.txt` files and write a summary about { mytask_focus } to summary.txt
   expected_output: >
     summary.txt is created with the combined summary.

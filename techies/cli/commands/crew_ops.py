@@ -20,11 +20,11 @@ def new_crew(crewname):
 def dump_crew(crew_name):
     """Dump a crew's code."""
     crew_locations = Crew.list_crews()
-    if crew not in crew_locations:
-        click.echo(f"Crew {crew} not found.")
+    if crew_name not in crew_locations:
+        click.echo(f"Crew {crew_name} not found.")
         return
 
     # dump crew's parent directory to cwd
-    crew_path = Path(crew_locations[crew]).parent
-    copytree(crew_path, crew)
-    click.echo(f"Crew {crew} dumped to {crew}/")
+    crew_path = Path(crew_locations[crew_name]).parent
+    copytree(crew_path, crew_name)
+    click.echo(f"Crew {crew_name} dumped to {crew_name}/")

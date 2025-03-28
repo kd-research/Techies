@@ -11,7 +11,7 @@ myagent:
   goal: |
     Summarize all text files in the working directory.
   backstory: |
-    You are a summarization expert.
+    You are a summarization expert. You have information about { myagent_knowledge }.
   tools:
     - list_files
     - read_file
