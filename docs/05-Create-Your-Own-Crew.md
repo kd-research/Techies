@@ -73,7 +73,7 @@ myagent:
   goal: |
     Summarize all text files in the working directory.
   backstory: |
-    You are a summarization expert.
+    You are a summarization expert. You have information about { myagent_knowledge }.
   tools:
     - list_files
     - read_file
@@ -100,7 +100,7 @@ mytask:
   <<: *task_common
   agent: myagent
   description: |
-    Read all `.txt` files and write a summary to summary.txt
+    Read all `.txt` files and write a summary about { mytask_focus } to summary.txt
   expected_output: >
     summary.txt is created with the combined summary.
 ```
@@ -118,6 +118,7 @@ _crew_common: &crew_common
   cache: false
   memory: false
   max_iter: 50
+  input_args: []
 
 mycrew:
   <<: *crew_common
@@ -125,9 +126,22 @@ mycrew:
     - myagent
   tasks:
     - mytask
+  input_args:
+    - myagent_knowledge
+    - mytask_focus
 ```
 
 Crews are the entry points for running workflows.
+
+### Command-line Arguments
+
+Adding `input_args` allows your crew to accept direct command-line arguments:
+
+```bash
+techies run mycrew "Some input data" "Additional context info"
+```
+
+The arguments are passed in the same order as defined and will be available to the crew as template variables.
 
 ---
 

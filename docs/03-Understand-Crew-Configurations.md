@@ -1,9 +1,9 @@
 # Understand Crew Configurations
 
-Before modifying or creating your own crew, it’s important to understand how a Techies crew is structured. This guide will help you explore existing crews using `techies dump`, and walk you through how agents, tasks, and crews are defined in YAML.
+Before modifying or creating your own crew, it's important to understand how a Techies crew is structured. This guide will help you explore existing crews using `techies dump`, and walk you through how agents, tasks, and crews are defined in YAML.
 
 > ⚠️ This feature requires the **experimental CLI** (`techiex`)  
-> Make sure you’ve aliased it in your shell:
+> Make sure you've aliased it in your shell:
 > ```bash
 > alias techies="techiex"
 > ```
@@ -112,6 +112,7 @@ _crew_common: &crew_common
   cache: false
   memory: false
   max_iter: 100
+  input_args: []
 
 hierarchy_crew_v2:
   <<: *crew_common
@@ -121,9 +122,31 @@ hierarchy_crew_v2:
   tasks:
     - game_hierarchy_representation_v2
     - game_hierarchy_validation
+  input_args:
+    - game_description
 ```
 
 Each crew is an execution pipeline — a collection of agents performing tasks in order.
+
+#### 📣 Input Arguments
+
+The `input_args` key allows crews to accept command-line arguments when run:
+
+```yaml
+mycrew:
+  # ... other configuration ...
+  input_args:
+    - myagent_knowledge
+    - mytask_focus
+```
+
+When a crew defines `input_args`, you can pass values directly on the command line:
+
+```bash
+techies run mycrew "value for first arg" "value for second arg"
+```
+
+These values will be accessible in the crew's tasks as template variables.
 
 ---
 
@@ -152,9 +175,9 @@ hierarchy_architect_v2: An expert in game architecture focusing on creating clea
 
 ### 🔍 Why This Matters
 
-- The introduction is generated from the agent’s `goal`, `backstory`, and tools
-- It reflects the **professional tone and scope** of the agent’s role
-- It’s a great way to validate your intent and ensure consistency in design
+- The introduction is generated from the agent's `goal`, `backstory`, and tools
+- It reflects the **professional tone and scope** of the agent's role
+- It's a great way to validate your intent and ensure consistency in design
 
 > 🧪 Try this yourself after dumping a crew:
 > ```bash
@@ -169,6 +192,7 @@ hierarchy_architect_v2: An expert in game architecture focusing on creating clea
 - Each file supports multiple definitions under unique keys
 - `techies dump` is the best way to learn the internal structure of a crew
 - `techies introduce` gives you a real-world glimpse of how agents communicate
+- Crews can accept command-line arguments via the `input_args` configuration
 
 ---
 

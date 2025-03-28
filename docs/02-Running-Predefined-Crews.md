@@ -132,7 +132,7 @@ Transforms game structure (in `.xml`) into basic playable code components, focus
 - `game_hierarchy.xml` file in current directory
 
 ### 📦 Output:
-- Python modules/files related to the game’s logic
+- Python modules/files related to the game's logic
 
 ### ▶️ Example:
 
