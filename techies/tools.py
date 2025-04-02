@@ -272,23 +272,50 @@ class ReadHtmlExamplesTool(BaseTool):
         except Exception as e:
             return f"Failed to read examples: {e}"
 
-def get_all_tools():
-    # base_dir = TemporaryDirectory(delete=False).name
-    base_dir = "."
+# Global registry for tools
+_registered_tools = {}
 
-    # print(f"Temp directory created at: {base_dir}")
+def to_snake_case(name: str) -> str:
+    """Convert a string to snake_case format.
+    Example: 'ReadFileTool' -> 'read_file_tool'"""
+    pattern = re.compile(r'(?<!^)(?=[A-Z])')
+    return pattern.sub('_', name).lower()
+
+def register_tool(tool_class: Type[BaseTool], tool_id: Optional[str] = None) -> str:
+    """Register a tool class with an optional custom ID.
+    If no ID is provided, it will try to use the tool's id attribute,
+    or convert the class name to snake_case.
+    Returns the tool_id used for registration."""
+    if tool_id is None:
+        if hasattr(tool_class, 'id'):
+            tool_id = tool_class.id
+        else:
+            tool_id = to_snake_case(tool_class.__name__)
+    
+    tool = tool_class(base_dir=".")
+    tool.cache_function = lambda args, result: False
+    _registered_tools[tool_id] = tool
+    return tool_id
+
+def get_all_tools():
+    """Get all tools including both built-in and user-registered tools."""
+    base_dir = "."
 
     def no_cache(args, result):
         return False
 
     tools = {}
-    toolklasses = [
+    # Add built-in tools
+    tool_classes = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
         SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool
     ]
-    for toolkls in toolklasses:
-        tool = toolkls(base_dir=base_dir)
-        tool.cache_function = no_cache
-        tools[tool.id] = tool
+    
+    for tool_class in tool_classes:
+        tool_id, tool = register_tool(tool_class)
+        tools[tool_id] = tool
+
+    # Add user-registered tools
+    tools.update(_registered_tools)
 
     return tools

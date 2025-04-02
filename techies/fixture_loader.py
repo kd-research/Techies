@@ -54,4 +54,27 @@ def populate_fixture_from_file(merged, filename, indexies):
     merged.update(obj)
     indexies.update({key: filename for key in obj.keys()})
 
-__all__ = ['load_fixture']
+def find_tools():
+    """Find all tools.py files and Python files in tools/ folders under runtimedirs.
+    Only searches first level in tools/ folders. Skips hidden and underscore-prefixed files."""
+    tool_files = []
+    
+    for runtimedir in runtimedirs():
+        # Look for tools.py in the root of each runtime directory
+        tools_py = os.path.join(runtimedir, 'tools.py')
+        if os.path.isfile(tools_py):
+            tool_files.append(tools_py)
+            
+        # Look for Python files in tools/ folder (first level only)
+        tools_dir = os.path.join(runtimedir, 'tools')
+        if os.path.isdir(tools_dir):
+            for item in os.listdir(tools_dir):
+                # Skip hidden files and underscore-prefixed files
+                if item.startswith('.') or item.startswith('_'):
+                    continue
+                if item.endswith('.py'):
+                    tool_files.append(os.path.join(tools_dir, item))
+    
+    return tool_files
+
+__all__ = ['load_fixture', 'find_tools']
