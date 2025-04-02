@@ -106,11 +106,12 @@ techiex run mycrew
 
 ## Documentation
 
-- [Getting Started with Techies](./docs/Getting-Started-With-Techies.md)
-- [Running Predefined Crews](./docs/Running-Predefined-Crews.md)
-- [Understand Crew Configurations](./docs/Understand-Crew-Configurations.md)
-- [Modifying Existing Crews](./docs/Modifying-Existing-Crews.md)
-- [Create Your Own Crew](./docs/Create-Your-Own-Crew.md)
+- [Getting Started with Techies](./docs/01-Getting-Started-With-Techies.md)
+- [Running Predefined Crews](./docs/02-Running-Predefined-Crews.md)
+- [Understand Crew Configurations](./docs/03-Understand-Crew-Configurations.md)
+- [Modifying Existing Crews](./docs/04-Modifying-Existing-Crews.md)
+- [Create Your Own Crew](./docs/05-Create-Your-Own-Crew.md)
+- [Create Your Own Tool](./docs/06-Create-Your-Own-Tool.md)
 
 ---
 
