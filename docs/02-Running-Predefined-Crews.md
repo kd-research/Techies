@@ -178,5 +178,7 @@ techies run code_crew game_hierarchy.xml
 
 ## Next Steps
 
-- [Modifying Existing Crews](./Modifying-Existing-Crew.md)
-- [Create Your Own Crew](./Create-Your-Own-Crew.md)
+- [Understand Crew Configurations](./03-Understand-Crew-Configurations.md)
+- [Modifying Existing Crews](./04-Modifying-Existing-Crews.md)
+- [Create Your Own Crew](./05-Create-Your-Own-Crew.md)
+- [Create Your Own Tool](./06-Create-Your-Own-Tool.md)

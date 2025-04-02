@@ -28,16 +28,9 @@ VERSION=1.0.0
 pip install git+https://github.com/kd-research/Techies.git@${VERSION}
 ```
 
-This installs both:
+This installs:
 
-- `techies` — the original CLI
-- `techiex` — the experimental replacement (optional)
-
-To alias `techiex` as your default CLI:
-
-```bash
-alias techies="techiex"
-```
+- `techies` — the comprehensive CLI for all Techies functionality
 
 ---
 
@@ -185,10 +178,11 @@ techies introduce --help
 
 ## Next Steps
 
-- [Running Predefined Crews](./Running-Predefined-Crews.md)
-- [Understand Crew Configurations](./Understand-Crew-Configurations.md)
-- [Modifying Existing Crews](./Modifying-Existing-Crews.md)
-- [Create Your Own Crew](./Create-Your-Own-Crew.md)
+- [Running Predefined Crews](./02-Running-Predefined-Crews.md)
+- [Understand Crew Configurations](./03-Understand-Crew-Configurations.md)
+- [Modifying Existing Crews](./04-Modifying-Existing-Crews.md)
+- [Create Your Own Crew](./05-Create-Your-Own-Crew.md)
+- [Create Your Own Tool](./06-Create-Your-Own-Tool.md)
 
 ---
 

@@ -1,12 +1,6 @@
-# Understand Crew Configurations
+# Understanding Crew Configurations
 
-Before modifying or creating your own crew, it's important to understand how a Techies crew is structured. This guide will help you explore existing crews using `techies dump`, and walk you through how agents, tasks, and crews are defined in YAML.
-
-> ⚠️ This feature requires the **experimental CLI** (`techiex`)  
-> Make sure you've aliased it in your shell:
-> ```bash
-> alias techies="techiex"
-> ```
+This guide explains how Techies crews are structured and how to analyze their configurations.
 
 ---
 
@@ -69,6 +63,8 @@ hierarchy_architect_v2:
     - read_file
     - write_file
 ```
+
+> You can also define and use [custom tools](./06-Create-Your-Own-Tool.md) in your agent configurations.
 
 ### Delegation Behavior
 
@@ -200,8 +196,12 @@ hierarchy_architect_v2: An expert in game architecture focusing on creating clea
 
 Ready to make your own changes?
 
-➡️ [Modifying Existing Crews](./Modifying-Existing-Crews.md)
+➡️ [Modifying Existing Crews](./04-Modifying-Existing-Crews.md)
 
 Or start fresh from a scaffold:
 
-➡️ [Create Your Own Crew](./Create-Your-Own-Crew.md)
+➡️ [Create Your Own Crew](./05-Create-Your-Own-Crew.md)
+
+Want to extend functionality with custom tools?
+
+➡️ [Create Your Own Tool](./06-Create-Your-Own-Tool.md)

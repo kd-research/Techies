@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/github/license/kd-research/Techies" alt="License">
   </a>
   <img src="https://img.shields.io/badge/python-3.12.4%2B-blue.svg" alt="Python Version">
-  <img src="https://img.shields.io/badge/cli-techies%20%7C%20techiex-orange" alt="CLI Interface">
+  <img src="https://img.shields.io/badge/cli-techies-orange" alt="CLI Interface">
 </p>
 
 ---
@@ -38,15 +38,9 @@ VERSION=1.0.0
 pip install git+https://github.com/kd-research/Techies.git@${VERSION}
 ```
 
-This installs both:
+This installs:
 
-- `techies` — original stable CLI
-- `techiex` — new **experimental CLI** (Click-based)
-
-> To alias `techiex` as your default CLI:
-> ```bash
-> alias techies="techiex"
-> ```
+- `techies` — comprehensive CLI for all Techies functionality
 
 ---
 
@@ -76,9 +70,9 @@ export MODEL=openai/gpt-4o
 
 ## CLI Tools
 
-### `techies`: Original CLI
+### `techies`: CLI Interface
 
-Stable, tested interface for running built-in crews.
+The powerful CLI interface for running and managing crews:
 
 ```bash
 techies list_crews
@@ -86,21 +80,17 @@ techies run hierarchy_crew_v2 --game tictactoe
 techies introduce hierarchy_crew_v2
 ```
 
-### `techiex`: Experimental CLI (Drop-in Replacement)
-
-Fully modular CLI with support for:
+Techies CLI also supports:
 
 - `scaffold` — create new custom crews
 - `dump` — extract and modify existing crews
 - `TECHIES_RUNTIME` — define custom runtime paths
 
 ```bash
-techiex scaffold my_crew
-techiex dump hierarchy_crew_v2
-techiex run mycrew
+techies scaffold my_crew
+techies dump hierarchy_crew_v2
+techies run mycrew
 ```
-
-> `techiex` supports everything `techies` does — and more.
 
 ---
 
@@ -131,7 +121,7 @@ pip install -e .
 
 ## Best Practices
 
-- Use `techiex` with `scaffold` to start your own crew
+- Use `techies scaffold` to start your own crew
 - Define a clean working directory for each run
 - Use `TECHIES_RUNTIME` to load external crew folders
 - Set `MODEL` and relevant API keys for your LLM provider

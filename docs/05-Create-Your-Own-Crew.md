@@ -1,14 +1,10 @@
 # Create Your Own Crew
 
+This guide walks you through creating a completely new crew from scratch.
+
 Techies is built to be modular and hackable — you can define your own agents, tasks, and crews using simple YAML files.
 
 This guide walks you through how to scaffold a new custom crew from scratch, link together its components, and run it locally or globally.
-
-> ⚠️ This feature is only available in the experimental CLI (`techiex`).  
-> Make sure you've aliased it:
-> ```bash
-> alias techies="techiex"
-> ```
 
 ---
 
@@ -84,6 +80,25 @@ myagent:
 - Agents using `_common` can delegate tasks to **other agents in the crew**
 - Agents using `_no_deleg` **must work independently**
 - Delegation is **not nested** — delegated agents must complete their task on their own
+
+### Assigning Tools to Agents
+
+The `agents.yml` defines which tools each agent can use:
+
+```yaml
+my_agent:
+  goal: |
+    Perform specialized data analysis.
+  backstory: |
+    A data specialist with analysis expertise.
+  tools:
+    - list_files
+    - read_file
+    - write_file
+    # Add more tools from the available tool list
+```
+
+> For advanced functionality, you can [create your own custom tools](./06-Create-Your-Own-Tool.md) to extend what your agents can do.
 
 ---
 
@@ -223,6 +238,7 @@ techies list_tools
 
 ## See Also
 
-- [Understand Crew Configurations](./Understand-Crew-Configurations.md)
-- [Modifying Existing Crews](./Modifying-Existing-Crew.md)
-- [Running Predefined Crews](./Running-Predefined-Crew.md)
+- [Understand Crew Configurations](./03-Understand-Crew-Configurations.md)
+- [Modifying Existing Crews](./04-Modifying-Existing-Crews.md)
+- [Running Predefined Crews](./02-Running-Predefined-Crews.md)
+- [Create Your Own Tool](./06-Create-Your-Own-Tool.md)

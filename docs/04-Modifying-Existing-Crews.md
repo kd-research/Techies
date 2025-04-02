@@ -1,14 +1,10 @@
 # Modifying Existing Crews
 
+This guide walks you through extending or modifying existing crews to customize their behavior.
+
 Once you understand how Techies crews are structured, you can start customizing them to better suit your needs.
 
 This guide walks you through how to **safely modify an existing crew**, override agents or tasks, and extend behavior using local configuration files.
-
-> ⚠️ This feature is only available in the experimental CLI (`techiex`) and **requires aliasing**:
-> ```bash
-> alias techies="techiex"
-> ```
-> Attempting to use these commands with the stable `techies` CLI will result in an error.
 
 ---
 
@@ -141,7 +137,33 @@ To revert to the original system version of a crew:
 
 ---
 
+## Modifying Agent Definitions
+
+One of the most common customizations is changing which tools an agent has access to.
+
+1. Open the dumped `agents.yml` file
+2. Locate the agent you want to modify
+3. Add or remove tools from the `tools` list:
+
+```yaml
+my_modified_agent:
+  goal: |
+    Search for information and analyze data.
+  backstory: |
+    A research specialist with data analysis skills.
+  tools:
+    - read_file
+    - write_file
+    - list_files
+    # Add other tools here
+```
+
+> Need more specialized functionality? You can also [create custom tools](./06-Create-Your-Own-Tool.md) and make them available to your agents.
+
+---
+
 ## See Also
 
-- [Understand Crew Configurations](./Understand-Crew-Configurations.md)
-- [Create Your Own Crew](./Create-Your-Own-Crew.md)
+- [Understand Crew Configurations](./03-Understand-Crew-Configurations.md)
+- [Create Your Own Crew](./05-Create-Your-Own-Crew.md)
+- [Create Your Own Tool](./06-Create-Your-Own-Tool.md)

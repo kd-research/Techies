@@ -181,4 +181,13 @@ def calculator(expression: str) -> str:
 
 # Register with explicit ID for use in agents.yaml
 register_tool(calculator, tool_id="math_calculator")
-``` 
+```
+
+## See Also
+
+- [Create Your Own Crew](./05-Create-Your-Own-Crew.md)
+- [Modifying Existing Crews](./04-Modifying-Existing-Crews.md)
+- [Understand Crew Configurations](./03-Understand-Crew-Configurations.md)
+- [Getting Started with Techies](./01-Getting-Started-With-Techies.md)
+
+Created and maintained by [Kaidong Hu](https://hukaidong.com) at [KD Research](https://github.com/kd-research). 
