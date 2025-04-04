@@ -3,7 +3,7 @@ authors = ["Kaidong Hu"]
 description = "LLM enhanced game generation"
 name =  "techies"
 readme = "README.md"
-version = "1.1.0"
+version = "1.0.5"
 
 [tool.poetry.scripts]
 techies = "techies.cli.main:main"

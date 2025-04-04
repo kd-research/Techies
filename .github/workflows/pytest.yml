@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      AGENTOPS_API_KEY: ${{ secrets.AGENTOPS_API_KEY }}
     steps:
       - uses: actions/checkout@v3
       
