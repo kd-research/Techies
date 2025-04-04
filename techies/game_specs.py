@@ -1,4 +1,7 @@
 def game_specs(key):
+    if key not in specs:
+        available_specs = ", ".join(specs.keys())
+        raise ValueError(f"Game spec '{key}' is not available. Available game specs: {available_specs}")
     return " ".join(specs[key].split())
 
 
