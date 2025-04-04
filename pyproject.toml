@@ -6,11 +6,10 @@ readme = "README.md"
 version = "1.0.1"
 
 [tool.poetry.scripts]
-techies = "techies._cli:main"
-techiex = "techies.cli.main:main" # new experimental cli
+techies = "techies.cli.main:main"
 
 [tool.poetry.dependencies]
-python                 =  "3.12.4"
+python                 =  ">=3.12"
 
 agentops               =  "^0.3.10"
 beautifulsoup4         =  "^4.12.3"
