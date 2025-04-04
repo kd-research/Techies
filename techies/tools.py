@@ -2,6 +2,7 @@ import json
 import os
 import re
 import requests
+import copy
 
 from bs4 import BeautifulSoup
 from crewai.tools import BaseTool
@@ -301,21 +302,14 @@ def get_all_tools():
     """Get all tools including both built-in and user-registered tools."""
     base_dir = "."
 
-    def no_cache(args, result):
-        return False
-
-    tools = {}
-    # Add built-in tools
+    # Register all built-in tools
     tool_classes = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
         SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool
     ]
     
     for tool_class in tool_classes:
-        tool_id, tool = register_tool(tool_class)
-        tools[tool_id] = tool
+        register_tool(tool_class)
 
-    # Add user-registered tools
-    tools.update(_registered_tools)
-
-    return tools
+    # Return a deep copy of the registered tools dictionary
+    return copy.deepcopy(_registered_tools)
