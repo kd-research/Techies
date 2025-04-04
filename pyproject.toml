@@ -3,15 +3,15 @@ authors = ["Kaidong Hu"]
 description = "LLM enhanced game generation"
 name =  "techies"
 readme = "README.md"
-version = "1.0.3"
+version = "1.0.4"
 
 [tool.poetry.scripts]
 techies = "techies.cli.main:main"
 
 [tool.poetry.dependencies]
-python                 =  ">=3.12"
+python                 =  ">=3.12,<3.13"
 
-agentops               =  "^0.3.10"
+agentops               =  "^0.4.5"
 beautifulsoup4         =  "^4.12.3"
 # Two unfixed bugs in crewai prevents us upgrading to 0.4x
 # - Agent not able to delegate task if extra tools are assigned

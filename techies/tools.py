@@ -171,7 +171,10 @@ class ListFilesTool(BaseTool):
     def _run(self, **kwargs) -> str:
         try:
             files = os.listdir(self.base_dir)
-            files = [f for f in files if not f.startswith('.') and os.path.isfile(f"{self.base_dir}/{f}")]
+            files = set([f for f in files if not f.startswith('.') and os.path.isfile(f"{self.base_dir}/{f}")])
+            # blacklist
+            files.discard("agentops.log")
+
             if not files:
                 return "# -- Theres nothing to be listed -- #"
             return "\n".join(files)
@@ -283,7 +286,7 @@ def to_snake_case(name: str) -> str:
     pattern = re.compile(r'(?<!^)(?=[A-Z])')
     return pattern.sub('_', name).lower()
 
-def register_tool(tool_class_or_instance: Union[Type[BaseTool], BaseTool], tool_id: Optional[str] = None) -> str:
+def register_tool(tool_class_or_instance: Union[Type[BaseTool], BaseTool], tool_id: Optional[str] = None, set_no_cache: bool = False) -> str:
     """Register a tool class or tool instance with an optional custom ID.
     If no ID is provided, it will try to use the tool's id attribute,
     or convert the class name to snake_case.
@@ -299,8 +302,8 @@ def register_tool(tool_class_or_instance: Union[Type[BaseTool], BaseTool], tool_
         tool = tool_class_or_instance
         tool_class = tool.__class__
 
-    # Set cache function for the tool
-    if hasattr(tool, 'cache_function'):
+    if set_no_cache:
+    # Override cache function for the tool
         tool.cache_function = lambda args, result: False
 
     if tool_id is None:        
@@ -325,7 +328,7 @@ def get_all_tools():
     ]
     
     for tool_class in tool_classes:
-        register_tool(tool_class)
+        register_tool(tool_class, set_no_cache=True)
 
     # Return a deep copy of the registered tools dictionary
     return copy.deepcopy(_registered_tools)
