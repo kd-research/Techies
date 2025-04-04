@@ -31,11 +31,12 @@ Developed by the [KD Research](https://github.com/kd-research) organization, led
 
 ## Installation
 
-Install Techies from GitHub:
-
 ```bash
-VERSION=1.0.0
-pip install git+https://github.com/kd-research/Techies.git@${VERSION}
+# Install latest version
+pip install git+https://github.com/kd-research/Techies.git
+
+# For specific version (uncomment and modify)
+# pip install git+https://github.com/kd-research/Techies.git@1.0.0
 ```
 
 This installs:
