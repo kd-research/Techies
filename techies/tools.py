@@ -3,13 +3,14 @@ import os
 import re
 import requests
 import copy
+import inspect
 
 from bs4 import BeautifulSoup
 from crewai.tools import BaseTool
 from freesound import FreesoundClient
 from pydantic import BaseModel, Field
 from tempfile import TemporaryDirectory
-from typing import Type, List, Dict, Any, Optional
+from typing import Type, List, Dict, Any, Optional, Union
 
 
 class ReadFileToolSchema(BaseModel):
@@ -282,19 +283,34 @@ def to_snake_case(name: str) -> str:
     pattern = re.compile(r'(?<!^)(?=[A-Z])')
     return pattern.sub('_', name).lower()
 
-def register_tool(tool_class: Type[BaseTool], tool_id: Optional[str] = None) -> str:
-    """Register a tool class with an optional custom ID.
+def register_tool(tool_class_or_instance: Union[Type[BaseTool], BaseTool], tool_id: Optional[str] = None) -> str:
+    """Register a tool class or tool instance with an optional custom ID.
     If no ID is provided, it will try to use the tool's id attribute,
     or convert the class name to snake_case.
     Returns the tool_id used for registration."""
-    if tool_id is None:
-        if hasattr(tool_class, 'id'):
-            tool_id = tool_class.id
-        else:
-            tool_id = to_snake_case(tool_class.__name__)
     
-    tool = tool_class(base_dir=".")
-    tool.cache_function = lambda args, result: False
+    # Check if tool_class_or_instance is a class (to be instantiated) or an instance
+    if inspect.isclass(tool_class_or_instance) and issubclass(tool_class_or_instance, BaseTool):
+        # It's a class that inherits from BaseTool, instantiate it
+        tool = tool_class_or_instance(base_dir=".")
+        tool_class = tool_class_or_instance
+    else:
+        # It's already an instance (e.g., from the @tool decorator)
+        tool = tool_class_or_instance
+        tool_class = tool.__class__
+
+    # Set cache function for the tool
+    if hasattr(tool, 'cache_function'):
+        tool.cache_function = lambda args, result: False
+
+    if tool_id is None:        
+        if hasattr(tool_class_or_instance, 'id'):
+            tool_id = tool_class_or_instance.id
+        elif hasattr(tool, 'id'):
+            tool_id = tool.id
+        else:
+            tool_id = to_snake_case(tool.name)
+    
     _registered_tools[tool_id] = tool
     return tool_id
 
