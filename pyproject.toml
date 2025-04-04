@@ -17,7 +17,7 @@ beautifulsoup4         =  "^4.12.3"
 # - Agent not able to delegate task if extra tools are assigned
 # - Agent not able to invoke non-deterministic tool even with cache disabled
 #crewai                 =  {extras    =  ["tools"],                                  version  =  "0.102.0"}
-crewai                 =  {git = "https://github.com/hukaidong/crewAI", rev = "58703181c77589178911f24a135a40d2de71a084", extras = ["tools"] }
+crewai                 =  {git = "https://github.com/hukaidong/crewAI", rev = "f618a17a27689f290d97a22758c536ad6a1eea9d", extras = ["tools"] }
 freesound-python       =  {git = "https://github.com/MTG/freesound-python", rev = "5be99a3689d17303c01cb122bbb0d5a96eba04f6"}
 
 # gpt4all                =  {version = "^2.7.0", optional = true}

@@ -118,6 +118,12 @@ def test_get_all_tools_returns_all_tools():
     for tool_id in expected_tool_ids:
         # Check if the tool exists with either the base ID or with _tool suffix
         assert (tool_id in tools) or (f"{tool_id}_tool" in tools), f"Tool '{tool_id}' not found in get_all_tools result"
+        
+        # Get the tool instance
+        available_tool = tools.get(tool_id, tools.get(f"{tool_id}_tool"))
+        # Check that the tool has a cache_function attribute and it's not None
+        assert hasattr(available_tool, "cache_function"), f"Tool '{tool_id}' missing cache_function attribute"
+        assert available_tool.cache_function is not None, f"Tool '{tool_id}' has None cache_function"
 
 def test_get_all_tools_returns_deep_copy():
     """Test that get_all_tools returns a deep copy of the tools dictionary."""
