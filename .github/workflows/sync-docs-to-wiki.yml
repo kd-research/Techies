@@ -3,6 +3,8 @@ name: Sync docs to Wiki
 on:
   push:
     branches: [main]
+    paths:
+      - 'docs/**'
 
 jobs:
   sync-to-wiki:
