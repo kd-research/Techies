@@ -118,9 +118,65 @@ mytask:
     Read all `.txt` files and write a summary about { mytask_focus } to summary.txt
   expected_output: >
     summary.txt is created with the combined summary.
+  callback: my_callback  # Optional: process task output before delivery to dependent tasks
+  depends_on: [previous_task]  # Optional: Define task dependencies
 ```
 
 Use `_task_common` to keep your task definitions clean and DRY.
+
+### Task Dependencies
+
+Tasks can define dependencies on other tasks using the `depends_on` array. When a task depends on another, it receives the output from the dependent task as context.
+
+```yaml
+first_task:
+  agent: research_agent
+  description: |
+    Research and collect data about the topic.
+
+analysis_task:
+  agent: analysis_agent
+  description: |
+    Analyze the data collected by the research team.
+  depends_on: [first_task]  # Output of first_task becomes context for analysis_task
+```
+
+This creates a workflow where:
+1. `first_task` executes first
+2. Its output is captured
+3. `analysis_task` receives this output as context
+4. `analysis_task` executes with access to the first task's results
+
+For complex workflows, you can depend on multiple tasks:
+
+```yaml
+final_report:
+  agent: report_agent
+  description: |
+    Create a comprehensive report based on the research and analysis.
+  depends_on: [first_task, analysis_task]  # Receives outputs from both tasks
+```
+
+### Task Callbacks
+
+Tasks can have an optional callback function that processes the task output before it's delivered to dependent tasks. 
+
+To assign a callback to a task, add the `callback` key with the ID of a registered callback function:
+
+```yaml
+mytask:
+  # ... other task configuration ...
+  callback: format_json_output
+```
+
+> **IMPORTANT:** 
+> 1. Callbacks must be defined in a `callbacks.py` file or in files within a `callbacks/` directory in your runtime directories
+> 2. The `--allow-load-scripts` flag **must** be enabled when running the crew to load and use callbacks:
+>    ```bash
+>    techies --allow-load-scripts run mycrew
+>    ```
+
+For more information on creating and using callbacks, see [Using Callbacks in Tasks](./07-Using-Callbacks-in-Tasks.md).
 
 ---
 

@@ -54,27 +54,42 @@ def populate_fixture_from_file(merged, filename, indexies):
     merged.update(obj)
     indexies.update({key: filename for key in obj.keys()})
 
-def find_tools():
-    """Find all tools.py files and Python files in tools/ folders under runtimedirs.
-    Only searches first level in tools/ folders. Skips hidden and underscore-prefixed files."""
-    tool_files = []
+def find_scripts(script_type):
+    """Find all [type].py files and Python files in [type]/ folders under runtimedirs.
+    Only searches first level in [type]/ folders. Skips hidden and underscore-prefixed files.
+    
+    Args:
+        script_type (str): Type of scripts to find (tools or callbacks)
+    
+    Returns:
+        list: List of file paths
+    """
+    script_files = []
     
     for runtimedir in runtimedirs():
-        # Look for tools.py in the root of each runtime directory
-        tools_py = os.path.join(runtimedir, 'tools.py')
-        if os.path.isfile(tools_py):
-            tool_files.append(tools_py)
+        # Look for [type].py in the root of each runtime directory
+        script_py = os.path.join(runtimedir, f'{script_type}.py')
+        if os.path.isfile(script_py):
+            script_files.append(script_py)
             
-        # Look for Python files in tools/ folder (first level only)
-        tools_dir = os.path.join(runtimedir, 'tools')
-        if os.path.isdir(tools_dir):
-            for item in os.listdir(tools_dir):
+        # Look for Python files in [type]/ folder (first level only)
+        script_dir = os.path.join(runtimedir, script_type)
+        if os.path.isdir(script_dir):
+            for item in os.listdir(script_dir):
                 # Skip hidden files and underscore-prefixed files
                 if item.startswith('.') or item.startswith('_'):
                     continue
                 if item.endswith('.py'):
-                    tool_files.append(os.path.join(tools_dir, item))
+                    script_files.append(os.path.join(script_dir, item))
     
-    return tool_files
+    return script_files
 
-__all__ = ['load_fixture', 'find_tools']
+def find_tools():
+    """Find all tools.py files and Python files in tools/ folders under runtimedirs."""
+    return find_scripts("tools")
+
+def find_callbacks():
+    """Find all callbacks.py files and Python files in callbacks/ folders under runtimedirs.""" 
+    return find_scripts("callbacks")
+
+__all__ = ['load_fixture', 'find_tools', 'find_callbacks']

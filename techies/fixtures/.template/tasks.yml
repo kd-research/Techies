@@ -9,3 +9,7 @@ mytask:
     Read all `.txt` files and write a summary about { mytask_focus } to summary.txt
   expected_output: >
     summary.txt is created with the combined summary.
+  # callback: my_callback  # Uncomment to process task output with a callback function
+                           # Note: Requires the callback to be defined in callbacks.py
+                           # and the --allow-load-scripts flag when running
+  # depends_on: [my_previous_task]  # output of my_prelude_task will be passed as context input to mytask.

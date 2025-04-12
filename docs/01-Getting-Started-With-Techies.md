@@ -184,6 +184,7 @@ techies introduce --help
 - [Modifying Existing Crews](./04-Modifying-Existing-Crews.md)
 - [Create Your Own Crew](./05-Create-Your-Own-Crew.md)
 - [Create Your Own Tool](./06-Create-Your-Own-Tool.md)
+- [Using Callbacks in Tasks](./07-Using-Callbacks-in-Tasks.md)
 
 ---
 

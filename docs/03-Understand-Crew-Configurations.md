@@ -90,12 +90,51 @@ game_hierarchy_representation_v2:
     Generate a structured game_hierarchy.xml file based on the provided specification.
   expected_output: >
     I have created the game_hierarchy.xml file as per the provided specifications.
+  callback: xml_formatter  # Optional: Process task output using a callback function
+  depends_on: [previous_task]  # Optional: Define task dependencies
 ```
 
 Each task:
 - Is executed by a single agent
 - Has a clearly described goal
 - May have validation logic via `expected_output`
+- Can optionally specify a `callback` to process its output
+- Can optionally define dependencies using `depends_on`
+
+### Task Dependencies
+
+The `depends_on` field allows you to build a task execution flow where outputs from previous tasks are passed as context to dependent tasks.
+
+```yaml
+task_a:
+  agent: agent_a
+  description: |
+    Generate initial data.
+
+task_b:
+  agent: agent_b
+  description: |
+    Process the data from task_a.
+  depends_on: [task_a]  # Output of task_a becomes context for task_b
+```
+
+When a task specifies `depends_on`, it will receive the outputs of the referenced tasks as context input.
+
+### Task Callbacks
+
+Callbacks are functions that process a task's output string before it's delivered to dependent tasks. Each task can have at most one callback.
+
+When a task includes a `callback` key, the specified callback function will receive the task output and transform it before passing it on.
+
+```yaml
+mytask:
+  agent: myagent
+  description: |
+    Generate a JSON summary of the analysis.
+  callback: json_formatter  # ID of a registered callback function
+```
+
+> For more details on creating and using callbacks, see [Using Callbacks in Tasks](./07-Using-Callbacks-in-Tasks.md).
 
 ---
 

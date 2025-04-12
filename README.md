@@ -103,6 +103,7 @@ techies run mycrew
 - [Modifying Existing Crews](./docs/04-Modifying-Existing-Crews.md)
 - [Create Your Own Crew](./docs/05-Create-Your-Own-Crew.md)
 - [Create Your Own Tool](./docs/06-Create-Your-Own-Tool.md)
+- [Using Callbacks in Tasks](./docs/07-Using-Callbacks-in-Tasks.md)
 
 ---
 
