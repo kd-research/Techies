@@ -1,0 +1,6 @@
+---
+description: Env setup for command execution
+globs: 
+alwaysApply: false
+---
+Use `python -m venv .venv && source .venv/bin/activate` to prepare running environment before execute command.

@@ -10,8 +10,7 @@ techies = "techies.cli.main:main"
 
 [tool.poetry.dependencies]
 python                 =  ">=3.12,<3.13"
-
-agentops               =  "^0.4.5"
+agentops               =  "^0.4.6"
 beautifulsoup4         =  "^4.12.3"
 # Two unfixed bugs in crewai prevents us upgrading to 0.4x
 # - Agent not able to delegate task if extra tools are assigned
