@@ -5,7 +5,7 @@
 <h1 align="center">Techies</h1>
 
 <p align="center">
-  A modular agent framework for collaborative creativity and structured workflows.
+  Techies: A no-code platform for orchestrating collaborative AI agents through YAML configuration.
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@
 
 ## What is Techies?
 
-**Techies** is a flexible agent framework for designing and running collaborative, multi-agent workflows. It supports dynamic planning, modular task execution, and structured agent coordination — ideal for creative tasks such as game design, code generation, and more.
+**Techies** is a less-code to no-code agent orchestration platform featuring a modular architecture that enables multiple AI agents to collaborate on complex workflows through YAML-driven configuration. The framework includes an extensible tooling system, making it accessible for users who want to orchestrate AI agent interactions without extensive coding knowledge. Techies functions as a laboratory environment where users can experiment with different agent configurations, task assignments, and collaborative workflows to achieve sophisticated outputs.
 
 Developed by the [KD Research](https://github.com/kd-research) organization, led by [Kaidong Hu](https://hukaidong.com).
 
