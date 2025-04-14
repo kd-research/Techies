@@ -42,7 +42,6 @@ def run_html5(*args, **kwargs):
     kickoff_html5_crew(*args, **kwargs)
 
 @run.command("mechanicsgencrew")
-@click.option("--genre", help="Predefined game genre")
 @click.argument("genre_name", required=True)
 def run_html5(*args, **kwargs):
     click.echo("Running Mechanics Generation crew")
