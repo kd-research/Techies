@@ -59,7 +59,7 @@ def get_all_tools():
     # Register all built-in tools
     tool_classes = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool
+        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool,
     ]
     
     for tool_class in tool_classes:
