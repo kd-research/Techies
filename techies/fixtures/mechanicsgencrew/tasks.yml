@@ -1,0 +1,129 @@
+_task_common: &task_common
+  human_input: false
+  async_execution: false
+
+Populate_Database:
+  <<: *task_common
+  agent: Mechanics_Expert
+  description: |
+    You are the Mechanics_Expert. The user has given the following game genre: **{genre}**.
+
+    **Your objectives**:
+    1. Generate an exhaustive list of relevant game mechanics and systems for the specified genre.
+    2. For each mechanic, provide the following fields:
+       - **Name**: A concise name for the mechanic.
+       - **Description**: A brief explanation of what the mechanic is, how it works, and why it might appear in this genre.
+       - **Implementation Considerations**: Key points to consider when coding or designing this mechanic (edge cases, examples, common pitfalls, typical variations, etc.).
+       - **Pseudocode**: A short, language-agnostic sketch demonstrating a possible implementation (no need for full code, just the logic).
+       - **Related Mechanics**: List of mechanic names (strings) that typically pair well or relate to this mechanic.
+    3. After finishing your first passes, repeat the process again to add more mechanics and systems and have a comprehensive and all-encompassing list for the **{genre}** genre.
+
+    **Important**:
+    - Make sure each entry is complete and coherent for someone reading it for the first time.
+    - You must produce as many mechanics as you can think of, but they should be relevant to the genre.
+    - The mechanics must be an exhaustive list that covers all mechanics that make up the genre.    
+    - The output must be a valid JSON array of objects, each containing the five fields above.
+    - Do not include any extraneous commentary outside of the structured output.
+    
+  expected_output: >
+    **Output**: A valid JSON array of mechanic objects. Each object must have these five fields exactly:
+    [
+      {
+        "Name": "...",
+        "Description": "...",
+        "Implementation Considerations": "...",
+        "Pseudocode": "...",
+        "Related Mechanics": ["..."]
+      },
+      ...
+    ]
+    - No additional fields beyond the five required keys.
+    - No wrapping text or "explanations" around the JSON. Just the JSON array itself.
+    
+
+Finalize_Database:
+  <<: *task_common
+  agent: Genre_Expert
+  description: |
+    You are the Genre_Expert. Based on the previous task, your coworkers have generated a JSON database of mechanics for the genre **{genre}**. The user has requested a review and refinement of this database:
+
+    **Your objectives**:
+    1. Analyze the existing JSON database for the genre **{genre}**.
+    2. Add newer or more advanced mechanics or systems you believe are missing or expand upon existing ones (e.g., add more details to the "Implementation Considerations" or "Pseudocode" if necessary). Feel free to add new mechanics that are present in subgenres within the scope of {genre}. Below are the fields you need to fill out for each mechanic you come up with:
+      - **Name**: A concise name for the mechanic.
+      - **Description**: A brief explanation of what the mechanic is, how it works, and why it might appear in this genre.
+      - **Implementation Considerations**: Key points to consider when coding or designing this mechanic (edge cases, examples, common pitfalls, typical variations, etc.).
+      - **Pseudocode**: A short, language-agnostic sketch demonstrating a possible implementation (no need for full code, just the logic).
+      - **Related Mechanics**: List of mechanic names (strings) that typically pair well or relate to this mechanic.
+    3. Ensure that each mechanic remains consistent and that they all use the exact same JSON structure (Name, Description, Implementation Considerations, Pseudocode, Related Mechanics). Update the related mechanics fields as needed when adding new mechanics. 
+    4. Keep the existing mechanics intact, but feel free to refine them (clarify their descriptions, fix inconsistencies, etc.).
+    5. Feel free to add new mechanics that are present in subgenres within the scope of {genre}. The goal is to have a final database that contains any and all mechanics that can be found in any game within the genre **{genre}** and its subgenres.
+    6. After finishing your first passes, repeat the process again to add more mechanics and systems and have a comprehensive and all-encompassing list for the **{genre}** genre.
+
+    **Important**:
+    - Provide new or updated mechanics in the same JSON structure.
+    - Do not remove valid mechanics; instead, refine or expand them.
+    - Aim for thorough coverage of the genre's mechanics.
+  depends_on: Populate_Database
+  expected_output: >
+    **Output**: A valid JSON array reflecting the updated database. The structure remains:
+      [
+        {
+          "Name": "...",
+          "Description": "...",
+          "Implementation Considerations": "...",
+          "Pseudocode": "...",
+          "Related Mechanics": [...]
+        },
+        ...
+      ]
+      - If adding new mechanics, include them as new objects in the array.
+      - Retain valid ones from the input, but refine as needed.
+      - Output must remain strictly JSON with no extra commentary outside the array.
+
+
+Review_Database:
+  <<: *task_common
+  agent: Database_Expert
+  description: |
+    You are the Database_Expert. You have been given a JSON database of mechanics for the genre **{genre}**. Your task is to review and finalize this database.
+
+    **Your objectives**:
+    1. Verify that the database follows the requested format:
+       - Each entry must contain the keys: Name, Description, Implementation Considerations, Pseudocode, Related Mechanics.
+       - The output must be valid JSON (no syntax errors, no extra fields).
+    2. Check for completeness, correctness, and consistency:
+       - Are the descriptions coherent and relevant to the genre: {genre}?
+       - Do the Implementation Considerations and Pseudocode fields provide enough detail?
+       - Are the Related Mechanics references sensible?
+    3. If anything is missing or inconsistent, refine or correct it directly in the JSON.
+    4. With these in mind, feel free to add any new mechanics that are present in subgenres within the scope of {genre}. The goal is to have a final database that contains any and all mechanics that can be found in any game within the genre **{genre}** and its subgenres. After making any changes, ensure that the JSON structure remains intact and valid. Below are the fields you need to fill out for each mechanic you come up with:
+      - **Name**: A concise name for the mechanic.
+      - **Description**: A brief explanation of what the mechanic is, how it works, and why it might appear in this genre.
+      - **Implementation Considerations**: Key points to consider when coding or designing this mechanic (edge cases, examples, common pitfalls, typical variations, etc.).
+      - **Pseudocode**: A short, language-agnostic sketch demonstrating a possible implementation (no need for full code, just the logic).
+      - **Related Mechanics**: List of mechanic names (strings) that typically pair well or relate to this mechanic.
+    5. Finalize the database so it's ready for use.
+
+    **Important**:
+    - You must output the final, valid JSON version of the database.
+    - Do not include extra commentary outside the JSON array.
+    - Only fix or improve entries if needed; otherwise, keep them as is.
+    When you are finished, please write the JSON to a file named **{genre}_mechanics.json**.
+
+  depends_on: Finalize_Database
+  expected_output: >
+    **Output**: A valid JSON array with the final version of each mechanic. Example structure:
+    [
+      {
+        "Name": "...",
+        "Description": "...",
+        "Implementation Considerations": "...",
+        "Pseudocode": "...",
+        "Related Mechanics": [...]
+      },
+      ...
+    ]
+    - No additional text or headings. Only JSON.
+    Make sure to write the JSON to a file named **{genre}_mechanics.json**.
+  callback: embed_file

@@ -45,3 +45,17 @@ def kickoff_html5_crew(crewname, game=None, gamefiles=None):
         shutil.copy(scaffold_file_path, "game.html")
 
     kickoff_hierarchy_crew(crewname, game=game, gamefiles=gamefiles)
+    
+def kickoff_mechanicsgen_crew(crewname, genre=None, genre_name=None):
+    if not genre and not genre_name:
+        print("Error: either --genre or genre_name must be provided.")
+        sys.exit(1)
+
+    if genre:
+        genre_specifications = game_specs(genre)
+    else:
+        game_specifications = game_specs(genre_name)
+
+    inputs = { "game_specifications": game_specifications }
+    crew = get_system_crew(crewname, manage_agentops=True)
+    crew.kickoff(inputs)

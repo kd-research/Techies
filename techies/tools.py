@@ -9,8 +9,11 @@ from .predefined_tools.read_file_tool import ReadFileTool
 from .predefined_tools.batch_read_files_tool import BatchReadFilesTool
 from .predefined_tools.write_file_tool import WriteFileTool
 from .predefined_tools.list_files_tool import ListFilesTool
-from .predefined_tools.sound_tools import SearchSoundTool, SaveSoundTool
+from .predefined_tools.sound_tools import SearchSoundTool, SaveSoundTool, SearchAndPickSoundTool
+from .predefined_tools.image_tools import GenerateAndDownloadImageTool
 from .predefined_tools.html_examples_tool import ReadHtmlExamplesTool
+from .predefined_tools.google_search_tool import GoogleSearchTool
+from .predefined_tools.query_mechanics_tool import QueryMechanicsTool
 
 # Global registry for tools
 _registered_tools = {}
@@ -59,7 +62,8 @@ def get_all_tools():
     # Register all built-in tools
     tool_classes = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool,
+        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, 
+        QueryMechanicsTool, GoogleSearchTool, GenerateAndDownloadImageTool, SearchAndPickSoundTool
     ]
     
     for tool_class in tool_classes:

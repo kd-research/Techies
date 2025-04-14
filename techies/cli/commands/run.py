@@ -2,6 +2,7 @@ import click
 from techies.cli.utils.dispatch import (
     kickoff_hierarchy_crew,
     kickoff_html5_crew,
+    kickoff_mechanicsgen_crew,
     kickoff_default_crew
 )
 from techies.cli.utils.click_extensions import DefaultRunGroup
@@ -39,3 +40,11 @@ def run_html5(*args, **kwargs):
     click.echo("Running HTML5 crew")
     args = ["html5_crew"] + list(args)
     kickoff_html5_crew(*args, **kwargs)
+
+@run.command("mechanicsgencrew")
+@click.option("--genre", help="Predefined game genre")
+@click.argument("genre_name", required=True)
+def run_html5(*args, **kwargs):
+    click.echo("Running Mechanics Generation crew")
+    args = ["mechanicsgencrew"] + list(args)
+    kickoff_mechanicsgen_crew(*args, **kwargs)
