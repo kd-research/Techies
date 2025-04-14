@@ -5,7 +5,7 @@
 <h1 align="center">Techies</h1>
 
 <p align="center">
-  A modular agent framework for collaborative creativity and structured workflows.
+  Techies: A no-code platform for orchestrating collaborative AI agents through YAML configuration.
 </p>
 
 <p align="center">
