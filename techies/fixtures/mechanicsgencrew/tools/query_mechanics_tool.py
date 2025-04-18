@@ -1,7 +1,7 @@
 import json, glob
 import numpy as np
 from pydantic import PrivateAttr
-from .base_tool import BaseTool, BaseModel, Field, Type, List, os
+from ....predefined_tools.base_tool import BaseTool, BaseModel, Field, Type, List, os
 from typing import Type, List, Any
 from sentence_transformers import SentenceTransformer
 import faiss
@@ -38,7 +38,8 @@ class QueryMechanicsTool(BaseTool):
       else:
           # Fallback to the default path relative to __file__
           self._embeddings_file = os.path.normpath(
-              os.path.join(os.path.dirname(__file__), "../refs/mechanics_db/mechanics_with_embeddings.json")
+              print("No embedded files found in the current directory. Using default path for platformer mechanics."),
+              os.path.join(os.path.dirname(__file__), "../refs/mechanics_db/platformer_mechanics_embedded.json")
           )      
           
       self._initial_top_k = initial_top_k
@@ -93,7 +94,7 @@ class QueryMechanicsTool(BaseTool):
           response_lines.append(f"Name: {result.get('Name', 'N/A')}")
           response_lines.append(f"Description: {result.get('Description', 'N/A')}")
           response_lines.append(f"Implementation Details: {result.get('Implementation Details', 'N/A')}")
-          response_lines.append(f"Pseudocode: {result.get('Pseudocode (Phaser.js)', 'N/A')}")
+          response_lines.append(f"Pseudocode: {result.get('Pseudocode', 'N/A')}")
           response_lines.append(f"Similarity Score: {result.get('similarity_score', 'N/A')}\n")
       return "\n".join(response_lines)
 

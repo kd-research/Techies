@@ -2,7 +2,7 @@ import json
 from typing import Any
 import openai
 import requests
-from .base_tool import BaseTool, BaseModel, Field, Type, List, os
+from ....predefined_tools.base_tool import BaseTool, BaseModel, Field, Type, List, os
 
 
 class GenerateAndDownloadImageSchema(BaseModel):

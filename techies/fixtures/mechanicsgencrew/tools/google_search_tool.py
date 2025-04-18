@@ -1,5 +1,5 @@
 from pydantic import ConfigDict
-from .base_tool import BaseTool, BaseModel, Field, Type
+from ....predefined_tools.base_tool import BaseTool, BaseModel, Field, Type
 from langchain_community.utilities import GoogleSerperAPIWrapper
 
 class GoogleSearchToolSchema(BaseModel):
