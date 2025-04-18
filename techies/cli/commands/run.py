@@ -2,7 +2,6 @@ import click
 from techies.cli.utils.dispatch import (
     kickoff_hierarchy_crew,
     kickoff_html5_crew,
-    kickoff_mechanicsgen_crew,
     kickoff_default_crew
 )
 from techies.cli.utils.click_extensions import DefaultRunGroup
