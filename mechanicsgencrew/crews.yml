@@ -1,0 +1,18 @@
+_crew_common: &crew_common
+  cache: false
+  max_iter: 100
+  memory: false
+  input_args: []
+
+mechanicsgencrew:
+  <<: *crew_common
+  agents:
+    - Mechanics_Expert
+    - Database_Expert
+  tasks:
+    - Populate_Database
+    - Finalize_Database
+    - Review_Database
+  input_args:
+    - genre
+
