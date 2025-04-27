@@ -20,13 +20,17 @@ class Task(_Task):
         task_config['agent'] = agent
 
         context = []
-        for context_name in task_config.pop('depends_on', []):
-            context.append(task_pool.get(context_name))
+        depends_on = task_config.pop('depends_on', [])
+        if isinstance(depends_on, str):
+            depends_on = [depends_on]
+
+        for context_name in depends_on:
+            context.append(task_pool[context_name])
         task_config['context'] = context
 
-
         callback_id = task_config.get('callback', None)
-        task_config['callback'] = callbacks_available.get(callback_id)
+        if callback_id:
+            task_config['callback'] = callbacks_available[callback_id]
 
         task_pool[config_name] = self
         super().__init__(**task_config, **kwargs)
