@@ -2,15 +2,18 @@ import os
 import sys
 import fileinput
 import shutil
+import importlib.util
 
 from techies.cli.utils.crew_helpers import get_system_crew
 from techies.game_specs import game_specs
+
+AGENTOPS_EXISTS = (importlib.util.find_spec("agentops") is not None)
 
 def kickoff_default_crew(crewname, extra_args=None):
     if extra_args is None:
         extra_args = []
         
-    crew = get_system_crew(crewname, manage_agentops=True)
+    crew = get_system_crew(crewname, manage_agentops=AGENTOPS_EXISTS)
     
     # Check if input_args are defined and match the number of provided args
     if hasattr(crew, 'input_args') and crew.input_args:
@@ -36,7 +39,7 @@ def kickoff_hierarchy_crew(crewname, game=None, gamefiles=None):
             game_specifications = "\n".join(f)
 
     inputs = { "game_specifications": game_specifications }
-    crew = get_system_crew(crewname, manage_agentops=True)
+    crew = get_system_crew(crewname, manage_agentops=AGENTOPS_EXISTS)
     crew.kickoff(inputs)
 
 def kickoff_html5_crew(crewname, game=None, gamefiles=None):

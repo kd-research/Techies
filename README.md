@@ -54,6 +54,8 @@ Set the following environment variables before running Techies:
 export OPENAI_API_KEY=<your-api-key>
 
 # Optional (AgentOps monitoring/debugging)
+# Note: agentops is optional and requires manual installation:
+# pip install agentops
 export AGENTOPS_API_KEY=<your-api-key>
 
 # Optional (audio support)

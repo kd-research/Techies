@@ -44,6 +44,8 @@ Before running anything, set the following environment variables:
 export OPENAI_API_KEY=<your-api-key>
 
 # Optional (AgentOps for debugging/monitoring)
+# Note: agentops is optional and requires manual installation:
+# pip install agentops
 export AGENTOPS_API_KEY=<your-api-key>
 
 # Optional (Freesound for audio)
