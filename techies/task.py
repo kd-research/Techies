@@ -13,6 +13,10 @@ class Task(_Task):
                 Task(config_name, agent_pool=agent_pool, task_pool=task_pool, callbacks_available=all_callbacks)
         return task_pool
 
+    @staticmethod
+    def list_tasks():
+        return load_fixture('tasks', result="locations")
+
     def __init__(self, config_name, *, agent_pool, task_pool, callbacks_available=None, **kwargs):
         task_config = load_fixture('tasks')[config_name]
 
