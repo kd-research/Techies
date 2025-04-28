@@ -31,7 +31,7 @@ class Agent(_Agent):
         agent_tools = []
         for tool_name in agent_config.get('tools', []):
             # intentionally raise if tool is not available
-            agent_tools.append(tools_available.get(tool_name))
+            agent_tools.append(tools_available[tool_name])
 
         agent_config['tools'] = agent_tools
 
