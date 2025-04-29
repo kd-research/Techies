@@ -85,8 +85,6 @@ def find_scripts(script_type):
                     continue
                 if item.endswith('.py'):
                     script_files.append(os.path.join(script_dir, item))
-
-    print(script_files)
     
     return script_files
 
