@@ -1,0 +1,6 @@
+# Techies Base Marker
+
+# IMPORTANT: The techies command should be executed from a clean working directory
+# otherwise script loading features might fail.
+#
+# This file is used by the techies command to identify the project base directory.
