@@ -21,7 +21,7 @@ def list_tools():
         if hasattr(tool, 'args_schema') and tool.args_schema:
             click.echo("Arguments:")
             for field_name, field in tool.args_schema.__fields__.items():
-                field_desc = field.field_info.description or "No description"
+                field_desc = field.description or "No description"
                 click.echo(f"  - {field_name}: {field_desc}")
         
         click.echo("-" * 80) 
