@@ -67,3 +67,13 @@ def get_all_tools():
 
     # Return a deep copy of the registered tools dictionary
     return copy.deepcopy(_registered_tools)
+
+def validate_tool(tool_id, recursive=True):
+    """
+    Validate the tool with the given tool_id.
+    Returns (True, None) on success, (False, 'failure-reason') on failure.
+    """
+    tools = get_all_tools()
+    if tool_id in tools:
+        return True, None
+    return False, f"Tool '{tool_id}' not found"
