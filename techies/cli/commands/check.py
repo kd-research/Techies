@@ -1,4 +1,5 @@
 import click
+import sys
 from techies.crew import Crew
 from techies.task import Task
 from techies.agent import Agent
@@ -20,6 +21,7 @@ def crew(name, recursive):
         click.echo(f"Checked crew '{name}' (recursive={recursive}): OK")
     else:
         click.echo(f"Checked crew '{name}' (recursive={recursive}): FAILED - {reason}")
+        sys.exit(1)
 
 @check.command()
 @click.argument('name')
@@ -31,6 +33,7 @@ def task(name, recursive):
         click.echo(f"Checked task '{name}' (recursive={recursive}): OK")
     else:
         click.echo(f"Checked task '{name}' (recursive={recursive}): FAILED - {reason}")
+        sys.exit(1)
 
 @check.command()
 @click.argument('name')
@@ -42,6 +45,7 @@ def agent(name, recursive):
         click.echo(f"Checked agent '{name}' (recursive={recursive}): OK")
     else:
         click.echo(f"Checked agent '{name}' (recursive={recursive}): FAILED - {reason}")
+        sys.exit(1)
 
 @check.command()
 @click.argument('name')
@@ -53,6 +57,7 @@ def tool(name, recursive):
         click.echo(f"Checked tool '{name}' (recursive={recursive}): OK")
     else:
         click.echo(f"Checked tool '{name}' (recursive={recursive}): FAILED - {reason}")
+        sys.exit(1)
 
 @check.command()
 @click.argument('name')
@@ -63,4 +68,5 @@ def callback(name, recursive):
     if ok:
         click.echo(f"Checked callback '{name}' (recursive={recursive}): OK")
     else:
-        click.echo(f"Checked callback '{name}' (recursive={recursive}): FAILED - {reason}") 
+        click.echo(f"Checked callback '{name}' (recursive={recursive}): FAILED - {reason}")
+        sys.exit(1) 
