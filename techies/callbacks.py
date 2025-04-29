@@ -33,3 +33,13 @@ def get_all_callbacks():
     """Get all registered callback functions."""
     # Return a deep copy of the registered callbacks dictionary
     return copy.deepcopy(_registered_callbacks) 
+
+def validate_callback(callback_id, recursive=True):
+    """
+    Validate the callback with the given callback_id.
+    Returns (True, None) on success, (False, 'failure-reason') on failure.
+    """
+    callbacks = get_all_callbacks()
+    if callback_id in callbacks:
+        return True, None
+    return False, f"Callback '{callback_id}' not found" 

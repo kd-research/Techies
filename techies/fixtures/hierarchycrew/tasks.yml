@@ -39,7 +39,7 @@ hierarchy_review:
     Report the expected answer to the questions.
     Report the refining suggestions.
     The final answer should be a plain text with less than 300 words.
-  depend_on:
+  depends_on:
     - game_hierarchy_representation
 
 game_hierarchy_refinement:
@@ -51,7 +51,7 @@ game_hierarchy_refinement:
     Your working directory will be delivered to hierarchy assembling team.
   expected_output: >
     A brief description of the game itself and the game hierarchy design in plain text with less than 300 words.
-  depend_on:
+  depends_on:
     - game_hierarchy_representation
     - hierarchy_review
 
@@ -64,7 +64,7 @@ game_hierarchy_assembling:
   expected_output: >
     Your final answer should be a single json object that represents the game hierarchy.
   output_file: game_hierarchy.json
-  depend_on:
+  depends_on:
     - game_hierarchy_refinement
 
 code_develop:
@@ -88,7 +88,7 @@ code_assemble:
     You would expect an empty DOM at beginning. Any DOM manipulation should be done in the game code.
   expected_output: >
     Your final answer should be a single file that contains the game code.
-  depend_on:
+  depends_on:
     - code_develop
 
 # vim: set foldmethod=indent foldlevel=0:
