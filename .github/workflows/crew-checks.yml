@@ -15,6 +15,8 @@ jobs:
           - crew_name: hierarchy_crew_v2
           - crew_name: html5_crew
           - crew_name: code_crew
+          #- crew_name: mechanicsgencrew
+          #  allow_script_flag: --allow-load-scripts
       fail-fast: false
     
     steps:
@@ -36,4 +38,4 @@ jobs:
           
       - name: Run crew check
         run: |
-          poetry run techies check crew ${{ matrix.crew_name }} 
+          poetry run techies ${{ matrix.allow_script_flag }} check crew ${{ matrix.crew_name }} 
