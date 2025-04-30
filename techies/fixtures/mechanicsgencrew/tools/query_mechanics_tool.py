@@ -4,8 +4,6 @@ from pydantic import PrivateAttr
 import os
 from pydantic import BaseModel, Field
 from typing import Type, List, Any
-from crewai.tools import BaseTool 
-from typing import Type, List, Any
 from sentence_transformers import SentenceTransformer
 import faiss
 
