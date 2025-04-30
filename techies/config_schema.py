@@ -15,7 +15,7 @@ AGENT_SCHEMA = {
         "verbose": {"type": "boolean"},
         "allow_delegation": {"type": "boolean"}
     },
-    "required": ["goal", "backstory", "tools"],
+    "required": ["goal", "backstory"],
     "additionalProperties": False
 }
 
