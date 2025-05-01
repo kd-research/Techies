@@ -11,7 +11,7 @@ Techies comes with several **predefined crews** designed for creative workflows 
 Run the following to list available crews:
 
 ```bash
-techies list_crews
+techies list crews
 ```
 
 Example output:

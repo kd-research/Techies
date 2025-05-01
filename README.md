@@ -78,7 +78,12 @@ export MODEL=openai/gpt-4o
 The powerful CLI interface for running and managing crews:
 
 ```bash
-techies list_crews
+# Explore available components
+techies list crews
+techies list agents
+techies list tasks
+
+# Run and introduce crews
 techies run hierarchy_crew_v2 --game tictactoe
 techies introduce hierarchy_crew_v2
 ```
@@ -94,6 +99,8 @@ techies scaffold my_crew
 techies dump hierarchy_crew_v2
 techies run mycrew
 ```
+
+> Note: Legacy commands like `list_crews`, `list_agents` are still available but will be removed in v2.0.
 
 ---
 

@@ -6,6 +6,7 @@ from .get_runtime_path import get_runtime_path
 from .list_tools import list_tools
 from .list_callbacks import list_callbacks
 from .check import check
+from .list import list_group
 
 def register_commands(cli):
     cli.add_command(run)
@@ -20,3 +21,4 @@ def register_commands(cli):
     cli.add_command(list_tools)
     cli.add_command(list_callbacks)
     cli.add_command(check)
+    cli.add_command(list_group)

@@ -275,7 +275,7 @@ Your `agents.yml` scaffold will include commented tool names.
 You can list them manually using:
 
 ```bash
-techies list_tools
+techies list tools
 ```
 
 > Custom tool support is a **work in progress** — stay tuned!

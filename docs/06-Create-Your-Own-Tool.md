@@ -124,10 +124,10 @@ register_tool(my_tool)  # You can also use register_tool(my_tool, tool_id="custo
 
 ## Listing Available Tools
 
-You can see all available tools, including your custom ones, using the `list_tools` command:
+You can see all available tools, including your custom ones, using the `list tools` command:
 
 ```bash
-techies --allow-load-tools list_tools
+techies --allow-load-tools list tools
 ```
 
 This will show each tool's ID, which is what you need to use in your agents.yaml file.

@@ -1,29 +1,28 @@
 import click
-from techies.crew import Crew
-from techies.agent import Agent
-from techies.task import Task
-from techies.game_specs import specs
+from techies.cli.utils.deprecator import deprecated_command
+from techies.cli.commands.list import _list_crews, _list_agents, _list_tasks, _list_game_specs
 
 @click.command(name="list_crews")
+@deprecated_command("list crews")
 def list_crews():
     """List available crews."""
-    click.echo("[Available crews]")
-    for crew, path in Crew.list_crews().items():
-        click.echo(f"{crew:20s} at {path}")
+    return _list_crews()
 
 @click.command(name="list_agents")
+@deprecated_command("list agents")
 def list_agents():
     """List available agents."""
-    click.echo(Agent.list_agents())
+    return _list_agents()
 
 @click.command(name="list_tasks")
+@deprecated_command("list tasks")
 def list_tasks():
     """List available tasks."""
-    click.echo(Task.list_tasks())
+    return _list_tasks()
 
 @click.command(name="list_game_specs")
+@deprecated_command("list game_specs")
 def list_game_specs():
     """List available game specifications."""
-    click.echo("[Available game specifications]")
-    click.echo("\t".join(specs.keys()))
+    return _list_game_specs()
 

@@ -67,127 +67,28 @@ Once installed, use the CLI to explore what's available:
 
 ```bash
 # List all registered crews
-techies list_crews
+techies list crews
 
 # List all available agents
-techies list_agents
+techies list agents
 
 # List all available tasks
-techies list_tasks
+techies list tasks
 
 # List predefined game specifications
-techies list_game_specs
+techies list game_specs
+
+# List available tools
+techies list tools
+
+# List available callbacks (requires --allow-load-scripts flag)
+techies --allow-load-scripts list callbacks
 ```
+
+> Note: Legacy commands like `list_crews`, `list_agents` are still available but will be deprecated in v2.0.
 
 ---
 
 ## Introduce a Crew
 
 Use the `introduce` command to preview what a crew does and how it works:
-
-```bash
-techies introduce hierarchy_crew_v2
-```
-
-This runs a special **self-introduction task** and will generate a natural-language explanation of the crew.
-
-> Warning: Requires access to system runtime path. If you're using a custom `TECHIES_RUNTIME`, make sure to include:
-> ```bash
-> export TECHIES_RUNTIME=$(techies get_runtime_path):/your/custom/path
-> ```
-
----
-
-## Run a Crew
-
-You can run a predefined crew using the `run` command.
-
-### Step 1: Run a Hierarchy Crew
-
-This generates a structured XML hierarchy for a game idea.
-
-```bash
-techies run hierarchy_crew_v2 --game tictactoe
-```
-
-- This uses a built-in game spec (`tictactoe`)
-- You can also provide a custom `.txt` file:
-
-```bash
-techies run hierarchy_crew_v2 my_game.txt
-```
-
-> Output: `game_hierarchy.xml` will be created in the current directory.
-
----
-
-### Step 2: Run the HTML5 Crew
-
-Once `game_hierarchy.xml` has been generated, you can use it to build a playable game:
-
-```bash
-techies run html5_crew game_hierarchy.xml
-```
-
-This will generate:
-
-- `index.html`, `style.css`, `script.js`
-- `game.html` (merged version)
-- Optional: `.mp3` sound files (if defined)
-
-> Open `game.html` in a browser to play.
-
----
-
-## Working Directory Rules
-
-Techies crews are **sandboxed** to the current working directory:
-
-- All outputs are written directly here
-- Crews can read/write any file in the directory
-- Hidden files/folders (starting with `.`) are ignored
-- Do **not** run crews in your home directory or root repo
-
-### Recommended Workflow
-
-```bash
-# 1. Create a new clean working directory
-mkdir working_dir && cd working_dir
-
-# 2. Run a hierarchy crew to generate game logic
-techies run hierarchy_crew_v2 --game tictactoe
-
-# 3. Use the output to run the HTML5 crew
-techies run html5_crew game_hierarchy.xml
-
-# 4. Open the output (game.html) in your browser
-```
-
-> Always use a clean folder when running crews. Crews write all outputs into the current directory.
-
----
-
-## Need Help?
-
-To view help for any command:
-
-```bash
-techies --help
-techies run --help
-techies introduce --help
-```
-
----
-
-## Next Steps
-
-- [Running Predefined Crews](./02-Running-Predefined-Crews.md)
-- [Understand Crew Configurations](./03-Understand-Crew-Configurations.md)
-- [Modifying Existing Crews](./04-Modifying-Existing-Crews.md)
-- [Create Your Own Crew](./05-Create-Your-Own-Crew.md)
-- [Create Your Own Tool](./06-Create-Your-Own-Tool.md)
-- [Using Callbacks in Tasks](./07-Using-Callbacks-in-Tasks.md)
-
----
-
-Techies is developed by [Kaidong Hu](https://hukaidong.com) at [KD Research](https://github.com/kd-research).

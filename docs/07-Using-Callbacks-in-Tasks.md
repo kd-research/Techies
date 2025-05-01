@@ -136,7 +136,7 @@ Without this flag, no custom callbacks will be loaded, and any task that referen
 To list all available callbacks:
 
 ```bash
-techies --allow-load-scripts list_callbacks
+techies --allow-load-scripts list callbacks
 ```
 
 ---

@@ -23,6 +23,11 @@ class Agent(_Agent):
 
         return agent_pool
 
+    @staticmethod
+    def list_agents():
+        """List available agents with their locations."""
+        return load_fixture('agents', result="locations")
+        
     def __init__(
         self, config_name, *, agent_pool=None, tools_available=None, **kwargs
     ):
