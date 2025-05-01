@@ -54,6 +54,8 @@ Set the following environment variables before running Techies:
 export OPENAI_API_KEY=<your-api-key>
 
 # Optional (AgentOps monitoring/debugging)
+# Note: agentops is optional and requires manual installation:
+# pip install agentops
 export AGENTOPS_API_KEY=<your-api-key>
 
 # Optional (audio support)
@@ -104,6 +106,7 @@ techies run mycrew
 - [Create Your Own Crew](./docs/05-Create-Your-Own-Crew.md)
 - [Create Your Own Tool](./docs/06-Create-Your-Own-Tool.md)
 - [Using Callbacks in Tasks](./docs/07-Using-Callbacks-in-Tasks.md)
+- [Validating Your Configurations](./docs/08-Validate-Your-Own-Crew.md)
 
 ---
 

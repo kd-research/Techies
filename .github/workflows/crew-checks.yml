@@ -1,0 +1,41 @@
+name: Crew Validation
+
+on:
+  pull_request:
+    paths:
+      - 'techies/fixtures/**'
+
+jobs:
+  check-crews:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - crew_name: hierarchy_crew
+          - crew_name: hierarchy_crew_v2
+          - crew_name: html5_crew
+          - crew_name: code_crew
+          #- crew_name: mechanicsgencrew
+          #  allow_script_flag: --allow-load-scripts
+      fail-fast: false
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.6.1
+          
+      - name: Install dependencies
+        run: |
+          poetry install
+          
+      - name: Run crew check
+        run: |
+          poetry run techies ${{ matrix.allow_script_flag }} check crew ${{ matrix.crew_name }} 

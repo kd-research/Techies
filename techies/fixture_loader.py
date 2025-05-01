@@ -20,7 +20,11 @@ def load_fixture(fixture_name, result="objects"):
         return indexies
 
 def runtime_config():
-    runtimedir_default = os.pathsep.join([_fixture_dir, "."])
+    # Only include current directory if .techiesbase is not present
+    if os.path.isfile('.techiesbase'):
+        runtimedir_default = _fixture_dir
+    else:
+        runtimedir_default = os.pathsep.join([_fixture_dir, "."])
 
     return os.environ.get('TECHIES_RUNTIME', runtimedir_default)
 

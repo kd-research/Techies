@@ -25,6 +25,7 @@ def load_custom_tools():
     
     # Create a dictionary of globals to expose to the tool scripts
     exposed_globals = {
+        '__name__': '__main__',
         'BaseTool': BaseTool,
         'tool': tool,
         'BaseModel': BaseModel,

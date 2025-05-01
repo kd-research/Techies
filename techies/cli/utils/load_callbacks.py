@@ -22,6 +22,7 @@ def load_custom_callbacks():
     
     # Create a dictionary of globals to expose to the callback scripts
     exposed_globals = {
+        '__name__': '__main__',
         'register_callback': register_callback
     }
     
