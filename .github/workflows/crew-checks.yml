@@ -15,8 +15,8 @@ jobs:
           - crew_name: hierarchy_crew_v2
           - crew_name: html5_crew
           - crew_name: code_crew
-          #- crew_name: mechanicsgencrew
-          #  allow_script_flag: --allow-load-scripts
+          - crew_name: mechanicsgencrew
+            allow_script_flag: --allow-load-scripts
       fail-fast: false
     
     steps:

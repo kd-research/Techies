@@ -1,10 +1,3 @@
-# import json
-# import os
-# import faiss
-# import numpy as np
-# from sentence_transformers import SentenceTransformer
-from techies.callbacks import register_callback
-
 # Create embeddings file, used as callback for after mechanics.json is created by mechanicsgencrew
 # to create embeddings for each mechanic and save them to a new JSON file. These mechanics can be
 # searched using the query_mechanics tool.
@@ -108,6 +101,10 @@ def search_mechanics_dynamic(query, initial_top_k=10, threshold=1.5):
             relevant_results.append(mechanic)
     return relevant_results
 
+def wrap_embed_json(message: str):
+    embed_json()
+    return message
+
 # def main():
 #     # Uncomment the following line to create embeddings
 #     embed_json()
@@ -131,4 +128,4 @@ def search_mechanics_dynamic(query, initial_top_k=10, threshold=1.5):
 # if __name__ == "__main__":
 #     main()
 
-register_callback("embed_json", embed_json)
+register_callback(wrap_embed_json, callback_id="embed_file")

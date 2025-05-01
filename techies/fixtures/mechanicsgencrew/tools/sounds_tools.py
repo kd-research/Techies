@@ -1,5 +1,8 @@
 import openai
-from ....predefined_tools.base_tool import BaseTool, BaseModel, Field, Type, List, Dict, Any, os, requests, re
+from typing import Any, Type
+import os
+import requests
+import re
 from bs4 import BeautifulSoup
 from freesound import FreesoundClient
 
