@@ -125,5 +125,5 @@ Review_Database:
       ...
     ]
     - No additional text or headings. Only JSON.
-    Make sure to write the JSON to a file named **{genre}_mechanics.json**.
+    Make sure to write the JSON to a file named **{genre}_mechanics.json** using the write_file tool.
   callback: embed_file

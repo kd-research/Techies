@@ -5670,8 +5670,6 @@ doc = ["reno", "sphinx"]
 test = ["pytest", "tornado (>=4.5)", "typeguard"]
 
 [[package]]
-<<<<<<< HEAD
-=======
 name = "threadpoolctl"
 version = "3.6.0"
 description = "threadpoolctl"
@@ -5684,7 +5682,6 @@ files = [
 ]
 
 [[package]]
->>>>>>> 2a6deb2cb13e0cad60ff9473c89c7fdefc96c825
 name = "tiktoken"
 version = "0.9.0"
 description = "tiktoken is a fast BPE tokeniser for use with OpenAI's models"
@@ -6860,8 +6857,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13"
-<<<<<<< HEAD
-content-hash = "c9ec0c90aa5954d8fe00f609fcf25ed59a9d6955a4ae82d37d5dddcff8344c7a"
-=======
 content-hash = "3c3b172a60ab71c461d0fe59a08ae8042872219b41872aa14c5b80e2cb5a38e7"
->>>>>>> 2a6deb2cb13e0cad60ff9473c89c7fdefc96c825

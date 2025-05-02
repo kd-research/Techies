@@ -9,17 +9,10 @@ version = "1.3.0"
 techies = "techies.cli.main:main"
 
 [tool.poetry.dependencies]
-<<<<<<< HEAD
 python = ">=3.12,<3.13"
 # agentops is optional and require user to install manually
 #agentops               =  "^0.4.6"  
 beautifulsoup4 = "^4.12.3"
-=======
-python                 =  ">=3.12,<3.13"
-# agentops is optional and require user to install manually
-#agentops               =  "^0.4.6"  
-beautifulsoup4         =  "^4.12.3"
->>>>>>> 2a6deb2cb13e0cad60ff9473c89c7fdefc96c825
 # Two unfixed bugs in crewai prevents us upgrading to 0.4x
 # - Agent not able to delegate task if extra tools are assigned
 # - Agent not able to invoke non-deterministic tool even with cache disabled
