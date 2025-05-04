@@ -44,7 +44,7 @@ def runtimedirs():
     return set(realpaths)
 
 def populate_fixture_from_file(merged, filename, indexies):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         obj = yaml.load(f, Loader=yaml.FullLoader)
 
     for key in list(obj.keys()):
