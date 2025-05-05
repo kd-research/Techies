@@ -8,10 +8,10 @@ from techies.config_schema import AGENT_SCHEMA
 
 class Agent(_Agent):
     @staticmethod
-    def eager_load_all(**extra_kwargs):
+    def eager_load_all(tools=None, **extra_kwargs):
 
         agent_pool = {}
-        all_tools = get_all_tools()
+        all_tools = get_all_tools() if tools is None else tools
         for config_name in load_fixture('agents').keys():
             if not config_name.startswith('_'):
                 agent = Agent(
