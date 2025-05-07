@@ -10,7 +10,7 @@ class ReadHtmlExamplesTool(BaseTool):
     id: str = "read_examples_html"
     description: str = "Read all example html games."
     args_schema: Type[BaseModel] = ReadHtmlExamplesToolSchema
-    base_dir: str
+    base_dir: str = "." # Not used in this tool, mute error when base_dir is assigned
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

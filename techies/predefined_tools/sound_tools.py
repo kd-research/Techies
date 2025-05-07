@@ -28,6 +28,7 @@ class SaveSoundToolSchema(BaseModel):
 class SearchSoundTool(BaseTool):
     name: str = "search_sound"
     id: str = "search_sound"
+    base_dir: str = "." # Not used in this tool, mute error when base_dir is assigned
     description: str = "Search for sounds using the FreeSound API."
     args_schema: Type[BaseModel] = SearchSoundToolSchema
 
@@ -74,6 +75,7 @@ class SearchSoundTool(BaseTool):
 class SaveSoundTool(BaseTool):
     name: str = "save_sound"
     id: str = "save_sound"
+    base_dir: str
     description: str = "Save a sound file from FreeSound using the sound ID."
     args_schema: Type[BaseModel] = SaveSoundToolSchema
 
@@ -87,10 +89,12 @@ class SaveSoundTool(BaseTool):
         client = FreesoundClient()
         client.set_token(os.environ['FREESOUND_CLIENT_API_KEY'], 'token')
 
-        current_directory = os.getcwd()
+        sounds_dir = os.path.join(self.base_dir, "sounds")
+        os.makedirs(sounds_dir, exist_ok=True)
+
         try:
             chosen_sound = client.get_sound(sound_id)
-            chosen_sound.retrieve_preview(current_directory, file_name)
-            return f"Sound with id: {sound_id}, with name: {file_name}."
+            chosen_sound.retrieve_preview(sounds_dir, file_name)
+            return f"Sound with id: {sound_id}, with name: {file_name} saved in {sounds_dir}."
         except Exception as e:
             return f"Failed to save sound: {e}" 
