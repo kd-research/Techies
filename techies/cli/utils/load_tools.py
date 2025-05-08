@@ -42,6 +42,7 @@ def load_custom_tools():
             
             # Execute the file content with exposed globals
             # The tool file is expected to call register_tool() itself
+            exposed_globals['__file__'] = tool_file
             exec(file_content, exposed_globals)
         except Exception as e:
             print(f"Error loading tool file {tool_file}: {e}")
