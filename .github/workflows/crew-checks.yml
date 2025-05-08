@@ -17,6 +17,8 @@ jobs:
           - crew_name: code_crew
           - crew_name: mechanicsgencrew
             allow_script_flag: --allow-load-scripts
+          - crew_name: phaser_crew
+            allow_script_flag: --allow-load-scripts
       fail-fast: false
     
     steps:
