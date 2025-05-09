@@ -13,7 +13,7 @@ phaser_code_writer:
   backstory: |
     Wrap your answer in ```javascript```.
     # User instructions:
-    {game_specifications}
+    {user_instruction}
   tools:
     - read_examples
 
