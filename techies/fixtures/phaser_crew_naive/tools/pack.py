@@ -49,15 +49,22 @@ class PackGameTool(BaseTool):
         assets_dir = os.path.join(self.base_dir, "assets")
         if not os.path.exists(assets_dir):
             os.makedirs(assets_dir)
-        for item in os.listdir(os.path.join(os.path.dirname(__file__), "template", "assets")):
-            s = os.path.join(os.path.dirname(__file__), "template", "assets", item)
-            d = os.path.join(assets_dir, item)
-            if os.path.isdir(s):
-                os.makedirs(d, exist_ok=True)
-            else:
-                with open(s, "rb") as fsrc, open(d, "wb") as fdst:
-                    fdst.write(fsrc.read())
-        
+        source_dir = os.path.join(os.path.dirname(FILE), "template", "assets")
+        # copy all contents (incl. subfolders) from source_dir to assets_dir
+        # do it recursively
+        def copytree(src, dst):
+            for item in os.listdir(src):
+                s = os.path.join(src, item)
+                d = os.path.join(dst, item)
+                if os.path.isdir(s):
+                    if not os.path.exists(d):
+                        os.makedirs(d)
+                    copytree(s, d)
+                else:
+                    with open(s, "rb") as fsrc:
+                        with open(d, "wb") as fdst:
+                            fdst.write(fsrc.read())
+        copytree(source_dir, assets_dir)       
 
         return "Game packed successfully."
 
