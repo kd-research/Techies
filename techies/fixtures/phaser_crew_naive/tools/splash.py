@@ -23,10 +23,9 @@ class SplashAndIconTool(BaseTool):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.client = OpenAI()
 
     def _run(self, **kwargs) -> str:
-
+        client: OpenAI = OpenAI()
         splash_description = kwargs['splash_description']
         icon_description = kwargs['icon_description']
 
@@ -36,8 +35,8 @@ class SplashAndIconTool(BaseTool):
         splash_path = os.path.join(self.base_dir, "external", "splash.png")
 
         # Generate icon image
-        icon_img = self.client.images.generate(
-            model="gpt-image-1",
+        icon_img = client.images.generate(
+            model="dall-e-3",
             prompt="Create a game app icon image for the description:\n"+icon_description+"\nUse transparent background",
             n=1,
             size="1024x1024"
@@ -47,9 +46,9 @@ class SplashAndIconTool(BaseTool):
             f.write(image_bytes)
 
         # Generate splash screen image
-        splash_img = self.client.images.generate(
+        splash_img = client.images.generate(
             model="dall-e-3",
-            prompt="Create a game app splash screen image for the description:\n"+splash_description+"\nUse transparent background",
+            prompt="Create a game app splash screen image for the description:\n"+splash_description,
             n=1,
             size="1024x1024"
         )
@@ -58,5 +57,4 @@ class SplashAndIconTool(BaseTool):
             f.write(image_bytes)
         return f"Icon and splash screen images generated successfully."
     
-
 register_tool(SplashAndIconTool)
