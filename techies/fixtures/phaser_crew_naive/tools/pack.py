@@ -4,7 +4,6 @@ from techies.predefined_tools.base_tool import BaseTool, BaseModel, Type, os
 class PackGameToolSchema(BaseModel):
     pass
 
-FILE = __file__
 class PackGameTool(BaseTool):
     name: str = "Pack game"
     id: str = "pack_game"
@@ -20,9 +19,9 @@ class PackGameTool(BaseTool):
         try:
             with open(os.path.join(self.base_dir, "game.js"), "r", encoding="utf-8") as f:
                 game_code = f.read()
-            with open(os.path.join(os.path.dirname(FILE), "template", "js", "main.js"), "r", encoding="utf-8") as f:
+            with open(os.path.join(os.path.dirname(__file__), "template", "js", "main.js"), "r", encoding="utf-8") as f:
                 js_file = f.read()
-            with open(os.path.join(os.path.dirname(FILE), "template", "index_template.html"), "r", encoding="utf-8") as f:
+            with open(os.path.join(os.path.dirname(__file__), "template", "index_template.html"), "r", encoding="utf-8") as f:
                 html_file = f.read()
         except Exception as e:
             return f"Error reading game template: {e}"
@@ -49,7 +48,7 @@ class PackGameTool(BaseTool):
         assets_dir = os.path.join(self.base_dir, "assets")
         if not os.path.exists(assets_dir):
             os.makedirs(assets_dir)
-        source_dir = os.path.join(os.path.dirname(FILE), "template", "assets")
+        source_dir = os.path.join(os.path.dirname(__file__), "template", "assets")
         # copy all contents (incl. subfolders) from source_dir to assets_dir
         # do it recursively
         def copytree(src, dst):

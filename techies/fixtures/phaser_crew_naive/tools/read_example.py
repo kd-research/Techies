@@ -4,8 +4,6 @@ from techies.predefined_tools.base_tool import BaseTool, BaseModel, Type, os
 class ReadExamplesToolSchema(BaseModel):
     pass
 
-FILE = __file__
-
 class ReadExamplesTool(BaseTool):
     name: str = "Read code examples"
     id: str = "read_examples"
@@ -17,7 +15,7 @@ class ReadExamplesTool(BaseTool):
         super().__init__(**kwargs)
 
     def _run(self, **kwargs) -> str:
-        with open(os.path.join(os.path.dirname(FILE), "template", "js", "main.js"), "r", encoding="utf-8") as f:
+        with open(os.path.join(os.path.dirname(__file__), "template", "js", "main.js"), "r", encoding="utf-8") as f:
             examples = f.read()
         return examples
     
