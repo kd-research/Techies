@@ -43,6 +43,14 @@ class PackGameTool(BaseTool):
         except Exception as e:
             return f"Error packing game: {e}"
         
+        # copy testing py to base_dir
+        try:
+            with open(os.path.join(os.path.dirname(__file__), "template", "host_test.py"), "r", encoding="utf-8") as f:
+                testing_code = f.read()
+            with open(os.path.join(self.base_dir, "host_test.py"), "w", encoding="utf-8") as f:
+                f.write(testing_code)
+        except Exception as e:
+            return f"Error copying host_test.py: {e}"        
 
         # copy assets folder to base_dir
         assets_dir = os.path.join(self.base_dir, "assets")
