@@ -161,7 +161,7 @@
 
     <div id="start-menu-screen" class="active screen">
         <div class="container">
-            <h1 id="game-title">California Jack</h1>
+            <h1 id="game-title">Basic Platformer</h1>
             <div class="game-logo">
               <img src="./images/game-logo.png" alt="Game Logo" />
             </div>
@@ -221,7 +221,6 @@
     <script>
       window.serverUrl = "http://127.0.0.1:5000";
       window.deviceID = null;
-      const gamename = "california-jack";  // TODO: change this to the game name
       document.addEventListener('DOMContentLoaded', () => {
         class GameUI {
           constructor() {
@@ -323,6 +322,7 @@
                   width: gameWidth, height: gameHeight,
                   physics: { default: 'arcade', arcade: { gravity: { y: 300 }, debug: false } },
                   scene: [ MainScene ],
+                  backgroundColor: '#9FCDF5',
               };
               this.phaserGame = new Phaser.Game(config);
               document.getElementById('game-container').appendChild(this.phaserGame.canvas);

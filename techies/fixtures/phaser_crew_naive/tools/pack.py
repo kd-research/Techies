@@ -21,7 +21,7 @@ class PackGameTool(BaseTool):
                 game_code = f.read()
             with open(os.path.join(os.path.dirname(__file__), "template", "js", "main.js"), "r", encoding="utf-8") as f:
                 js_file = f.read()
-            with open(os.path.join(os.path.dirname(__file__), "template", "index_template.html"), "r", encoding="utf-8") as f:
+            with open(os.path.join(os.path.dirname(__file__), "template", "index.html"), "r", encoding="utf-8") as f:
                 html_file = f.read()
         except Exception as e:
             return f"Error reading game template: {e}"
