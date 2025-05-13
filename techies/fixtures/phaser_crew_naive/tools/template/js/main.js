@@ -231,14 +231,14 @@ class MetricDisplay {
      * @param {number} initial   Starting value (default 0)
      * @param {object} style
      */
-    constructor(scene, x, y, label, initial = 0, style = { fontSize: '24px', fill: '#000' }) {
+    constructor(scene, x, y, label, initial = 0, style = { fontSize: '24px', fill: '#000', fontStyle: 'bold' }) {
         this.scene = scene;
         this.value = initial;
         this.label = label;
-        this.rect = scene.add.rectangle(x, y, 200, 25, 0xffffff, ).setOrigin(0);
+        // this.rect = scene.add.rectangle(x, y, 200, 25, 0xffffff, ).setOrigin(0);
         this.text = scene.add.text(x, y, `${label}: ${this._fmt(initial)}`, style);
         this.text.setScrollFactor(0);
-        this.rect.setScrollFactor(0);
+        // this.rect.setScrollFactor(0);
     }
 
     /**
@@ -548,7 +548,7 @@ class Destination {
         const h = this.scene.scale.height;
         this.scene.add.text(w / 2, h / 2, 'YOU WIN!', {
             fontSize: '64px',
-            fill: '#0f0',
+            fill: '#000',
             fontStyle: 'bold'
         }).setOrigin(0.5).setScrollFactor(0);
     }
@@ -583,6 +583,49 @@ class GamepadButton {
     }
 }
 
+class GameControlPanel {
+    constructor(scene, mapHeight, gameHeight, gameWidth) {
+        this.scene = scene;
+        this.mapHeight = mapHeight;
+        this.gameHeight = gameHeight;
+        this.gameWidth = gameWidth;
+
+        // add black background
+        this.background = scene.add.rectangle(0, mapHeight, gameWidth, gameHeight - mapHeight, 0x000000)
+            .setOrigin(0)
+            .setScrollFactor(0);
+        
+        // add a virtual joystick
+        var joystickPlugin = this.scene.plugins.get('rexvirtualjoystickplugin');
+        var joystick = joystickPlugin.add(this.scene, {
+            x: 120,
+            y: mapHeight + (gameHeight - mapHeight) * 0.5,
+            radius: 70,
+            dir: 'left&right',
+        }); 
+        this.joystick = joystick;
+        
+    }
+
+    setButtons(texts, callbacks) {
+        const buttonNumber = texts.length;
+        const panelHeight = this.gameHeight - this.mapHeight;
+
+        // calculate button x and y positions
+        const x_pos = this.gameWidth - 100;
+        var y_pos = [];
+        for (let i = 0; i < buttonNumber; i++) {
+            y_pos.push(this.mapHeight + (panelHeight / (buttonNumber + 1)) * (i + 1));
+        }
+        // create buttons
+        var buttons = [];
+        for (let i = 0; i < buttonNumber; i++) {
+            const button = new GamepadButton(this.scene, x_pos, y_pos[i], texts[i], callbacks[i]);
+            buttons.push(button);
+        }
+        return buttons;
+    }
+}
 
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -628,19 +671,14 @@ class MainScene extends Phaser.Scene {
         const tileLayer = this.map.createLayer("Tile Layer", tiles, 0, 0);
         tileLayer.setCollisionByProperty({ type: [ 'ground' ] });
 
-        // add a virtual joystick
         const gameWidth = window.innerWidth - 0;
         const gameHeight = window.innerHeight - 65;
-        var joystickPlugin = this.plugins.get('rexvirtualjoystickplugin');
-        var joystick = joystickPlugin.add(this, {
-            x: 120,
-            y: gameHeight * 0.85,
-            radius: 70,
-            dir: 'left&right',
-        });
+        const mapHeight = tileLayer.height;
+        // add control panel
+        const controlPanel = new GameControlPanel(this, mapHeight, gameHeight, gameWidth);
 
         // player
-        this.player = new BasePlayer(this, joystick, 100, 450, 'player_run', 'player_idle');
+        this.player = new BasePlayer(this, controlPanel.joystick, 100, 450, 'player_run', 'player_idle');
         this.physics.add.collider(this.player, tileLayer);
 
         // set the camera to follow the player
@@ -718,8 +756,10 @@ class MainScene extends Phaser.Scene {
         this.physics.add.collider(this.destination.sprite, tileLayer);
         
         // Create fire and jump buttons
-        this.fireButton = new GamepadButton(this, gameWidth * 0.85, gameHeight * 0.8, 'Fire', () => this.shooter.fire());
-        this.jumpButton = new GamepadButton(this, gameWidth * 0.85, gameHeight * 0.9, 'Jump', () => this.player.jump());
+        controlPanel.setButtons(
+            ['Fire', 'Jump'],
+            [() => this.shooter.fire(), () => this.player.jump()]
+        );
 
         // --- End of customizable section ---
     }
