@@ -36,7 +36,7 @@ def load_custom_callbacks():
             # Execute the file content with exposed globals
             # The callback file is expected to call register_callback() itself
             exposed_globals['__file__'] = callback_file
-            exec(file_content, exposed_globals)
+            exec(file_content, exposed_globals.copy())
         except Exception as e:
             print(f"Error loading callback file {callback_file}: {e}")
     
