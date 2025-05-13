@@ -43,8 +43,9 @@ phaser_game_packer:
   goal: |
     Package the Phaser game code into a game file.
   backstory: |
-    You are a Phaser 3 code writer. Your task is to first use "Splash screen and icon generator" to generate game splash screen and icon.
+    You are a Phaser 3 code writer. Your task is to first use splash screen and icon generators to generate game splash screen and icon.
     Then you will use "Pack game tool" to package the Phaser game code into a game file.
   tools:
-    - splash_and_icon
+    - splash_gen
+    - icon_gen
     - pack_game
