@@ -217,58 +217,6 @@ class Collector {
     }
 }
 
-/**
- * Displays a labeled numeric value on screen, with methods to
- * increment and reset it.  Shows at most one digit after the
- * decimal if the value isn’t an integer.
- */
-class MetricDisplay {
-    /**
-     * @param {Phaser.Scene} scene
-     * @param {number} x
-     * @param {number} y
-     * @param {string} label
-     * @param {number} initial   Starting value (default 0)
-     * @param {object} style
-     */
-    constructor(scene, x, y, label, initial = 0, style = { fontSize: '24px', fill: '#000', fontStyle: 'bold' }) {
-        this.scene = scene;
-        this.value = initial;
-        this.label = label;
-        // this.rect = scene.add.rectangle(x, y, 200, 25, 0xffffff, ).setOrigin(0);
-        this.text = scene.add.text(x, y, `${label}: ${this._fmt(initial)}`, style);
-        this.text.setScrollFactor(0);
-        // this.rect.setScrollFactor(0);
-    }
-
-    /**
-     * Add to the current value and update the display.
-     * @param {number} delta
-     */
-    add(delta) {
-        this.value += delta;
-        this.text.setText(`${this.label}: ${this._fmt(this.value)}`);
-    }
-
-    /** Reset the value to zero and update the display. */
-    reset() {
-        this.value = 0;
-        this.text.setText(`${this.label}: ${this._fmt(this.value)}`);
-    }
-
-    /**
-     * Format a number: if it's an integer, no decimals;
-     * otherwise one digit after decimal point.
-     * @param {number} v
-     * @returns {string}
-     * @private
-     */
-    _fmt(v) {
-        return Number.isInteger(v)
-            ? v.toString()
-            : v.toFixed(1);
-    }
-}
 
 /**
  * A pool of static, immovable enemies.
@@ -285,14 +233,14 @@ class EnemyGroup {
         });
         // add enemy idle animation
         scene.anims.create({
-            key: 'enemy',
-            frames: scene.anims.generateFrameNumbers('enemy'),
+            key: 'enemy_idle',
+            frames: scene.anims.generateFrameNumbers('enemy_idle'),
             frameRate: 10,
             repeat: -1
         });
         configs.forEach(cfg => {
             const e = this.group.create(cfg.x, cfg.y, cfg.key);
-            e.play('enemy');
+            e.play('enemy_idle');
             if (cfg.scale) e.setScale(cfg.scale).refreshBody();
         });
     }
@@ -427,48 +375,6 @@ class BulletEnemyCollision {
     }
 }
 
-/**
- * A single enemy sprite that automatically chases a target (the player).
- */
-class ChasingEnemy extends Phaser.Physics.Arcade.Sprite {
-    /**
-     * @param {Phaser.Scene} scene
-     * @param {number} x
-     * @param {number} y
-     * @param {string} texture    Key of the loaded image/spritesheet.
-     * @param {Phaser.Physics.Arcade.Sprite} target
-     * @param {number} speed      Horizontal chase speed.
-     */
-    constructor(scene, x, y, texture, target, speed = 100) {
-        super(scene, x, y, texture);
-        this.scene = scene;
-        this.target = target;
-        this.speed = speed;
-
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
-
-        // gravity so it lands on platforms
-        this.setBounce(0.2).setCollideWorldBounds(true);
-    }
-
-    /** Call this each frame in your scene.update() */
-    update() {
-        if (!this.body.enable) return;  // dead or disabled
-
-        // simple horizontal chase
-        let diff_x = this.target.x - this.x;
-        if (Math.abs(diff_x) < 10) {
-            this.setVelocityX(0);
-        } else {
-            this.setVelocityX(diff_x < 0 ? -this.speed : this.speed);
-        }
-        // flip the sprite to face the target
-        // (this assumes the sprite faces right by default)
-        this.setFlipX(diff_x < 0);
-    }
-}
-
 
 /**
  * Ends the game when the linked health display goes below zero.
@@ -525,107 +431,16 @@ class Destination {
         this.scene = scene;
         this.player = player;
         this.reached = false;
-
-        // create a static image for the goal
         this.sprite = scene.physics.add.staticImage(x, y, key);
-
-        // when player overlaps the goal, trigger win
-        scene.physics.add.overlap(player, this.sprite, this._onReach, null, this);
     }
 
-    _onReach() {
+    onReach() {
         if (this.reached) return;
         this.reached = true;
-
-        // pause all physics
-        this.scene.physics.pause();
-
-        // optional: make the player glow
-        this.player.setTint(0x00ff00);
-
-        // display “You Win!” centered
-        const w = this.scene.scale.width;
-        const h = this.scene.scale.height;
-        this.scene.add.text(w / 2, h / 2, 'YOU WIN!', {
-            fontSize: '64px',
-            fill: '#000',
-            fontStyle: 'bold'
-        }).setOrigin(0.5).setScrollFactor(0);
+        this.scene.gameOver.run("YOU WIN!");
     }
 }
 
-
-
-/**
- * Represents a gamepad button in a Phaser scene.
- * 
- * @class
- * @param {Phaser.Scene} scene - The Phaser scene where the button will be added.
- * @param {number} x - The x-coordinate of the button.
- * @param {number} y - The y-coordinate of the button.
- * @param {string} text - The text to display on the button.
- * @param {Function} callback - The function to call when the button is clicked.
- */
-class GamepadButton {
-    constructor(scene, x, y, text, callback) {
-        this.scene = scene;
-        this.x = x;
-        this.y = y;
-        this.text = text;
-        this.callback = callback;
-        this.button = scene.add.text(x, y, text, { fontSize: '32px', fill: '#fff' })
-            .setOrigin(0.5)
-            .setInteractive()
-            .setScrollFactor(0)
-            .on('pointerdown', () => {
-                this.callback();
-            })
-    }
-}
-
-class GameControlPanel {
-    constructor(scene, mapHeight, gameHeight, gameWidth) {
-        this.scene = scene;
-        this.mapHeight = mapHeight;
-        this.gameHeight = gameHeight;
-        this.gameWidth = gameWidth;
-
-        // add black background
-        this.background = scene.add.rectangle(0, mapHeight, gameWidth, gameHeight - mapHeight, 0x000000)
-            .setOrigin(0)
-            .setScrollFactor(0);
-        
-        // add a virtual joystick
-        var joystickPlugin = this.scene.plugins.get('rexvirtualjoystickplugin');
-        var joystick = joystickPlugin.add(this.scene, {
-            x: 120,
-            y: mapHeight + (gameHeight - mapHeight) * 0.5,
-            radius: 70,
-            dir: 'left&right',
-        }); 
-        this.joystick = joystick;
-        
-    }
-
-    setButtons(texts, callbacks) {
-        const buttonNumber = texts.length;
-        const panelHeight = this.gameHeight - this.mapHeight;
-
-        // calculate button x and y positions
-        const x_pos = this.gameWidth - 100;
-        var y_pos = [];
-        for (let i = 0; i < buttonNumber; i++) {
-            y_pos.push(this.mapHeight + (panelHeight / (buttonNumber + 1)) * (i + 1));
-        }
-        // create buttons
-        var buttons = [];
-        for (let i = 0; i < buttonNumber; i++) {
-            const button = new GamepadButton(this.scene, x_pos, y_pos[i], texts[i], callbacks[i]);
-            buttons.push(button);
-        }
-        return buttons;
-    }
-}
 
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -652,7 +467,11 @@ class MainScene extends Phaser.Scene {
             frameWidth: 32,
             frameHeight: 32
         });
-        this.load.spritesheet('enemy', 'Pixel_Adventure/Main Characters/Ninja Frog/Idle (32x32).png', {
+        this.load.spritesheet('enemy_idle', 'Pixel_Adventure/Main Characters/Ninja Frog/Idle (32x32).png', {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+        this.load.spritesheet('enemy_run', 'Pixel_Adventure/Main Characters/Ninja Frog/Run (32x32).png', {
             frameWidth: 32,
             frameHeight: 32
         });
@@ -685,6 +504,9 @@ class MainScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, tileLayer.x + tileLayer.width + 600, 0);
 
+        // load game over
+        this.gameOver = new GameOver(this);
+
         // --- From this line below is customizable ---
 
         // collect stars to increase score
@@ -696,11 +518,11 @@ class MainScene extends Phaser.Scene {
         // touch enemies to lose health
         this.healthDisplay = new MetricDisplay(this, 16, 56, 'Health', 100);
         this.enemyGroup = new EnemyGroup(this, [
-            { x: 400, y: 530, key: 'enemy' },
-            { x: 750, y: 270, key: 'enemy' }
+            { x: 400, y: 530, },
+            { x: 750, y: 270, }
         ]);
         this.physics.add.collider(this.enemyGroup.group, tileLayer);
-        this.damageOnTouch = new DamageOnTouch(this, this.player, this.enemyGroup.group, this.healthDisplay, 0.5);
+        this.damageOnTouch = new DamageOnTouch(this, this.player, this.enemyGroup.group, this.healthDisplay, 10);
         this.gameOverMonitor = new GameOverOnHealth(this, this.healthDisplay);
 
 
@@ -718,14 +540,14 @@ class MainScene extends Phaser.Scene {
         );
 
         // create the chaser enemy
-        this.chaser = new ChasingEnemy(this, 200, 100, 'enemy', this.player, 60);
+        this.chaser = new ChasingEnemy(this, 200, 100, 'enemy_idle', 'enemy_run', this.player, 60);
         this.physics.add.collider(this.chaser, tileLayer);
         this.chaserDamage = new DamageOnTouch(
             this, 
             this.player, 
             this.chaser,       // single sprite works here too
             this.healthDisplay,
-            1
+            10
         );
         this.physics.add.overlap(
             this.bulletGroup, 
@@ -754,6 +576,9 @@ class MainScene extends Phaser.Scene {
         // Reach the flag to win
         this.destination = new Destination(this, this.player, 1500, 500, 'flag');
         this.physics.add.collider(this.destination.sprite, tileLayer);
+        this.physics.add.overlap(this.player, this.destination.sprite, () => {
+            this.destination.onReach();
+        });
         
         // Create fire and jump buttons
         controlPanel.setButtons(

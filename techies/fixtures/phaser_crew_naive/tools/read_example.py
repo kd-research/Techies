@@ -15,9 +15,11 @@ class ReadExamplesTool(BaseTool):
         super().__init__(**kwargs)
 
     def _run(self, **kwargs) -> str:
+        with open(os.path.join(os.path.dirname(__file__), "template", "js", "common.js"), "r", encoding="utf-8") as f:
+            common_js = f.read()
         with open(os.path.join(os.path.dirname(__file__), "template", "js", "main.js"), "r", encoding="utf-8") as f:
             examples = f.read()
-        return examples
+        return common_js + examples
     
 
 register_tool(ReadExamplesTool)
