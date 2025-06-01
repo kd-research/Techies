@@ -32,13 +32,13 @@ It is an LLM agent workflow designed using the following principles:
 The workflow is as follows:
 ```mermaid
 flowchart TD
-    A[User] -->|Give instructions| B[phaser_code_writer]
-    B -->|Write JS code| C[phaser_code_fixer]
-    C -->|Fix JS code| D[phaser_game_packer]
-    D -->|Package game| E[Deployment]
+    A[User] -->|Request| B[phaser_code_writer]
+    B -->|Phaser JS code| C[phaser_code_fixer]
+    C -->|Fixed JS code| D[phaser_game_packer]
+    D -->|Packed game in folder| E[Further Deployment]
 ```
 
-`phaser_code_writer` reads the user instructions and example JS code, generating a new JS code file. 
+`phaser_code_writer` reads the user request and example JS code, generating a new JS code file. 
 
 `phaser_code_fixer` reads the code and refines it, ensuring it is complete and functional.
 
@@ -47,8 +47,7 @@ The above two agents may call `phaser_code_saver` to save the code in the workin
 `phaser_game_packer` configures the html file and assets for the game, copying them to the working folder. 
 
 ## Roadmap
-Short term (all require tool argument issues get fixed):
-- Fix the icon and splash screen generation capability.
+Short term:
 - Enable asset browsering.
 
 Long term:
