@@ -71,7 +71,27 @@ class PackGameTool(BaseTool):
                     with open(s, "rb") as fsrc:
                         with open(d, "wb") as fdst:
                             fdst.write(fsrc.read())
-        copytree(source_dir, assets_dir)       
+        copytree(source_dir, assets_dir)
+
+        # copy js/common.js to base_dir/js
+        js_dir = os.path.join(self.base_dir, "js")
+        if not os.path.exists(js_dir):
+            os.makedirs(js_dir)
+        try:
+            with open(os.path.join(os.path.dirname(__file__), "template", "js", "common.js"), "r", encoding="utf-8") as f:
+                common_js = f.read()
+            with open(os.path.join(js_dir, "common.js"), "w", encoding="utf-8") as f:
+                f.write(common_js)
+        except Exception as e:
+            return f"Error copying common.js: {e}"     
+
+        # save result message to external/result
+        # create external directory if it doesn't exist
+        external_dir = os.path.join(self.base_dir, "external")
+        if not os.path.exists(external_dir):
+            os.makedirs(external_dir)
+        with open(os.path.join(external_dir, "result"), "w", encoding="utf-8") as f:
+            f.write("SUCCESS")     
 
         return "Game packed successfully."
 
