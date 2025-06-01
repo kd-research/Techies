@@ -16,5 +16,5 @@ phaser_crew:
     - save_phaser_code
     - pack_phaser_game
   input_args:
-    - user_instruction
+    - request
 
