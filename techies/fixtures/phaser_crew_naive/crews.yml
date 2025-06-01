@@ -1,0 +1,20 @@
+_crew_common: &crew_common
+  cache: false
+  max_iter: 100
+  memory: false
+
+phaser_crew:
+  <<: *crew_common
+  agents:
+    - phaser_code_writer
+    - phaser_code_fixer
+    - phaser_code_saver
+    - phaser_game_packer
+  tasks:
+    - write_phaser_code
+    - fix_phaser_code
+    - save_phaser_code
+    - pack_phaser_game
+  input_args:
+    - request
+

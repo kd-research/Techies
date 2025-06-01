@@ -1,0 +1,76 @@
+_task_common: &task_common
+  human_input: false
+  async_execution: false
+
+write_phaser_code:
+  <<: *task_common
+  agent: phaser_code_writer
+  description: |
+    Given the user instructions, write a Phaser 3 code snippet that implements the specified functionality.
+
+    Requirements:
+    - Read the examples. You are given a list of predefined classes and functions that you can use to implement the functionality.
+    - You cannot modify the existing classes or functions. 
+    - When you want to modify their functionality, we strongly encourage you to create a new class (with different name) that extends the existing class, rather than writing low-level code addtions to update() or create() methods. We value modularity and reusability in your code.
+    - You cannot modify the preload() function, which means you cannot load any new assets.
+    - For the MainScene class, you can only modify the customizable section, which is marked with comments.
+    - You should write in following format:
+      ```javascript
+      // Predefined classes and functions are already available for you to use
+      // Now please write your customized classes and functions here
+
+      class CustomScene extends MainScene {
+        constructor() {
+          super();
+          // You cannot modify the constructor
+        }
+        create() {
+          super.create();
+          // Your code here
+        }
+        update() {
+          super.update();
+          // Your code here
+        }
+      }
+      ```
+  expected_output: >
+    After you finished writing up the code, says "I have created the code as per the provided specifications.".
+
+fix_phaser_code:
+  <<: *task_common
+  agent: phaser_code_fixer
+  description: |
+    Fix the code snippet to ensure it works correctly.
+    Checklist:
+    - No TODOs or placeholders should be present in the code.
+    - The code should be modular and reusable.
+    - If you overwrite any existing classes or functions, make sure you consider the same corner cases as the original.
+    - CustomScene must be implemented.
+    - If you add any action button, make sure they are close to existing buttons but not overlapping with them.
+  expected_output: >
+    After you finished fixing up the code, says "I have fixed the code as per the provided specifications.".
+
+save_phaser_code:
+  <<: *task_common
+  agent: phaser_code_saver
+  description: |
+    Save the code snippet to a file.
+
+    Requirements:
+    - You should save the code snippet to a file named "game.js".
+    - Make sure the file is saved before the program ends.
+  expected_output: >
+    After you finished saving up the code, says "I have saved the code file as per the provided specifications.".
+
+pack_phaser_game:
+  <<: *task_common
+  agent: phaser_game_packer
+  description: |
+    Package the Phaser game code into a game file.
+
+    Requirements:
+    - You should package the Phaser game code into a game file named "index.html".
+    - Make sure the game file is created before the program ends.
+  expected_output: >
+    After you finished packaging up the game, says "I have packaged the game as per the provided specifications.".
