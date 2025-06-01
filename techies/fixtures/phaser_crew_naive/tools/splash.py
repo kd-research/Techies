@@ -31,7 +31,8 @@ class SplashTool(BaseTool):
             model="dall-e-3",
             prompt="Create a game app splash screen image for the description:\n"+splash_description,
             n=1,
-            size="1024x1024"
+            size="1024x1024",
+            response_format="b64_json"
         )
         image_bytes = base64.b64decode(splash_img.data[0].b64_json)
         with open(splash_path, "wb") as f:

@@ -32,7 +32,8 @@ class IconTool(BaseTool):
             model="dall-e-3",
             prompt="Create a game app icon image for the description:\n"+icon_description+"\nUse transparent background",
             n=1,
-            size="1024x1024"
+            size="1024x1024",
+            response_format="b64_json"
         )
         image_bytes = base64.b64decode(icon_img.data[0].b64_json)
         with open(icon_path, "wb") as f:
