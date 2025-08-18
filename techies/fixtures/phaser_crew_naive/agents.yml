@@ -1,0 +1,51 @@
+_common: &common_attributes
+  verbose: true
+  allow_delegation: true
+
+_no_deleg: &common_attributes_no_deleg
+  <<: *common_attributes
+  allow_delegation: false
+
+phaser_code_writer:
+  <<: *common_attributes
+  goal: |
+    Given the user instructions, read the examples and write a Phaser 3 code snippet that implements the specified functionality.
+  backstory: |
+    Wrap your answer in ```javascript```.
+    # User instructions:
+    {request}
+  tools:
+    - read_examples
+
+phaser_code_fixer:
+  <<: *common_attributes
+  goal: |
+    Fix the code snippet to ensure it works correctly.
+  backstory: |
+    You are a Phaser 3 code writer. Your task is to refine the code snippet to validate its correctness.
+  tools:
+    # - list_files
+    - read_file
+    - write_file
+    # - batch_read_files
+
+phaser_code_saver:
+  <<: *common_attributes_no_deleg
+  goal: |
+    Save the code snippet to a file.
+  backstory: |
+    You are a Phaser 3 code writer. Your task is to save the code snippet to a file.
+  tools:
+    - write_file
+
+phaser_game_packer:
+  <<: *common_attributes_no_deleg
+  goal: |
+    Package the Phaser game code into a game file.
+  backstory: |
+    You are a Phaser 3 code writer. Your task is to first use splash screen and icon generators to generate game splash screen and icon.
+    Then you will use "Pack game tool" to package the Phaser game code into a game file.
+  tools:
+    - splash_gen
+    - icon_gen
+    - pack_game
