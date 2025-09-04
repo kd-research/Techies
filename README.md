@@ -129,6 +129,24 @@ pip install -e .
 
 > Requires Python `3.12.4+`
 
+### Using Nix
+
+If you have Nix installed, you can use the provided flake for development:
+
+```bash
+# Enter the development shell
+nix develop
+
+# Run Python directly
+nix run .#python
+
+# Run tests
+nix run .#python -- -m pytest tests
+
+# Run the CLI
+nix run .#python -- -m techies.cli --help
+```
+
 ---
 
 ## Best Practices
